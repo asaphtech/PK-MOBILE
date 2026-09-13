@@ -16,4 +16,8 @@
     <string name="shortcut_empty">Belum ada shortcut. Tekan tombol + untuk menambahkan.</string>
     <string name="toast_saved">Shortcut berhasil disimpan!</string>
     <string name="toast_deleted">Shortcut dihapus.</string>
+    <string name="btn_import">Import</string>
+    <string name="btn_export">Ekspor</string>
+    <string name="toast_imported">Berhasil mengimpor %1$d shortcut!</string>
+    <string name="toast_no_shortcut_found">Tidak ditemukan data shortcut yang valid.</string>
 </resources>

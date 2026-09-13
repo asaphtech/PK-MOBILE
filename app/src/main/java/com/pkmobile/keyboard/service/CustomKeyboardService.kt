@@ -160,10 +160,8 @@ class CustomKeyboardService : InputMethodService() {
             handleSpaceKey()
         }
 
-        // Tombol backspace di mode simbol
-        root.findViewById<ImageButton>(R.id.sym_key_backspace)?.setOnClickListener {
-            handleBackspaceKey()
-        }
+        // Tombol backspace di mode simbol dengan repeat on hold
+        attachRepeatBackspaceListener(root.findViewById(R.id.sym_key_backspace))
 
         // Tombol enter di mode simbol
         root.findViewById<ImageButton>(R.id.sym_enter)?.setOnClickListener {
@@ -181,10 +179,8 @@ class CustomKeyboardService : InputMethodService() {
             refreshAlphaKeyLabels()
         }
 
-        // Tombol Backspace
-        root.findViewById<ImageButton>(R.id.key_backspace)?.setOnClickListener {
-            handleBackspaceKey()
-        }
+        // Tombol Backspace dengan fitur tahan untuk menghapus terus-menerus (continuous repeat)
+        attachRepeatBackspaceListener(root.findViewById(R.id.key_backspace))
 
         // Tombol Spasi (Pemicu Utama Auto-Text / Shortcut Expansion)
         root.findViewById<Button>(R.id.key_space)?.setOnClickListener {
@@ -316,8 +312,52 @@ class CustomKeyboardService : InputMethodService() {
         }
     }
 
+    // Handler untuk auto-repeat tombol backspace saat ditekan terus-menerus
+    private val backspaceHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private var isBackspaceRepeating = false
+
+    private val backspaceRepeatRunnable = object : Runnable {
+        override fun run() {
+            if (isBackspaceRepeating) {
+                handleBackspaceKey()
+                // Interval penghapusan cepat (45 milidetik)
+                backspaceHandler.postDelayed(this, 45)
+            }
+        }
+    }
+
+    /**
+     * Memasang listener touch pada tombol backspace agar menghapus teks secara berkelanjutan saat ditahan.
+     */
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
+    private fun attachRepeatBackspaceListener(button: View?) {
+        button?.setOnTouchListener { v, event ->
+            when (event.action) {
+                android.view.MotionEvent.ACTION_DOWN -> {
+                    v.isPressed = true
+                    // Hapus karakter pertama langsung
+                    handleBackspaceKey()
+                    isBackspaceRepeating = true
+                    // Mulai pengulangan cepat setelah jeda awal 350 milidetik
+                    backspaceHandler.postDelayed(backspaceRepeatRunnable, 350)
+                    true
+                }
+                android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> {
+                    v.isPressed = false
+                    isBackspaceRepeating = false
+                    backspaceHandler.removeCallbacks(backspaceRepeatRunnable)
+                    v.performClick()
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        isBackspaceRepeating = false
+        backspaceHandler.removeCallbacks(backspaceRepeatRunnable)
         serviceScope.cancel()
     }
 }

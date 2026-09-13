@@ -153,8 +153,24 @@
                 android:layout_weight="1"
                 android:text="@string/section_shortcuts"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_import_shortcut"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📥 Import"
+                android:textColor="@color/candidate_text_highlight" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_export_shortcut"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📤 Ekspor"
+                android:textColor="@color/text_secondary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_add_shortcut"

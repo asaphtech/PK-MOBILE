@@ -61,7 +61,7 @@ PK MOBILE/
 - Menangani event input:
   - **Tombol Huruf/Karakter**: Mengirim teks ke kolom input aktif melalui `currentInputConnection.commitText(char, 1)` dan memasukkannya ke buffer `AutoTextEngine`.
   - **Tombol Spasi**: Memanggil `AutoTextEngine.handleSpace(currentInputConnection)`. Jika ada kata kunci shortcut yang cocok, teks shortcut yang terketik langsung dihapus dan digantikan oleh ekspansi auto-text.
-  - **Tombol Backspace**: Memanggil `currentInputConnection.deleteSurroundingText(1, 0)` dan mengurangi karakter terakhir pada buffer engine.
+  - **Tombol Backspace**: Dilengkapi **Auto-Repeat on Long Press**. Menekan sekali menghapus 1 karakter; menahan tombol akan menghapus karakter secara berkelanjutan dan cepat (setiap 45ms setelah jeda awal 350ms).
   - **Tombol Shift / Caps**: Melakukan toggle huruf besar/kecil (Caps) secara dinamis pada tampilan tombol keyboard.
   - **Tombol Simbol (?123 / ABC)**: Mengalihkan tampilan antara alfabet QWERTY dan deretan angka/simbol.
 
@@ -85,12 +85,21 @@ PK MOBILE/
   - `otw` $\to$ `On the way`
   - `info` $\to$ `Informasi lebih lanjut dapat menghubungi layanan kami.`
 
-### 4. `MainActivity.kt`
+### 4. `ShortcutImporter.kt` (Migrasi dari Perfect Keyboard)
+- Engine pintar untuk membaca berbagai jenis berkas ekspor Perfect Keyboard:
+  - **Berkas XML**: Mendukung tag atribut maupun tag hierarki (`<record><key>...</key><value>...</value></record>`).
+  - **Berkas CSV / TSV / TXT**: Mendukung pemisah tab, koma, titik koma, dan format `key=value`.
+  - **JSON**: Format array pasangan shortcut.
+- Menjamin pemindahan ribuan shortcut selesai dalam sekejap dengan *batch insert Room*.
+
+### 5. `MainActivity.kt`
 - Dashboard kontrol untuk pengguna:
   - **Tombol 1**: Membuka Pengaturan Input Method Android (`Settings.ACTION_INPUT_METHOD_SETTINGS`) untuk mengaktifkan keyboard.
   - **Tombol 2**: Membuka dialog pemilih input method aktif (`InputMethodManager.showInputMethodPicker()`).
   - **Test Input Field**: Kolom input langsung di aplikasi untuk mencoba mengetik dan menguji ekspansi shortcut.
-  - **Manajer Shortcut**: Menampilkan daftar shortcut Room, menghapus shortcut, dan menambah shortcut baru melalui pop-up dialog.
+  - **Tombol 📥 Import (Migrasi)**: Membuka file picker untuk memilih file backup Perfect Keyboard atau menempelkan teks langsung.
+  - **Tombol 📤 Ekspor**: Berbagi dan mencadangkan data shortcut dalam format CSV standar.
+  - **Manajer Shortcut**: Menampilkan daftar shortcut Room, menghapus shortcut, dan menambah shortcut baru.
 
 ---
 

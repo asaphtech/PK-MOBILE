@@ -101,6 +101,25 @@ public final class ShortcutDao_Impl implements ShortcutDao {
   }
 
   @Override
+  public Object insertAll(final List<ShortcutEntity> shortcuts,
+      final Continuation<? super List<Long>> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<List<Long>>() {
+      @Override
+      @NonNull
+      public List<Long> call() throws Exception {
+        __db.beginTransaction();
+        try {
+          final List<Long> _result = __insertionAdapterOfShortcutEntity.insertAndReturnIdsList(shortcuts);
+          __db.setTransactionSuccessful();
+          return _result;
+        } finally {
+          __db.endTransaction();
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
   public Object delete(final ShortcutEntity shortcut,
       final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {

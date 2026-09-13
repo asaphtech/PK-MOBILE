@@ -29,6 +29,12 @@ public final class ActivityMainBinding implements ViewBinding {
   public final MaterialButton btnEnableIme;
 
   @NonNull
+  public final MaterialButton btnExportShortcut;
+
+  @NonNull
+  public final MaterialButton btnImportShortcut;
+
+  @NonNull
   public final MaterialButton btnSelectIme;
 
   @NonNull
@@ -45,12 +51,15 @@ public final class ActivityMainBinding implements ViewBinding {
 
   private ActivityMainBinding(@NonNull CoordinatorLayout rootView,
       @NonNull MaterialButton btnAddShortcut, @NonNull MaterialButton btnEnableIme,
+      @NonNull MaterialButton btnExportShortcut, @NonNull MaterialButton btnImportShortcut,
       @NonNull MaterialButton btnSelectIme, @NonNull EditText etTestInput,
       @NonNull RecyclerView rvShortcuts, @NonNull TextView tvEmptyShortcuts,
       @NonNull TextView tvShortcutHeader) {
     this.rootView = rootView;
     this.btnAddShortcut = btnAddShortcut;
     this.btnEnableIme = btnEnableIme;
+    this.btnExportShortcut = btnExportShortcut;
+    this.btnImportShortcut = btnImportShortcut;
     this.btnSelectIme = btnSelectIme;
     this.etTestInput = etTestInput;
     this.rvShortcuts = rvShortcuts;
@@ -97,6 +106,18 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btn_export_shortcut;
+      MaterialButton btnExportShortcut = ViewBindings.findChildViewById(rootView, id);
+      if (btnExportShortcut == null) {
+        break missingId;
+      }
+
+      id = R.id.btn_import_shortcut;
+      MaterialButton btnImportShortcut = ViewBindings.findChildViewById(rootView, id);
+      if (btnImportShortcut == null) {
+        break missingId;
+      }
+
       id = R.id.btn_select_ime;
       MaterialButton btnSelectIme = ViewBindings.findChildViewById(rootView, id);
       if (btnSelectIme == null) {
@@ -128,7 +149,8 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       return new ActivityMainBinding((CoordinatorLayout) rootView, btnAddShortcut, btnEnableIme,
-          btnSelectIme, etTestInput, rvShortcuts, tvEmptyShortcuts, tvShortcutHeader);
+          btnExportShortcut, btnImportShortcut, btnSelectIme, etTestInput, rvShortcuts,
+          tvEmptyShortcuts, tvShortcutHeader);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

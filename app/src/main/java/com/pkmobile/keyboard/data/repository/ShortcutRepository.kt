@@ -24,6 +24,18 @@ class ShortcutRepository(private val shortcutDao: ShortcutDao) {
         return shortcutDao.insertOrUpdate(entity)
     }
 
+    suspend fun importShortcuts(pairs: List<Pair<String, String>>): Int {
+        if (pairs.isEmpty()) return 0
+        val entities = pairs.map { (key, value) ->
+            ShortcutEntity(
+                shortcut = key.trim().lowercase(),
+                expansion = value.trim()
+            )
+        }
+        shortcutDao.insertAll(entities)
+        return entities.size
+    }
+
     suspend fun deleteShortcut(shortcut: ShortcutEntity) {
         shortcutDao.delete(shortcut)
     }

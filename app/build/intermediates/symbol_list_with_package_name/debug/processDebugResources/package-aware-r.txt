@@ -3205,8 +3205,11 @@ id bounceEnd
 id bounceStart
 id btn_add_shortcut
 id btn_candidate_chip
+id btn_choose_file
 id btn_delete
 id btn_enable_ime
+id btn_export_shortcut
+id btn_import_shortcut
 id btn_select_ime
 id buttonPanel
 id cache_measures
@@ -3292,6 +3295,7 @@ id enterAlways
 id enterAlwaysCollapsed
 id et_input_expansion
 id et_input_shortcut
+id et_raw_import
 id et_test_input
 id exitUntilCollapsed
 id expand_activities_button
@@ -3661,6 +3665,8 @@ id tv_candidate_prefix
 id tv_candidate_text
 id tv_empty_shortcuts
 id tv_expansion
+id tv_file_status
+id tv_preview_count
 id tv_shortcut_badge
 id tv_shortcut_header
 id unchecked
@@ -3818,6 +3824,7 @@ layout design_navigation_menu_item
 layout design_text_input_end_icon
 layout design_text_input_start_icon
 layout dialog_add_shortcut
+layout dialog_import_shortcut
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
 layout item_shortcut
@@ -3923,6 +3930,8 @@ string bottomsheet_drag_handle_content_description
 string btn_add_shortcut
 string btn_cancel
 string btn_enable_ime
+string btn_export
+string btn_import
 string btn_save
 string btn_select_ime
 string call_notification_answer_action
@@ -4066,6 +4075,8 @@ string status_bar_notification_info_overflow
 string subtype_en
 string subtype_id
 string toast_deleted
+string toast_imported
+string toast_no_shortcut_found
 string toast_saved
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
