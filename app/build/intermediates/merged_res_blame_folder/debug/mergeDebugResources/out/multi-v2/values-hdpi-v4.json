@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.pkmobile.keyboard.app-mergeDebugResources-35:/values-hdpi-v4/values-hdpi-v4.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\5eff2c2b6c1995db66c09b9038426334\\transformed\\appcompat-1.6.1\\res\\values-hdpi-v4\\values-hdpi-v4.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "13",
+                        "endOffsets": "327"
+                    }
+                }
+            ]
+        }
+    ]
+}

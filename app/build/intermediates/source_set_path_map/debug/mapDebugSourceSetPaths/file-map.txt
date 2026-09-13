@@ -1,0 +1,40 @@
+com.pkmobile.keyboard.app-coordinatorlayout-1.1.0-0 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\16017e0a3da23a359618166e620dd46b\transformed\coordinatorlayout-1.1.0\res
+com.pkmobile.keyboard.app-savedstate-1.2.1-1 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a6f16b76328ed9b7d1a7f0668b88086\transformed\savedstate-1.2.1\res
+com.pkmobile.keyboard.app-drawerlayout-1.1.1-2 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1b363fc691558774131be2a671080740\transformed\drawerlayout-1.1.1\res
+com.pkmobile.keyboard.app-room-ktx-2.6.1-3 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2684dc865d0b4abde5edbea5fa79956f\transformed\room-ktx-2.6.1\res
+com.pkmobile.keyboard.app-lifecycle-runtime-ktx-2.7.0-4 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2f9f7f3290b3e60ae66a5cf112229cd0\transformed\lifecycle-runtime-ktx-2.7.0\res
+com.pkmobile.keyboard.app-lifecycle-process-2.7.0-5 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\res
+com.pkmobile.keyboard.app-room-runtime-2.6.1-6 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\res
+com.pkmobile.keyboard.app-lifecycle-livedata-2.7.0-7 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4014a2f11d63c11daa40c3f93a7014fc\transformed\lifecycle-livedata-2.7.0\res
+com.pkmobile.keyboard.app-transition-1.2.0-8 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\521a94829efcd1eac8cf7f90ddba596d\transformed\transition-1.2.0\res
+com.pkmobile.keyboard.app-lifecycle-viewmodel-savedstate-2.7.0-9 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\53c94669803ee54391dfec051af6315e\transformed\lifecycle-viewmodel-savedstate-2.7.0\res
+com.pkmobile.keyboard.app-lifecycle-livedata-core-ktx-2.7.0-10 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5a1e413b15df62f483fc7edc7c2ac5e0\transformed\lifecycle-livedata-core-ktx-2.7.0\res
+com.pkmobile.keyboard.app-fragment-1.3.6-11 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5c2d3962099bf74531f314845975abc4\transformed\fragment-1.3.6\res
+com.pkmobile.keyboard.app-appcompat-1.6.1-12 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5eff2c2b6c1995db66c09b9038426334\transformed\appcompat-1.6.1\res
+com.pkmobile.keyboard.app-core-1.12.0-13 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\res
+com.pkmobile.keyboard.app-constraintlayout-2.1.4-14 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\73c9db1fda6939639a753cb93e9ea34b\transformed\constraintlayout-2.1.4\res
+com.pkmobile.keyboard.app-lifecycle-viewmodel-2.7.0-15 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\7f97fa7526b37815ad6f9f0b93a1291f\transformed\lifecycle-viewmodel-2.7.0\res
+com.pkmobile.keyboard.app-core-ktx-1.12.0-16 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\8078ecf868e9288d2f2e3d36f14d8bf5\transformed\core-ktx-1.12.0\res
+com.pkmobile.keyboard.app-cardview-1.0.0-17 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9ddcd6995085816b3b4145223fd9f629\transformed\cardview-1.0.0\res
+com.pkmobile.keyboard.app-viewpager2-1.0.0-18 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\aa2d5ff23c39eecf3f73fa959cf3a039\transformed\viewpager2-1.0.0\res
+com.pkmobile.keyboard.app-startup-runtime-1.1.1-19 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ab84af5e083aaf8a5ef20b8554e56a28\transformed\startup-runtime-1.1.1\res
+com.pkmobile.keyboard.app-profileinstaller-1.3.0-20 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\res
+com.pkmobile.keyboard.app-sqlite-2.4.0-21 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\b76e751bd34722227f80ffb5da778a6f\transformed\sqlite-2.4.0\res
+com.pkmobile.keyboard.app-emoji2-views-helper-1.2.0-22 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\bbc37859171f1d17f1e5e03e82f2beb0\transformed\emoji2-views-helper-1.2.0\res
+com.pkmobile.keyboard.app-lifecycle-livedata-core-2.7.0-23 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c2b756a2962d565e418acec6a0cfe56e\transformed\lifecycle-livedata-core-2.7.0\res
+com.pkmobile.keyboard.app-annotation-experimental-1.3.0-24 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c8222a08753805d1931488e0ae72be6b\transformed\annotation-experimental-1.3.0\res
+com.pkmobile.keyboard.app-sqlite-framework-2.4.0-25 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c854b1ed6c23e22ee3b4bfd76a8caa56\transformed\sqlite-framework-2.4.0\res
+com.pkmobile.keyboard.app-appcompat-resources-1.6.1-26 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d9506116eb9db96b53c0cf5fe6c9a1d8\transformed\appcompat-resources-1.6.1\res
+com.pkmobile.keyboard.app-lifecycle-runtime-2.7.0-27 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\df3706a4025bf2fb2d267134a6fc7269\transformed\lifecycle-runtime-2.7.0\res
+com.pkmobile.keyboard.app-recyclerview-1.1.0-28 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\dfbc3f4aefb2d74c074e02c24e1ef06d\transformed\recyclerview-1.1.0\res
+com.pkmobile.keyboard.app-emoji2-1.2.0-29 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\res
+com.pkmobile.keyboard.app-core-runtime-2.2.0-30 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fa18fdf27666d6f685ba5c2f83068da5\transformed\core-runtime-2.2.0\res
+com.pkmobile.keyboard.app-activity-1.8.0-31 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fa6b3430888c9f7837efcdfd7e5dca2c\transformed\activity-1.8.0\res
+com.pkmobile.keyboard.app-material-1.11.0-32 C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fd20a4eab6e3ee4b3f63eb9950a2a50d\transformed\material-1.11.0\res
+com.pkmobile.keyboard.app-pngs-33 C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\build\generated\res\pngs\debug
+com.pkmobile.keyboard.app-resValues-34 C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\build\generated\res\resValues\debug
+com.pkmobile.keyboard.app-packageDebugResources-35 C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.pkmobile.keyboard.app-packageDebugResources-36 C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.pkmobile.keyboard.app-debug-37 C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.pkmobile.keyboard.app-debug-38 C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\debug\res
+com.pkmobile.keyboard.app-main-39 C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\res
