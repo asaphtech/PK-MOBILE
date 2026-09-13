@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand / App Palette -->
+    <color name="primary">#5865F2</color>
+    <color name="primary_dark">#4752C4</color>
+    <color name="accent">#57F287</color>
+    <color name="surface_dark">#121316</color>
+    <color name="surface_card">#1E1F24</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#9DA4B0</color>
+
+    <!-- Keyboard Dark Theme Colors -->
+    <color name="keyboard_background">#18191C</color>
+    <color name="candidate_strip_background">#1E2024</color>
+    <color name="candidate_chip_background">#2B2D31</color>
+    <color name="candidate_chip_highlight">#313A5E</color>
+    <color name="candidate_text_primary">#F2F3F5</color>
+    <color name="candidate_text_highlight">#7986FA</color>
+
+    <color name="key_background_normal">#2F3136</color>
+    <color name="key_background_pressed">#40444B</color>
+    <color name="key_background_special">#202225</color>
+    <color name="key_background_action">#5865F2</color>
+    <color name="key_background_action_pressed">#4752C4</color>
+
+    <color name="key_text">#FFFFFF</color>
+    <color name="key_text_secondary">#8E9297</color>
+    <color name="key_divider">#202225</color>
+    <color name="key_shadow">#121315</color>
+</resources>
