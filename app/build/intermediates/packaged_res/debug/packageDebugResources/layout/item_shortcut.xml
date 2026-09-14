@@ -25,8 +25,9 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <!-- Badges Row -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
@@ -57,12 +58,32 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_package_badge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="➔"
+                    android:layout_marginStart="6dp"
+                    android:background="#22FFFFFF"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:maxWidth="120dp"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="2dp"
+                    android:text="📁 Paket Utama"
                     android:textColor="@color/text_secondary"
-                    android:textSize="14sp" />
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tv_status_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_candidate_chip"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="2dp"
+                    android:text="Aktif"
+                    android:textColor="@color/accent"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <TextView
@@ -72,22 +93,31 @@
                 android:layout_marginTop="6dp"
                 android:text="On my way!"
                 android:textColor="@color/text_primary"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
         </LinearLayout>
+
+        <!-- Toggle Active Switch per-shortcut -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_shortcut_active"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            app:useMaterialThemeColors="true" />
 
         <ImageButton
             android:id="@+id/btn_edit"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="2dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Edit Shortcut"
             android:src="@drawable/ic_edit" />
 
         <ImageButton
             android:id="@+id/btn_delete"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="4dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="2dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Hapus Shortcut"
             android:src="@drawable/ic_delete" />

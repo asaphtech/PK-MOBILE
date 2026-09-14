@@ -44,6 +44,12 @@ public final class ActivitySettingsBinding implements ViewBinding {
   public final TextView btnConfigAnonKey;
 
   @NonNull
+  public final MaterialButton btnEnableIme;
+
+  @NonNull
+  public final MaterialButton btnSelectIme;
+
+  @NonNull
   public final MaterialButton btnSyncNow;
 
   @NonNull
@@ -88,7 +94,8 @@ public final class ActivitySettingsBinding implements ViewBinding {
   private ActivitySettingsBinding(@NonNull CoordinatorLayout rootView,
       @NonNull MaterialButton btnAuthLogin, @NonNull MaterialButton btnAuthLogout,
       @NonNull MaterialButton btnAuthRegister, @NonNull ImageButton btnBack,
-      @NonNull TextView btnConfigAnonKey, @NonNull MaterialButton btnSyncNow,
+      @NonNull TextView btnConfigAnonKey, @NonNull MaterialButton btnEnableIme,
+      @NonNull MaterialButton btnSelectIme, @NonNull MaterialButton btnSyncNow,
       @NonNull MaterialCardView cardFnGuide, @NonNull TextInputEditText etAuthEmail,
       @NonNull TextInputEditText etAuthPassword, @NonNull LinearLayout layoutAuthForm,
       @NonNull ProgressBar progressSync, @NonNull RadioButton rbModeInstant,
@@ -102,6 +109,8 @@ public final class ActivitySettingsBinding implements ViewBinding {
     this.btnAuthRegister = btnAuthRegister;
     this.btnBack = btnBack;
     this.btnConfigAnonKey = btnConfigAnonKey;
+    this.btnEnableIme = btnEnableIme;
+    this.btnSelectIme = btnSelectIme;
     this.btnSyncNow = btnSyncNow;
     this.cardFnGuide = cardFnGuide;
     this.etAuthEmail = etAuthEmail;
@@ -172,6 +181,18 @@ public final class ActivitySettingsBinding implements ViewBinding {
       id = R.id.btn_config_anon_key;
       TextView btnConfigAnonKey = ViewBindings.findChildViewById(rootView, id);
       if (btnConfigAnonKey == null) {
+        break missingId;
+      }
+
+      id = R.id.btn_enable_ime;
+      MaterialButton btnEnableIme = ViewBindings.findChildViewById(rootView, id);
+      if (btnEnableIme == null) {
+        break missingId;
+      }
+
+      id = R.id.btn_select_ime;
+      MaterialButton btnSelectIme = ViewBindings.findChildViewById(rootView, id);
+      if (btnSelectIme == null) {
         break missingId;
       }
 
@@ -260,10 +281,10 @@ public final class ActivitySettingsBinding implements ViewBinding {
       }
 
       return new ActivitySettingsBinding((CoordinatorLayout) rootView, btnAuthLogin, btnAuthLogout,
-          btnAuthRegister, btnBack, btnConfigAnonKey, btnSyncNow, cardFnGuide, etAuthEmail,
-          etAuthPassword, layoutAuthForm, progressSync, rbModeInstant, rbModeManual,
-          rgExpansionMode, switchHideOnSend, tvAppVersion, tvAuthStatusBadge, tvAuthUserEmail,
-          tvSyncStatus);
+          btnAuthRegister, btnBack, btnConfigAnonKey, btnEnableIme, btnSelectIme, btnSyncNow,
+          cardFnGuide, etAuthEmail, etAuthPassword, layoutAuthForm, progressSync, rbModeInstant,
+          rbModeManual, rgExpansionMode, switchHideOnSend, tvAppVersion, tvAuthStatusBadge,
+          tvAuthUserEmail, tvSyncStatus);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

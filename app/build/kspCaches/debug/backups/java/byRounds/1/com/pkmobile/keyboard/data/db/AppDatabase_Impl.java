@@ -16,7 +16,6 @@ import java.lang.Override;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,13 +31,12 @@ public final class AppDatabase_Impl extends AppDatabase {
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(2) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(4) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS `shortcuts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `shortcut` TEXT NOT NULL, `expansion` TEXT NOT NULL, `expansion_mode` TEXT NOT NULL DEFAULT 'INSTANT', `created_at` INTEGER NOT NULL)");
-        db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_shortcuts_shortcut` ON `shortcuts` (`shortcut`)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `shortcuts` (`trigger_code` TEXT NOT NULL, `expansion_text` TEXT NOT NULL, `category` TEXT, `expansion_mode` TEXT NOT NULL, `package_name` TEXT NOT NULL, `is_active` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, PRIMARY KEY(`trigger_code`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b20a5edefd6a9b5346c1666e5a671a6c')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5152b9707f4f0cd2b5e7f9f24487ad90')");
       }
 
       @Override
@@ -87,15 +85,16 @@ public final class AppDatabase_Impl extends AppDatabase {
       @NonNull
       public RoomOpenHelper.ValidationResult onValidateSchema(
           @NonNull final SupportSQLiteDatabase db) {
-        final HashMap<String, TableInfo.Column> _columnsShortcuts = new HashMap<String, TableInfo.Column>(5);
-        _columnsShortcuts.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
-        _columnsShortcuts.put("shortcut", new TableInfo.Column("shortcut", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
-        _columnsShortcuts.put("expansion", new TableInfo.Column("expansion", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
-        _columnsShortcuts.put("expansion_mode", new TableInfo.Column("expansion_mode", "TEXT", true, 0, "'INSTANT'", TableInfo.CREATED_FROM_ENTITY));
+        final HashMap<String, TableInfo.Column> _columnsShortcuts = new HashMap<String, TableInfo.Column>(7);
+        _columnsShortcuts.put("trigger_code", new TableInfo.Column("trigger_code", "TEXT", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsShortcuts.put("expansion_text", new TableInfo.Column("expansion_text", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsShortcuts.put("category", new TableInfo.Column("category", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsShortcuts.put("expansion_mode", new TableInfo.Column("expansion_mode", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsShortcuts.put("package_name", new TableInfo.Column("package_name", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsShortcuts.put("is_active", new TableInfo.Column("is_active", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsShortcuts.put("created_at", new TableInfo.Column("created_at", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysShortcuts = new HashSet<TableInfo.ForeignKey>(0);
-        final HashSet<TableInfo.Index> _indicesShortcuts = new HashSet<TableInfo.Index>(1);
-        _indicesShortcuts.add(new TableInfo.Index("index_shortcuts_shortcut", true, Arrays.asList("shortcut"), Arrays.asList("ASC")));
+        final HashSet<TableInfo.Index> _indicesShortcuts = new HashSet<TableInfo.Index>(0);
         final TableInfo _infoShortcuts = new TableInfo("shortcuts", _columnsShortcuts, _foreignKeysShortcuts, _indicesShortcuts);
         final TableInfo _existingShortcuts = TableInfo.read(db, "shortcuts");
         if (!_infoShortcuts.equals(_existingShortcuts)) {
@@ -105,7 +104,7 @@ public final class AppDatabase_Impl extends AppDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "b20a5edefd6a9b5346c1666e5a671a6c", "6d87e24da899518adc12908da8c2c00c");
+    }, "5152b9707f4f0cd2b5e7f9f24487ad90", "9505f98e02caa1d6d59321a794542630");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;

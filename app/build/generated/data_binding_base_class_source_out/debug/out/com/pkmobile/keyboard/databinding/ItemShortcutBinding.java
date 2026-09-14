@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.pkmobile.keyboard.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -27,23 +28,37 @@ public final class ItemShortcutBinding implements ViewBinding {
   public final ImageButton btnEdit;
 
   @NonNull
+  public final SwitchMaterial switchShortcutActive;
+
+  @NonNull
   public final TextView tvExpansion;
 
   @NonNull
   public final TextView tvModeBadge;
 
   @NonNull
+  public final TextView tvPackageBadge;
+
+  @NonNull
   public final TextView tvShortcutBadge;
 
+  @NonNull
+  public final TextView tvStatusBadge;
+
   private ItemShortcutBinding(@NonNull CardView rootView, @NonNull ImageButton btnDelete,
-      @NonNull ImageButton btnEdit, @NonNull TextView tvExpansion, @NonNull TextView tvModeBadge,
-      @NonNull TextView tvShortcutBadge) {
+      @NonNull ImageButton btnEdit, @NonNull SwitchMaterial switchShortcutActive,
+      @NonNull TextView tvExpansion, @NonNull TextView tvModeBadge,
+      @NonNull TextView tvPackageBadge, @NonNull TextView tvShortcutBadge,
+      @NonNull TextView tvStatusBadge) {
     this.rootView = rootView;
     this.btnDelete = btnDelete;
     this.btnEdit = btnEdit;
+    this.switchShortcutActive = switchShortcutActive;
     this.tvExpansion = tvExpansion;
     this.tvModeBadge = tvModeBadge;
+    this.tvPackageBadge = tvPackageBadge;
     this.tvShortcutBadge = tvShortcutBadge;
+    this.tvStatusBadge = tvStatusBadge;
   }
 
   @Override
@@ -85,6 +100,12 @@ public final class ItemShortcutBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.switch_shortcut_active;
+      SwitchMaterial switchShortcutActive = ViewBindings.findChildViewById(rootView, id);
+      if (switchShortcutActive == null) {
+        break missingId;
+      }
+
       id = R.id.tv_expansion;
       TextView tvExpansion = ViewBindings.findChildViewById(rootView, id);
       if (tvExpansion == null) {
@@ -97,14 +118,26 @@ public final class ItemShortcutBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tv_package_badge;
+      TextView tvPackageBadge = ViewBindings.findChildViewById(rootView, id);
+      if (tvPackageBadge == null) {
+        break missingId;
+      }
+
       id = R.id.tv_shortcut_badge;
       TextView tvShortcutBadge = ViewBindings.findChildViewById(rootView, id);
       if (tvShortcutBadge == null) {
         break missingId;
       }
 
-      return new ItemShortcutBinding((CardView) rootView, btnDelete, btnEdit, tvExpansion,
-          tvModeBadge, tvShortcutBadge);
+      id = R.id.tv_status_badge;
+      TextView tvStatusBadge = ViewBindings.findChildViewById(rootView, id);
+      if (tvStatusBadge == null) {
+        break missingId;
+      }
+
+      return new ItemShortcutBinding((CardView) rootView, btnDelete, btnEdit, switchShortcutActive,
+          tvExpansion, tvModeBadge, tvPackageBadge, tvShortcutBadge, tvStatusBadge);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

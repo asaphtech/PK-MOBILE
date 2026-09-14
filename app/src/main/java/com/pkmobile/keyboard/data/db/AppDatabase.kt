@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 import androidx.room.migration.Migration
 
-@Database(entities = [ShortcutEntity::class], version = 2, exportSchema = false)
+@Database(entities = [ShortcutEntity::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun shortcutDao(): ShortcutDao
@@ -26,6 +26,13 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE shortcuts ADD COLUMN package_name TEXT NOT NULL DEFAULT 'Paket Utama'")
+                db.execSQL("ALTER TABLE shortcuts ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -33,7 +40,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "pk_keyboard_shortcuts.db"
                 )
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .fallbackToDestructiveMigration()
                 .addCallback(DatabaseCallback())
                 .build()

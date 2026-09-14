@@ -1,9 +1,12 @@
 package com.pkmobile.keyboard.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -52,6 +55,18 @@ class SettingsActivity : AppCompatActivity() {
         // Tombol Kembali
         binding.btnBack.setOnClickListener {
             finish()
+        }
+
+        // Langkah Pengaktifan IME
+        binding.btnEnableIme.setOnClickListener {
+            val intent = Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+        }
+
+        binding.btnSelectIme.setOnClickListener {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.showInputMethodPicker()
         }
 
         // Setup Supabase Cloud & Auth
@@ -106,8 +121,10 @@ class SettingsActivity : AppCompatActivity() {
                 if (result.isSuccess) {
                     Toast.makeText(this@SettingsActivity, "Berhasil masuk sebagai $email", Toast.LENGTH_SHORT).show()
                     refreshAuthState()
+                    // Otomatisasi Sinkronisasi setelah login berhasil
+                    triggerSync()
                 } else {
-                    val err = result.exceptionOrNull()?.localizedMessage ?: "Gagal masuk ke Supabase"
+                    val err = result.exceptionOrNull()?.localizedMessage ?: "Gagal masuk ke akun"
                     Toast.makeText(this@SettingsActivity, "Gagal Masuk: $err", Toast.LENGTH_LONG).show()
                 }
             }
@@ -165,7 +182,7 @@ class SettingsActivity : AppCompatActivity() {
         } else {
             binding.tvAuthStatusBadge.text = "Belum Masuk"
             binding.tvAuthStatusBadge.setTextColor(getColor(R.color.text_secondary))
-            binding.tvAuthUserEmail.text = "Masuk untuk mencadangkan & menyinkronkan shortcut antar perangkat."
+            binding.tvAuthUserEmail.text = "Masuk dengan akun CS JFN Type Master untuk mengunduh template shortcut secara otomatis."
             binding.layoutAuthForm.visibility = View.VISIBLE
             binding.btnAuthLogout.visibility = View.GONE
         }
@@ -173,22 +190,29 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setupSyncViews() {
         binding.btnSyncNow.setOnClickListener {
-            binding.btnSyncNow.isEnabled = false
-            binding.progressSync.visibility = View.VISIBLE
-            binding.tvSyncStatus.text = "Sedang menyinkronkan data dengan Supabase Cloud..."
+            triggerSync()
+        }
+    }
 
-            lifecycleScope.launch {
-                val result = syncRepository.sync()
-                binding.btnSyncNow.isEnabled = true
-                binding.progressSync.visibility = View.GONE
-                binding.tvSyncStatus.text = result.message
+    /**
+     * Menjalankan sinkronisasi data shortcut dua arah secara lokal Room dan Cloud Supabase.
+     */
+    private fun triggerSync() {
+        binding.btnSyncNow.isEnabled = false
+        binding.progressSync.visibility = View.VISIBLE
+        binding.tvSyncStatus.text = "Sedang menyinkronkan data shortcut..."
 
-                Toast.makeText(
-                    this@SettingsActivity,
-                    result.message,
-                    if (result.success) Toast.LENGTH_SHORT else Toast.LENGTH_LONG
-                ).show()
-            }
+        lifecycleScope.launch {
+            val result = syncRepository.sync()
+            binding.btnSyncNow.isEnabled = true
+            binding.progressSync.visibility = View.GONE
+            binding.tvSyncStatus.text = result.message
+
+            Toast.makeText(
+                this@SettingsActivity,
+                result.message,
+                if (result.success) Toast.LENGTH_SHORT else Toast.LENGTH_LONG
+            ).show()
         }
     }
 

@@ -30,28 +30,15 @@
                 android:src="@drawable/ic_arrow_back"
                 app:tint="@color/text_primary" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="12dp"
                 android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Pengaturan Keyboard"
-                    android:textColor="@color/text_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Kustomisasi perilaku &amp; tombol"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
-            </LinearLayout>
+                android:text="Pengaturan"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- Content Scroll -->
@@ -66,13 +53,69 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- SECTION 0: SINKRONISASI CLOUD (SUPABASE) -->
+                <!-- SECTION: PENGAKTIFAN KEYBOARD -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:text="SINKRONISASI CLOUD (SUPABASE)"
+                    android:text="PENGAKTIFAN KEYBOARD"
+                    android:textColor="@color/candidate_text_highlight"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/surface_card"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#1FFFFFFF"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="Langkah Pengaktifan IME:"
+                            android:textColor="@color/candidate_text_highlight"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_enable_ime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/key_background_normal"
+                            android:text="@string/btn_enable_ime"
+                            android:textColor="@color/text_primary"
+                            app:cornerRadius="8dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_select_ime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:backgroundTint="@color/primary"
+                            android:text="@string/btn_select_ime"
+                            android:textColor="@color/text_primary"
+                            app:cornerRadius="8dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- SECTION 0: AKUN JFN TYPE MASTER -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="AKUN JFN TYPE MASTER"
                     android:textColor="@color/candidate_text_highlight"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -103,7 +146,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Akun Supabase Cloud"
+                                android:text="Akun JFN Type Master"
                                 android:textColor="@color/text_primary"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -126,7 +169,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Masuk untuk mencadangkan &amp; menyinkronkan shortcut antar perangkat."
+                            android:text="Masuk dengan akun CS JFN Type Master untuk mengunduh template shortcut secara otomatis."
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
 
@@ -152,7 +195,7 @@
                                     android:id="@+id/et_auth_email"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:hint="Email Supabase"
+                                    android:hint="Email CS"
                                     android:inputType="textEmailAddress"
                                     android:textColor="@color/text_primary"
                                     android:textSize="13sp" />
@@ -254,11 +297,11 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:gravity="center"
-                            android:text="Database lokal Room &amp; Supabase Cloud"
+                            android:text="Database lokal &amp; Cloud JFN Type Master"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
 
-                        <!-- Anon Key Option (Expander/Dialog) -->
+                        <!-- Anon Key Option (Disembunyikan karena sudah di-hardcode secara internal) -->
                         <TextView
                             android:id="@+id/btn_config_anon_key"
                             android:layout_width="wrap_content"
@@ -268,7 +311,8 @@
                             android:padding="6dp"
                             android:text="⚙️ Atur Supabase Anon Key &amp; URL"
                             android:textColor="@color/candidate_text_highlight"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            android:visibility="gone" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -498,7 +542,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:text="PK Custom Keyboard Engine"
+                                android:text="JFN Type Master Engine"
                                 android:textColor="@color/text_secondary"
                                 android:textSize="12sp" />
                         </LinearLayout>

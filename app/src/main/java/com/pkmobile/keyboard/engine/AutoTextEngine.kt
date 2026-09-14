@@ -38,11 +38,12 @@ class AutoTextEngine(
     var isInstantMode: Boolean = false
 
     init {
-        // Sinkronisasi data Room Database ke cache memori secara reaktif
+        // Sinkronisasi data Room Database ke cache memori secara reaktif (hanya shortcut aktif/terpasang)
         scope.launch(Dispatchers.IO) {
-            repository.allShortcutsFlow.collectLatest { list ->
+            repository.activeShortcutsFlow.collectLatest { list ->
                 val newCache = HashMap<String, CachedShortcut>()
                 for (item in list) {
+                    if (!item.isActive) continue
                     val key = item.shortcut.trim().lowercase()
                     if (key.isNotEmpty()) {
                         newCache[key] = CachedShortcut(item.expansion, item.expansionMode)

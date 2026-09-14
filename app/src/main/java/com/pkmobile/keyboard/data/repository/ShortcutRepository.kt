@@ -7,87 +7,126 @@ import kotlinx.coroutines.flow.Flow
 class ShortcutRepository(private val shortcutDao: ShortcutDao) {
 
     val allShortcutsFlow: Flow<List<ShortcutEntity>> = shortcutDao.getAllFlow()
+    val activeShortcutsFlow: Flow<List<ShortcutEntity>> = shortcutDao.getActiveFlow()
+    val distinctPackagesFlow: Flow<List<String>> = shortcutDao.getDistinctPackagesFlow()
 
     suspend fun getAllList(): List<ShortcutEntity> {
         return shortcutDao.getAllList()
     }
 
     suspend fun findExpansion(shortcut: String): String? {
-        return shortcutDao.findByShortcut(shortcut.trim().lowercase())?.expansion
+        return shortcutDao.findActiveByShortcut(shortcut.trim().lowercase())?.expansionText
     }
 
-    suspend fun insertShortcut(shortcut: String, expansion: String, expansionMode: String = "INSTANT"): Long {
+    suspend fun setPackageActive(packageName: String, isActive: Boolean): Int {
+        return shortcutDao.setPackageActive(packageName, isActive)
+    }
+
+    suspend fun setShortcutActive(triggerCode: String, isActive: Boolean): Int {
+        return shortcutDao.setShortcutActive(triggerCode, isActive)
+    }
+
+    suspend fun insertShortcut(
+        shortcut: String,
+        expansion: String,
+        expansionMode: String = "INSTANT",
+        packageName: String = "Manual",
+        isActive: Boolean = true
+    ) {
         val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(shortcut).lowercase()
         val entity = ShortcutEntity(
-            shortcut = cleanKey,
-            expansion = expansion.trim(),
-            expansionMode = expansionMode
+            triggerCode = cleanKey,
+            expansionText = expansion.trim(),
+            category = packageName,
+            expansionMode = expansionMode,
+            packageName = packageName,
+            isActive = isActive
         )
-        return shortcutDao.insertOrUpdate(entity)
+        shortcutDao.insertOrUpdate(entity)
     }
 
-    suspend fun insertOrUpdate(entity: ShortcutEntity): Long {
-        val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(entity.shortcut).lowercase()
-        val cleanExp = entity.expansion.trim()
-        val cleanEntity = entity.copy(shortcut = cleanKey, expansion = cleanExp)
-        return shortcutDao.insertOrUpdate(cleanEntity)
+    suspend fun insertOrUpdate(entity: ShortcutEntity) {
+        val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(entity.triggerCode).lowercase()
+        val cleanExp = entity.expansionText.trim()
+        val cleanEntity = entity.copy(
+            triggerCode = cleanKey,
+            expansionText = cleanExp
+        )
+        shortcutDao.insertOrUpdate(cleanEntity)
+    }
+
+    suspend fun deleteAllShortcuts() {
+        shortcutDao.deleteAll()
+    }
+
+    suspend fun update(oldTrigger: String, shortcut: ShortcutEntity): Int {
+        val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(shortcut.triggerCode).lowercase()
+        val cleanExp = shortcut.expansionText.trim()
+        if (oldTrigger.lowercase() != cleanKey) {
+            shortcutDao.deleteByTriggerCode(oldTrigger)
+        }
+        val updated = shortcut.copy(
+            triggerCode = cleanKey,
+            expansionText = cleanExp,
+            expansionMode = shortcut.expansionMode
+        )
+        shortcutDao.insertOrUpdate(updated)
+        return 1
     }
 
     suspend fun update(shortcut: ShortcutEntity): Int {
-        val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(shortcut.shortcut).lowercase()
-        val cleanExp = shortcut.expansion.trim()
-
-        // Jika trigger baru sudah dipakai oleh baris lain, hapus agar tidak melanggar indeks unik
-        val existing = shortcutDao.findByShortcut(cleanKey)
-        if (existing != null && existing.id != shortcut.id) {
-            shortcutDao.delete(existing)
-        }
-
-        val updated = shortcut.copy(
-            shortcut = cleanKey,
-            expansion = cleanExp,
-            expansionMode = shortcut.expansionMode
-        )
-        val rows = shortcutDao.update(updated)
-        if (rows == 0) {
-            shortcutDao.insertOrUpdate(updated)
-        }
-        return 1
+        return update(shortcut.triggerCode, shortcut)
     }
 
     suspend fun insertAll(entities: List<ShortcutEntity>) {
         if (entities.isNotEmpty()) {
             val cleanEntities = entities.mapNotNull { entity ->
-                val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(entity.shortcut).lowercase()
-                val cleanExp = entity.expansion.trim()
+                val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(entity.triggerCode).lowercase()
+                val cleanExp = entity.expansionText.trim()
                 if (cleanKey.isNotBlank() && cleanExp.isNotBlank()) {
                     ShortcutEntity(
-                        shortcut = cleanKey,
-                        expansion = cleanExp,
-                        expansionMode = entity.expansionMode
+                        triggerCode = cleanKey,
+                        expansionText = cleanExp,
+                        category = entity.category ?: "General",
+                        expansionMode = entity.expansionMode,
+                        packageName = entity.packageName,
+                        isActive = entity.isActive
                     )
                 } else null
-            }
+            }.distinctBy { it.triggerCode }
             shortcutDao.insertAll(cleanEntities)
         }
     }
 
     suspend fun importShortcuts(pairs: List<Pair<String, String>>, clearExisting: Boolean = false, defaultMode: String = "INSTANT"): Int {
+        return importXmlShortcuts(pairs, fileName = "Imported", clearExisting = clearExisting, defaultMode = defaultMode)
+    }
+
+    suspend fun importXmlShortcuts(
+        pairs: List<Pair<String, String>>,
+        fileName: String,
+        clearExisting: Boolean = false,
+        defaultMode: String = "INSTANT"
+    ): Int {
         if (clearExisting) {
             shortcutDao.deleteAll()
         }
         if (pairs.isEmpty()) return 0
+        val pkgName = fileName.ifBlank { "Paket XML" }
         val entities = pairs.mapNotNull { (key, value) ->
             val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(key).lowercase()
             val cleanExp = value.trim()
             if (cleanKey.isNotBlank() && cleanExp.isNotBlank()) {
                 ShortcutEntity(
-                    shortcut = cleanKey,
-                    expansion = cleanExp,
-                    expansionMode = defaultMode
+                    triggerCode = cleanKey,
+                    expansionText = cleanExp,
+                    category = pkgName,
+                    expansionMode = defaultMode,
+                    packageName = pkgName,
+                    isActive = true
                 )
             } else null
-        }
+        }.distinctBy { it.triggerCode }
         shortcutDao.insertAll(entities)
         return entities.size
     }
@@ -99,12 +138,14 @@ class ShortcutRepository(private val shortcutDao: ShortcutDao) {
         val all = shortcutDao.getAllList()
         var updatedCount = 0
         for (item in all) {
-            val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(item.shortcut).lowercase()
-            val cleanExp = item.expansion.trim()
-            if (cleanKey != item.shortcut) {
+            val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(item.triggerCode).lowercase()
+            val cleanExp = item.expansionText.trim()
+            if (cleanKey != item.triggerCode) {
                 shortcutDao.delete(item)
                 if (cleanKey.isNotBlank()) {
-                    shortcutDao.insertOrUpdate(ShortcutEntity(shortcut = cleanKey, expansion = cleanExp, expansionMode = item.expansionMode))
+                    shortcutDao.insertOrUpdate(
+                        item.copy(triggerCode = cleanKey, expansionText = cleanExp)
+                    )
                     updatedCount++
                 }
             }
@@ -120,7 +161,7 @@ class ShortcutRepository(private val shortcutDao: ShortcutDao) {
         shortcutDao.delete(shortcut)
     }
 
-    suspend fun deleteById(id: Long) {
-        shortcutDao.deleteById(id)
+    suspend fun deleteByTriggerCode(triggerCode: String) {
+        shortcutDao.deleteByTriggerCode(triggerCode)
     }
 }

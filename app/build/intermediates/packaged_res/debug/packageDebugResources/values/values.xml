@@ -23,7 +23,7 @@
     <color name="surface_dark">#121316</color>
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#9DA4B0</color>
-    <string name="app_name">PK Custom Keyboard</string>
+    <string name="app_name">JFN Type Master</string>
     <string name="btn_add_shortcut">+ Tambah Shortcut</string>
     <string name="btn_cancel">Batal</string>
     <string name="btn_enable_ime">1. Aktifkan di Pengaturan Keyboard</string>
@@ -35,7 +35,7 @@
     <string name="hint_expansion">Hasil Pengganti (misal: On my way!)</string>
     <string name="hint_shortcut">Kata Kunci (misal: omw)</string>
     <string name="keyboard_hint">Ketik sesuatu atau coba shortcut (omw, brb, thx)...</string>
-    <string name="keyboard_service_name">PK Auto-Text Keyboard</string>
+    <string name="keyboard_service_name">JFN Type Master Keyboard</string>
     <string name="section_shortcuts">Daftar Auto-Text / Shortcut</string>
     <string name="shortcut_empty">Belum ada shortcut. Tekan tombol + untuk menambahkan.</string>
     <string name="subtype_en">English (US)</string>

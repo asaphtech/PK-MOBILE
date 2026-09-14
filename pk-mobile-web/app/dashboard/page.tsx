@@ -170,11 +170,11 @@ export default function DashboardPage() {
       const cleanTrigger = formTrigger.trim().toLowerCase();
       const cleanExpansion = formExpansion.trim();
 
-      const payload: any = {
-        shortcut: cleanTrigger,
-        expansion: cleanExpansion,
-        expansion_mode: formMode,
+      const payload = {
+        trigger_code: cleanTrigger,
+        expansion_text: cleanExpansion,
         category: formCategory,
+        expansion_mode: formMode,
         user_id: user?.id,
       };
 
@@ -185,19 +185,7 @@ export default function DashboardPage() {
           .update(payload)
           .eq('id', editingItem.id);
 
-        if (error) {
-          // Fallback jika kolom category belum ada di tabel Supabase
-          const { error: retryError } = await (client as any)
-            .from('shortcuts')
-            .update({
-              shortcut: cleanTrigger,
-              expansion: cleanExpansion,
-              expansion_mode: formMode,
-            })
-            .eq('id', editingItem.id);
-
-          if (retryError) throw retryError;
-        }
+        if (error) throw error;
 
         showToast('success', `Shortcut "${cleanTrigger}" berhasil diperbarui!`);
       } else {
@@ -206,19 +194,7 @@ export default function DashboardPage() {
           .from('shortcuts')
           .insert([payload]);
 
-        if (error) {
-          // Fallback tanpa kolom category jika tabel belum memiliki kolom tersebut
-          const { error: retryError } = await (client as any)
-            .from('shortcuts')
-            .insert([{
-              shortcut: cleanTrigger,
-              expansion: cleanExpansion,
-              expansion_mode: formMode,
-              user_id: user?.id,
-            }]);
-
-          if (retryError) throw retryError;
-        }
+        if (error) throw error;
 
         showToast('success', `Shortcut "${cleanTrigger}" berhasil ditambahkan!`);
       }
@@ -246,7 +222,7 @@ export default function DashboardPage() {
 
       if (error) throw error;
 
-      showToast('success', `Shortcut "${deleteTarget.shortcut}" berhasil dihapus.`);
+      showToast('success', `Shortcut "${deleteTarget.trigger_code || deleteTarget.shortcut || ''}" berhasil dihapus.`);
       setDeleteTarget(null);
       await fetchShortcuts();
     } catch (err: any) {
@@ -320,26 +296,16 @@ export default function DashboardPage() {
     try {
       const client = getSupabaseClient();
       const payload = csvPreview.map(item => ({
-        shortcut: item.shortcut,
-        expansion: item.expansion,
+        trigger_code: (item.trigger_code || item.shortcut || '').trim().toLowerCase(),
+        expansion_text: (item.expansion_text || item.expansion || '').trim(),
         category: item.category || 'Umum',
-        expansion_mode: item.expansion_mode,
+        expansion_mode: item.expansion_mode || 'INSTANT',
         user_id: user?.id,
       }));
 
       const { error } = await (client as any).from('shortcuts').upsert(payload);
 
-      if (error) {
-        // Fallback jika kolom category belum ada
-        const fallbackPayload = csvPreview.map(item => ({
-          shortcut: item.shortcut,
-          expansion: item.expansion,
-          expansion_mode: item.expansion_mode,
-          user_id: user?.id,
-        }));
-        const { error: retryError } = await (client as any).from('shortcuts').upsert(fallbackPayload);
-        if (retryError) throw retryError;
-      }
+      if (error) throw error;
 
       showToast('success', `Berhasil mengimpor ${csvPreview.length} shortcut dari CSV!`);
       setIsImportModalOpen(false);

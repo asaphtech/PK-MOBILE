@@ -12,14 +12,17 @@ data class SupabaseShortcutDto(
     @SerialName("id")
     val id: Long? = null,
 
-    @SerialName("shortcut")
-    val shortcut: String,
+    @SerialName("trigger_code")
+    val triggerCode: String? = "",
 
-    @SerialName("expansion")
-    val expansion: String,
+    @SerialName("expansion_text")
+    val expansionText: String? = "",
+
+    @SerialName("category")
+    val category: String? = "General",
 
     @SerialName("expansion_mode")
-    val expansionMode: String = "INSTANT",
+    val expansionMode: String? = "INSTANT",
 
     @SerialName("user_id")
     val userId: String? = null,
@@ -29,18 +32,22 @@ data class SupabaseShortcutDto(
 ) {
     fun toEntity(): ShortcutEntity {
         return ShortcutEntity(
-            shortcut = shortcut,
-            expansion = expansion,
-            expansionMode = expansionMode
+            triggerCode = (triggerCode ?: "").trim().lowercase(),
+            expansionText = (expansionText ?: "").trim(),
+            category = category?.ifBlank { "General" } ?: "General",
+            expansionMode = expansionMode?.ifBlank { "INSTANT" } ?: "INSTANT",
+            packageName = category?.ifBlank { "General" } ?: "General",
+            isActive = true
         )
     }
 
     companion object {
         fun fromEntity(entity: ShortcutEntity, userId: String? = null): SupabaseShortcutDto {
             return SupabaseShortcutDto(
-                shortcut = entity.shortcut,
-                expansion = entity.expansion,
-                expansionMode = entity.expansionMode,
+                triggerCode = entity.triggerCode,
+                expansionText = entity.expansionText,
+                category = entity.category?.ifBlank { "General" } ?: "General",
+                expansionMode = entity.expansionMode.ifBlank { "INSTANT" },
                 userId = userId
             )
         }

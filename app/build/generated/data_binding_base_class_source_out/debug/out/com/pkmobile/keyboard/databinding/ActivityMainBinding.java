@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.pkmobile.keyboard.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -27,25 +29,37 @@ public final class ActivityMainBinding implements ViewBinding {
   public final MaterialButton btnAddShortcut;
 
   @NonNull
-  public final MaterialButton btnBulkInput;
-
-  @NonNull
-  public final MaterialButton btnEnableIme;
+  public final ImageButton btnClearSearch;
 
   @NonNull
   public final MaterialButton btnExportShortcut;
 
   @NonNull
-  public final MaterialButton btnImportShortcut;
+  public final MaterialButton btnImportXml;
 
   @NonNull
-  public final MaterialButton btnSelectIme;
+  public final MaterialButton btnImportXmlPackage;
 
   @NonNull
   public final ImageButton btnSettings;
 
   @NonNull
+  public final MaterialButton btnSyncCloud;
+
+  @NonNull
+  public final MaterialCardView cardSearch;
+
+  @NonNull
+  public final EditText etSearchShortcut;
+
+  @NonNull
   public final EditText etTestInput;
+
+  @NonNull
+  public final LinearLayout layoutPackageSection;
+
+  @NonNull
+  public final RecyclerView rvPackages;
 
   @NonNull
   public final RecyclerView rvShortcuts;
@@ -54,26 +68,36 @@ public final class ActivityMainBinding implements ViewBinding {
   public final TextView tvEmptyShortcuts;
 
   @NonNull
+  public final TextView tvPackagesTitle;
+
+  @NonNull
   public final TextView tvShortcutHeader;
 
   private ActivityMainBinding(@NonNull CoordinatorLayout rootView,
-      @NonNull MaterialButton btnAddShortcut, @NonNull MaterialButton btnBulkInput,
-      @NonNull MaterialButton btnEnableIme, @NonNull MaterialButton btnExportShortcut,
-      @NonNull MaterialButton btnImportShortcut, @NonNull MaterialButton btnSelectIme,
-      @NonNull ImageButton btnSettings, @NonNull EditText etTestInput,
+      @NonNull MaterialButton btnAddShortcut, @NonNull ImageButton btnClearSearch,
+      @NonNull MaterialButton btnExportShortcut, @NonNull MaterialButton btnImportXml,
+      @NonNull MaterialButton btnImportXmlPackage, @NonNull ImageButton btnSettings,
+      @NonNull MaterialButton btnSyncCloud, @NonNull MaterialCardView cardSearch,
+      @NonNull EditText etSearchShortcut, @NonNull EditText etTestInput,
+      @NonNull LinearLayout layoutPackageSection, @NonNull RecyclerView rvPackages,
       @NonNull RecyclerView rvShortcuts, @NonNull TextView tvEmptyShortcuts,
-      @NonNull TextView tvShortcutHeader) {
+      @NonNull TextView tvPackagesTitle, @NonNull TextView tvShortcutHeader) {
     this.rootView = rootView;
     this.btnAddShortcut = btnAddShortcut;
-    this.btnBulkInput = btnBulkInput;
-    this.btnEnableIme = btnEnableIme;
+    this.btnClearSearch = btnClearSearch;
     this.btnExportShortcut = btnExportShortcut;
-    this.btnImportShortcut = btnImportShortcut;
-    this.btnSelectIme = btnSelectIme;
+    this.btnImportXml = btnImportXml;
+    this.btnImportXmlPackage = btnImportXmlPackage;
     this.btnSettings = btnSettings;
+    this.btnSyncCloud = btnSyncCloud;
+    this.cardSearch = cardSearch;
+    this.etSearchShortcut = etSearchShortcut;
     this.etTestInput = etTestInput;
+    this.layoutPackageSection = layoutPackageSection;
+    this.rvPackages = rvPackages;
     this.rvShortcuts = rvShortcuts;
     this.tvEmptyShortcuts = tvEmptyShortcuts;
+    this.tvPackagesTitle = tvPackagesTitle;
     this.tvShortcutHeader = tvShortcutHeader;
   }
 
@@ -110,15 +134,9 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.btn_bulk_input;
-      MaterialButton btnBulkInput = ViewBindings.findChildViewById(rootView, id);
-      if (btnBulkInput == null) {
-        break missingId;
-      }
-
-      id = R.id.btn_enable_ime;
-      MaterialButton btnEnableIme = ViewBindings.findChildViewById(rootView, id);
-      if (btnEnableIme == null) {
+      id = R.id.btn_clear_search;
+      ImageButton btnClearSearch = ViewBindings.findChildViewById(rootView, id);
+      if (btnClearSearch == null) {
         break missingId;
       }
 
@@ -128,15 +146,15 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.btn_import_shortcut;
-      MaterialButton btnImportShortcut = ViewBindings.findChildViewById(rootView, id);
-      if (btnImportShortcut == null) {
+      id = R.id.btn_import_xml;
+      MaterialButton btnImportXml = ViewBindings.findChildViewById(rootView, id);
+      if (btnImportXml == null) {
         break missingId;
       }
 
-      id = R.id.btn_select_ime;
-      MaterialButton btnSelectIme = ViewBindings.findChildViewById(rootView, id);
-      if (btnSelectIme == null) {
+      id = R.id.btn_import_xml_package;
+      MaterialButton btnImportXmlPackage = ViewBindings.findChildViewById(rootView, id);
+      if (btnImportXmlPackage == null) {
         break missingId;
       }
 
@@ -146,9 +164,39 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btn_sync_cloud;
+      MaterialButton btnSyncCloud = ViewBindings.findChildViewById(rootView, id);
+      if (btnSyncCloud == null) {
+        break missingId;
+      }
+
+      id = R.id.card_search;
+      MaterialCardView cardSearch = ViewBindings.findChildViewById(rootView, id);
+      if (cardSearch == null) {
+        break missingId;
+      }
+
+      id = R.id.et_search_shortcut;
+      EditText etSearchShortcut = ViewBindings.findChildViewById(rootView, id);
+      if (etSearchShortcut == null) {
+        break missingId;
+      }
+
       id = R.id.et_test_input;
       EditText etTestInput = ViewBindings.findChildViewById(rootView, id);
       if (etTestInput == null) {
+        break missingId;
+      }
+
+      id = R.id.layout_package_section;
+      LinearLayout layoutPackageSection = ViewBindings.findChildViewById(rootView, id);
+      if (layoutPackageSection == null) {
+        break missingId;
+      }
+
+      id = R.id.rv_packages;
+      RecyclerView rvPackages = ViewBindings.findChildViewById(rootView, id);
+      if (rvPackages == null) {
         break missingId;
       }
 
@@ -164,15 +212,22 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tv_packages_title;
+      TextView tvPackagesTitle = ViewBindings.findChildViewById(rootView, id);
+      if (tvPackagesTitle == null) {
+        break missingId;
+      }
+
       id = R.id.tv_shortcut_header;
       TextView tvShortcutHeader = ViewBindings.findChildViewById(rootView, id);
       if (tvShortcutHeader == null) {
         break missingId;
       }
 
-      return new ActivityMainBinding((CoordinatorLayout) rootView, btnAddShortcut, btnBulkInput,
-          btnEnableIme, btnExportShortcut, btnImportShortcut, btnSelectIme, btnSettings,
-          etTestInput, rvShortcuts, tvEmptyShortcuts, tvShortcutHeader);
+      return new ActivityMainBinding((CoordinatorLayout) rootView, btnAddShortcut, btnClearSearch,
+          btnExportShortcut, btnImportXml, btnImportXmlPackage, btnSettings, btnSyncCloud,
+          cardSearch, etSearchShortcut, etTestInput, layoutPackageSection, rvPackages, rvShortcuts,
+          tvEmptyShortcuts, tvPackagesTitle, tvShortcutHeader);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
