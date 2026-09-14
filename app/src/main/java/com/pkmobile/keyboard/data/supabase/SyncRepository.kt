@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.withTransaction
 import com.pkmobile.keyboard.data.db.AppDatabase
 import com.pkmobile.keyboard.data.repository.ShortcutRepository
+import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.Dispatchers
@@ -17,9 +18,10 @@ data class SyncResult(
 )
 
 /**
- * Repository untuk sinkronisasi Offline-First antara Room Database lokal
- * dan Supabase Cloud Database (tabel 'shortcuts').
- * Mencegah duplikasi data dengan pembersihan atomik (database.withTransaction).
+ * Repository untuk sinkronisasi PULL ONLY dari Supabase Cloud Database (tabel 'shortcuts')
+ * ke Room Database lokal di HP Android.
+ * Menggantikan seluruh data lokal dengan data resmi dari Supabase secara atomik via Room Transaction.
+ * Mencegah error duplikasi / conflict constraint karena tidak ada lagi push/insert dari HP ke Cloud.
  */
 class SyncRepository(
     private val context: Context,
@@ -30,26 +32,42 @@ class SyncRepository(
     private val shortcutDao by lazy { database.shortcutDao() }
     private val client by lazy { SupabaseConfig.getClient(context) }
 
+    /**
+     * Mengunduh data resmi dari Supabase Cloud dan menimpa database Room lokal secara atomik.
+     */
+    suspend fun syncFromCloud(): Result<Unit> = runCatching {
+        withContext(Dispatchers.IO) {
+            val userId = client.auth.currentUserOrNull()?.id ?: authService.getCurrentUserId()
+
+            // 1. Ambil data unik dari Supabase Cloud
+            val cloudShortcuts = client.from("shortcuts")
+                .select(columns = Columns.raw("trigger_code,expansion_text,category,expansion_mode,user_id")) {
+                    if (userId != null) filter { eq("user_id", userId) }
+                }
+                .decodeList<SupabaseShortcutDto>()
+
+            // 2. Timpa total database Room HP dengan data resmi Supabase
+            database.withTransaction {
+                shortcutDao.deleteAll()
+                val entities = cloudShortcuts
+                    .filter { !it.triggerCode.isNullOrBlank() && !it.expansionText.isNullOrBlank() }
+                    .distinctBy { (it.triggerCode ?: "").trim().lowercase() }
+                    .map { it.toEntity() }
+                shortcutDao.insertAll(entities)
+            }
+        }
+    }
+
+    /**
+     * Alur Sinkronisasi PULL ONLY untuk tombol "SINKRONKAN SEKARANG" dan UI.
+     * Tidak lagi melakukan push/insert data lokal ke Cloud.
+     */
     suspend fun sync(): SyncResult = withContext(Dispatchers.IO) {
         try {
-            val userId = authService.getCurrentUserId()
+            val userId = client.auth.currentUserOrNull()?.id ?: authService.getCurrentUserId()
 
-            // 1. Ambil semua shortcut unik dari Room lokal untuk diunggah
-            val localShortcuts = shortcutDao.getAllList()
-            var pushedCount = 0
-
-            if (localShortcuts.isNotEmpty()) {
-                val dtoList = localShortcuts
-                    .distinctBy { it.triggerCode.trim().lowercase() }
-                    .map { entity ->
-                        SupabaseShortcutDto.fromEntity(entity, userId)
-                    }
-                client.from("shortcuts").upsert(dtoList)
-                pushedCount = dtoList.size
-            }
-
-            // 2. Tarik data terbaru dari Supabase Cloud (select=trigger_code,expansion_text,category,expansion_mode,user_id)
-            val cloudQuery = client.from("shortcuts").select(
+            // 1. Ambil data unik dari Supabase Cloud
+            val cloudShortcuts = client.from("shortcuts").select(
                 columns = Columns.raw("trigger_code,expansion_text,category,expansion_mode,user_id")
             ) {
                 if (userId != null) {
@@ -58,16 +76,15 @@ class SyncRepository(
                     }
                 }
             }
-            val cloudShortcuts = cloudQuery.decodeList<SupabaseShortcutDto>()
+            .decodeList<SupabaseShortcutDto>()
 
-            // 3. Bersihkan & deduplikasi data yang diunduh dari cloud
+            // 2. Bersihkan & deduplikasi data yang diunduh dari cloud
             val downloadedEntities = cloudShortcuts
                 .filter { !it.triggerCode.isNullOrBlank() && !it.expansionText.isNullOrBlank() }
                 .distinctBy { (it.triggerCode ?: "").trim().lowercase() }
                 .map { it.toEntity() }
 
-            // 4. Eksekusi Atomic Transaction di Room Database:
-            // Bersihkan data lama terlebih dahulu agar tidak terduplikasi, lalu masukkan data terbaru
+            // 3. Timpa total database Room HP dengan data resmi Supabase (Atomic Room Transaction)
             database.withTransaction {
                 shortcutDao.deleteAll()
                 val uniqueShortcuts = downloadedEntities.distinctBy { it.triggerCode }
@@ -78,9 +95,9 @@ class SyncRepository(
 
             SyncResult(
                 success = true,
-                pushedCount = pushedCount,
+                pushedCount = 0,
                 pulledCount = pulledCount,
-                message = "Sinkronisasi sukses: $pulledCount shortcut diperbarui dari cloud."
+                message = "Sinkronisasi sukses: $pulledCount shortcut resmi berhasil diunduh dari Cloud."
             )
         } catch (e: Exception) {
             SyncResult(
@@ -90,51 +107,5 @@ class SyncRepository(
         }
     }
 
-    suspend fun pushOnly(): SyncResult = withContext(Dispatchers.IO) {
-        try {
-            val userId = authService.getCurrentUserId()
-            val localShortcuts = shortcutDao.getAllList()
-            if (localShortcuts.isEmpty()) {
-                return@withContext SyncResult(true, 0, 0, "Tidak ada data lokal untuk diunggah.")
-            }
-            val dtoList = localShortcuts
-                .distinctBy { it.triggerCode.trim().lowercase() }
-                .map { SupabaseShortcutDto.fromEntity(it, userId) }
-            client.from("shortcuts").upsert(dtoList)
-            SyncResult(true, dtoList.size, 0, "Berhasil mengunggah ${dtoList.size} shortcut ke cloud.")
-        } catch (e: Exception) {
-            SyncResult(false, message = "Gagal mengunggah: ${e.localizedMessage ?: e.message}")
-        }
-    }
-
-    suspend fun pullOnly(): SyncResult = withContext(Dispatchers.IO) {
-        try {
-            val userId = authService.getCurrentUserId()
-            val cloudQuery = client.from("shortcuts").select(
-                columns = Columns.raw("trigger_code,expansion_text,category,expansion_mode,user_id")
-            ) {
-                if (userId != null) {
-                    filter {
-                        eq("user_id", userId)
-                    }
-                }
-            }
-            val cloudShortcuts = cloudQuery.decodeList<SupabaseShortcutDto>()
-
-            val downloadedEntities = cloudShortcuts
-                .filter { !it.triggerCode.isNullOrBlank() && !it.expansionText.isNullOrBlank() }
-                .distinctBy { (it.triggerCode ?: "").trim().lowercase() }
-                .map { it.toEntity() }
-
-            database.withTransaction {
-                shortcutDao.deleteAll()
-                val uniqueShortcuts = downloadedEntities.distinctBy { it.triggerCode }
-                shortcutDao.insertAll(uniqueShortcuts)
-            }
-
-            SyncResult(true, 0, downloadedEntities.size, "Berhasil mengunduh ${downloadedEntities.size} shortcut dari cloud.")
-        } catch (e: Exception) {
-            SyncResult(false, message = "Gagal mengunduh: ${e.localizedMessage ?: e.message}")
-        }
-    }
+    suspend fun pullOnly(): SyncResult = sync()
 }

@@ -178,26 +178,19 @@ export default function DashboardPage() {
         user_id: user?.id,
       };
 
-      if (editingItem?.id) {
-        // Update
-        const { error } = await (client as any)
-          .from('shortcuts')
-          .update(payload)
-          .eq('id', editingItem.id);
-
-        if (error) throw error;
-
-        showToast('success', `Shortcut "${cleanTrigger}" berhasil diperbarui!`);
-      } else {
-        // Insert baru
-        const { error } = await (client as any)
-          .from('shortcuts')
-          .insert([payload]);
-
-        if (error) throw error;
-
-        showToast('success', `Shortcut "${cleanTrigger}" berhasil ditambahkan!`);
+      if (editingItem?.id && (editingItem.trigger_code || editingItem.shortcut) && (editingItem.trigger_code || editingItem.shortcut).trim().toLowerCase() !== cleanTrigger) {
+        // Jika trigger code diubah, hapus trigger lama
+        await (client as any).from('shortcuts').delete().eq('id', editingItem.id);
       }
+
+      // Upsert dengan strategi onConflict: user_id, trigger_code
+      const { error } = await (client as any)
+        .from('shortcuts')
+        .upsert(payload, { onConflict: 'user_id, trigger_code' });
+
+      if (error) throw error;
+
+      showToast('success', `Shortcut "${cleanTrigger}" berhasil disimpan!`);
 
       setIsModalOpen(false);
       await fetchShortcuts();
@@ -303,7 +296,9 @@ export default function DashboardPage() {
         user_id: user?.id,
       }));
 
-      const { error } = await (client as any).from('shortcuts').upsert(payload);
+      const { error } = await (client as any)
+        .from('shortcuts')
+        .upsert(payload, { onConflict: 'user_id, trigger_code' });
 
       if (error) throw error;
 
