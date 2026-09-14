@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +42,9 @@ public final class ActivityMainBinding implements ViewBinding {
   public final MaterialButton btnSelectIme;
 
   @NonNull
+  public final ImageButton btnSettings;
+
+  @NonNull
   public final EditText etTestInput;
 
   @NonNull
@@ -56,8 +60,9 @@ public final class ActivityMainBinding implements ViewBinding {
       @NonNull MaterialButton btnAddShortcut, @NonNull MaterialButton btnBulkInput,
       @NonNull MaterialButton btnEnableIme, @NonNull MaterialButton btnExportShortcut,
       @NonNull MaterialButton btnImportShortcut, @NonNull MaterialButton btnSelectIme,
-      @NonNull EditText etTestInput, @NonNull RecyclerView rvShortcuts,
-      @NonNull TextView tvEmptyShortcuts, @NonNull TextView tvShortcutHeader) {
+      @NonNull ImageButton btnSettings, @NonNull EditText etTestInput,
+      @NonNull RecyclerView rvShortcuts, @NonNull TextView tvEmptyShortcuts,
+      @NonNull TextView tvShortcutHeader) {
     this.rootView = rootView;
     this.btnAddShortcut = btnAddShortcut;
     this.btnBulkInput = btnBulkInput;
@@ -65,6 +70,7 @@ public final class ActivityMainBinding implements ViewBinding {
     this.btnExportShortcut = btnExportShortcut;
     this.btnImportShortcut = btnImportShortcut;
     this.btnSelectIme = btnSelectIme;
+    this.btnSettings = btnSettings;
     this.etTestInput = etTestInput;
     this.rvShortcuts = rvShortcuts;
     this.tvEmptyShortcuts = tvEmptyShortcuts;
@@ -134,6 +140,12 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btn_settings;
+      ImageButton btnSettings = ViewBindings.findChildViewById(rootView, id);
+      if (btnSettings == null) {
+        break missingId;
+      }
+
       id = R.id.et_test_input;
       EditText etTestInput = ViewBindings.findChildViewById(rootView, id);
       if (etTestInput == null) {
@@ -159,8 +171,8 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       return new ActivityMainBinding((CoordinatorLayout) rootView, btnAddShortcut, btnBulkInput,
-          btnEnableIme, btnExportShortcut, btnImportShortcut, btnSelectIme, etTestInput,
-          rvShortcuts, tvEmptyShortcuts, tvShortcutHeader);
+          btnEnableIme, btnExportShortcut, btnImportShortcut, btnSelectIme, btnSettings,
+          etTestInput, rvShortcuts, tvEmptyShortcuts, tvShortcutHeader);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

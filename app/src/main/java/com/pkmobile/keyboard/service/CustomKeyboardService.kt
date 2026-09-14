@@ -1,16 +1,26 @@
 package com.pkmobile.keyboard.service
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.inputmethodservice.InputMethodService
+import android.os.Handler
+import android.os.Looper
+import android.view.Gravity
+import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputConnection
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.pkmobile.keyboard.R
+import com.pkmobile.keyboard.ui.SettingsActivity
 import com.pkmobile.keyboard.data.db.AppDatabase
 import com.pkmobile.keyboard.data.repository.ShortcutRepository
 import com.pkmobile.keyboard.engine.AutoTextEngine
@@ -20,11 +30,22 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 
 /**
- * Service Utama Input Method Editor (IME) untuk Custom Keyboard.
- * Menangani pembuatan tampilan keyboard, penekanan tombol karakter,
- * kontrol spasi, backspace, enter, shift, dan integrasi Auto-Text engine.
+ * Service Utama Input Method Editor (IME) untuk Custom Keyboard PK MOBILE.
+ * Menangani pembuatan tampilan keyboard dengan dukungan:
+ * 1. Layer Alfabet (QWERTY)
+ * 2. Layer Simbol 1/2 (Angka & Simbol Umum)
+ * 3. Layer Simbol 2/2 (Simbol Lengkap PC)
+ * 4. Layer Fn (Tombol Fungsi PC CS yang terintegrasi langsung ke AutoTextEngine)
+ * 5. Tombol ENTER teks (Aksi Kirim/Submit) & tombol Alinea Baru (↵ baris baru murni)
  */
 class CustomKeyboardService : InputMethodService() {
+
+    enum class KeyboardLayer {
+        ALPHA,
+        SYMBOL_1,
+        SYMBOL_2,
+        FN
+    }
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -32,19 +53,26 @@ class CustomKeyboardService : InputMethodService() {
     private lateinit var autoTextEngine: AutoTextEngine
     private lateinit var repository: ShortcutRepository
 
+    private var currentLayer = KeyboardLayer.ALPHA
     private var isShiftActive = false
-    private var isSymbolMode = false
 
-    // Views
+    // Referensi global PopupWindow menu slash/fn untuk mencegah re-creation & flickering
+    private var fnPopupWindow: PopupWindow? = null
+
+    // Layout Containers
     private var keyboardRoot: View? = null
     private var layoutAlpha: LinearLayout? = null
-    private var layoutSymbol: LinearLayout? = null
+    private var layoutSymbol1: LinearLayout? = null
+    private var layoutSymbol2: LinearLayout? = null
+    private var layoutFn: LinearLayout? = null
+
+    // Suggestion Bar Views
     private var tvCandidatePrefix: TextView? = null
     private var tvCandidateText: TextView? = null
     private var btnCandidateChip: LinearLayout? = null
     private var keyShiftButton: ImageButton? = null
 
-    // Daftar tombol huruf alfabet untuk update caps/lowercase
+    // Daftar tombol alfabet untuk refresh uppercase/lowercase
     private val alphaButtons = mutableListOf<Button>()
 
     override fun onCreate() {
@@ -65,7 +93,9 @@ class CustomKeyboardService : InputMethodService() {
 
         initViews(view)
         setupAlphaKeys(view)
-        setupSymbolKeys(view)
+        setupSymbol1Keys(view)
+        setupSymbol2Keys(view)
+        setupFnKeys(view)
         setupSpecialKeys(view)
 
         return view
@@ -73,27 +103,48 @@ class CustomKeyboardService : InputMethodService() {
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
-        // Reset state setiap kali keyboard terbuka kembali
+        loadPreferences()
+        // Reset state setiap kali keyboard terbuka
         autoTextEngine.resetBuffer()
-        isSymbolMode = false
-        showAlphabetKeyboard()
+        isShiftActive = false
+        showLayer(KeyboardLayer.ALPHA)
         updateCandidateUI(null, null)
+    }
+
+    private fun loadPreferences() {
+        val prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE)
+        val expansionMode = prefs.getString(SettingsActivity.PREF_EXPANSION_MODE, SettingsActivity.MODE_MANUAL)
+        autoTextEngine.isInstantMode = (expansionMode == SettingsActivity.MODE_INSTANT)
     }
 
     private fun initViews(root: View) {
         layoutAlpha = root.findViewById(R.id.layout_alpha)
-        layoutSymbol = root.findViewById(R.id.layout_symbol)
+        layoutSymbol1 = root.findViewById(R.id.layout_symbol)
+        layoutSymbol2 = root.findViewById(R.id.layout_symbol2)
+        layoutFn = root.findViewById(R.id.layout_fn)
+
         tvCandidatePrefix = root.findViewById(R.id.tv_candidate_prefix)
         tvCandidateText = root.findViewById(R.id.tv_candidate_text)
         btnCandidateChip = root.findViewById(R.id.btn_candidate_chip)
         keyShiftButton = root.findViewById(R.id.key_shift)
 
-        // Klik pada candidate chip langsung mengekspansi shortcut yang sedang cocok
+        // Klik chip candidate suggestion bar untuk mengekspansi shortcut
         btnCandidateChip?.setOnClickListener {
             currentInputConnection?.let { ic ->
                 autoTextEngine.applyCandidateExpansion(ic)
             }
         }
+    }
+
+    /**
+     * Berpindah antar layer keyboard (ALPHA, SYMBOL_1, SYMBOL_2, FN).
+     */
+    private fun showLayer(layer: KeyboardLayer) {
+        currentLayer = layer
+        layoutAlpha?.visibility = if (layer == KeyboardLayer.ALPHA) View.VISIBLE else View.GONE
+        layoutSymbol1?.visibility = if (layer == KeyboardLayer.SYMBOL_1) View.VISIBLE else View.GONE
+        layoutSymbol2?.visibility = if (layer == KeyboardLayer.SYMBOL_2) View.VISIBLE else View.GONE
+        layoutFn?.visibility = if (layer == KeyboardLayer.FN) View.VISIBLE else View.GONE
     }
 
     /**
@@ -119,7 +170,6 @@ class CustomKeyboardService : InputMethodService() {
                     val charToCommit = if (isShiftActive) rawText.uppercase() else rawText.lowercase()
                     commitCharacter(charToCommit)
 
-                    // Jika bukan caps lock permanen, matikan shift setelah 1 huruf ditekan
                     if (isShiftActive) {
                         isShiftActive = false
                         refreshAlphaKeyLabels()
@@ -130,10 +180,10 @@ class CustomKeyboardService : InputMethodService() {
     }
 
     /**
-     * Mengatur tombol angka dan simbol (?123 layout).
+     * Mengatur tombol simbol Halaman 1 (1/2).
      */
-    private fun setupSymbolKeys(root: View) {
-        val symbolKeyIds = intArrayOf(
+    private fun setupSymbol1Keys(root: View) {
+        val symbol1KeyIds = intArrayOf(
             R.id.sym_1, R.id.sym_2, R.id.sym_3, R.id.sym_4, R.id.sym_5,
             R.id.sym_6, R.id.sym_7, R.id.sym_8, R.id.sym_9, R.id.sym_0,
             R.id.sym_at, R.id.sym_hash, R.id.sym_dollar, R.id.sym_percent,
@@ -143,44 +193,179 @@ class CustomKeyboardService : InputMethodService() {
             R.id.sym_exclamation, R.id.sym_question, R.id.sym_comma, R.id.sym_period
         )
 
-        for (id in symbolKeyIds) {
+        for (id in symbol1KeyIds) {
             val btn = root.findViewById<Button>(id)
             btn?.setOnClickListener {
                 commitCharacter(btn.text.toString())
             }
         }
 
-        // Tombol switch kembali ke keyboard huruf
-        root.findViewById<Button>(R.id.sym_switch_abc)?.setOnClickListener {
-            showAlphabetKeyboard()
+        // Navigasi ke Halaman Simbol 2 (2/2)
+        root.findViewById<Button>(R.id.sym_page_switch)?.setOnClickListener {
+            showLayer(KeyboardLayer.SYMBOL_2)
         }
 
-        // Tombol spasi di mode simbol
+        // Kembali ke Huruf ABC
+        root.findViewById<Button>(R.id.sym_switch_abc)?.setOnClickListener {
+            showLayer(KeyboardLayer.ALPHA)
+        }
+
+        // Beralih ke Halaman Fn
+        root.findViewById<Button>(R.id.sym_switch_fn)?.setOnClickListener {
+            showLayer(KeyboardLayer.FN)
+        }
+
+        // Spasi
         root.findViewById<Button>(R.id.sym_space)?.setOnClickListener {
             handleSpaceKey()
         }
 
-        // Tombol backspace di mode simbol dengan repeat on hold
+        // Backspace dengan auto-repeat
         attachRepeatBackspaceListener(root.findViewById(R.id.sym_key_backspace))
 
-        // Tombol alinea baru di mode simbol (\n)
+        // Tombol Alinea Baru murni (\n)
         root.findViewById<Button>(R.id.sym_new_line)?.setOnClickListener {
             handleNewLineKey()
         }
 
-        // Tombol enter di mode simbol (Click untuk Aksi IME, Tahan untuk Alinea Baru)
-        val symEnterBtn = root.findViewById<ImageButton>(R.id.sym_enter)
-        symEnterBtn?.setOnClickListener {
+        // Tombol ENTER (Aksi Kirim/Submit)
+        root.findViewById<Button>(R.id.sym_enter)?.setOnClickListener {
             handleEnterKey()
-        }
-        symEnterBtn?.setOnLongClickListener {
-            handleNewLineKey()
-            true
         }
     }
 
     /**
-     * Mengatur tombol kontrol khusus (Shift, Space, Backspace, Enter, Punctuation).
+     * Mengatur tombol simbol Halaman 2 (2/2) - Simbol Tambahan PC Lengkap.
+     * Termasuk: ~ ` ^ = _ { } [ ] \ | < > dan simbol komputasi lainnya.
+     */
+    private fun setupSymbol2Keys(root: View) {
+        val symbol2KeyIds = intArrayOf(
+            R.id.sym2_tilde, R.id.sym2_backtick, R.id.sym2_caret, R.id.sym2_equal,
+            R.id.sym2_underscore, R.id.sym2_brace_open, R.id.sym2_brace_close,
+            R.id.sym2_bracket_open, R.id.sym2_bracket_close, R.id.sym2_backslash,
+            R.id.sym2_pipe, R.id.sym2_less, R.id.sym2_greater, R.id.sym2_euro,
+            R.id.sym2_pound, R.id.sym2_yen, R.id.sym2_cent, R.id.sym2_degree,
+            R.id.sym2_bullet, R.id.sym2_ellipsis, R.id.sym2_guillemet_left,
+            R.id.sym2_guillemet_right, R.id.sym2_section, R.id.sym2_copy,
+            R.id.sym2_reg, R.id.sym2_plusminus, R.id.sym2_notequal,
+            R.id.sym2_comma, R.id.sym2_period
+        )
+
+        for (id in symbol2KeyIds) {
+            val btn = root.findViewById<Button>(id)
+            btn?.setOnClickListener {
+                commitCharacter(btn.text.toString())
+            }
+        }
+
+        // Navigasi kembali ke Halaman Simbol 1 (1/2)
+        root.findViewById<Button>(R.id.sym2_page_switch)?.setOnClickListener {
+            showLayer(KeyboardLayer.SYMBOL_1)
+        }
+
+        // Kembali ke Huruf ABC
+        root.findViewById<Button>(R.id.sym2_switch_abc)?.setOnClickListener {
+            showLayer(KeyboardLayer.ALPHA)
+        }
+
+        // Beralih ke Halaman Fn
+        root.findViewById<Button>(R.id.sym2_switch_fn)?.setOnClickListener {
+            showLayer(KeyboardLayer.FN)
+        }
+
+        // Spasi
+        root.findViewById<Button>(R.id.sym2_space)?.setOnClickListener {
+            handleSpaceKey()
+        }
+
+        // Backspace dengan auto-repeat
+        attachRepeatBackspaceListener(root.findViewById(R.id.sym2_key_backspace))
+
+        // Tombol Alinea Baru murni (\n)
+        root.findViewById<Button>(R.id.sym2_new_line)?.setOnClickListener {
+            handleNewLineKey()
+        }
+
+        // Tombol ENTER (Aksi Kirim/Submit)
+        root.findViewById<Button>(R.id.sym2_enter)?.setOnClickListener {
+            handleEnterKey()
+        }
+    }
+
+    /**
+     * Mengatur tombol fungsi PC pada Layer "Fn".
+     * Ketentuan Khusus:
+     * - TIDAK memicu aksi native Android (tidak memicu refresh/back).
+     * - Mengirim nilai string trigger (misal: "[F5]", "[ESC]", "[DEL]") ke AutoTextEngine.processKeyInput().
+     * - Menjalankan ekspansi auto-text jika kata/kode trigger cocok dengan database Room.
+     */
+    private fun setupFnKeys(root: View) {
+        val fnKeyMap = mapOf(
+            R.id.fn_f1 to "[F1]",
+            R.id.fn_f2 to "[F2]",
+            R.id.fn_f3 to "[F3]",
+            R.id.fn_f4 to "[F4]",
+            R.id.fn_f5 to "[F5]",
+            R.id.fn_f6 to "[F6]",
+            R.id.fn_f7 to "[F7]",
+            R.id.fn_f8 to "[F8]",
+            R.id.fn_f9 to "[F9]",
+            R.id.fn_f10 to "[F10]",
+            R.id.fn_f11 to "[F11]",
+            R.id.fn_f12 to "[F12]",
+            R.id.fn_esc to "[ESC]",
+            R.id.fn_home to "[HOME]",
+            R.id.fn_end to "[END]",
+            R.id.fn_pgup to "[PGUP]",
+            R.id.fn_pgdn to "[PGDN]",
+            R.id.fn_ins to "[INS]",
+            R.id.fn_del to "[DEL]",
+            R.id.fn_prtscn to "[PRTSCN]",
+            R.id.fn_ctrl to "[CTRL]",
+            R.id.fn_alt to "[ALT]",
+            R.id.fn_caps to "[CAPS]",
+            R.id.fn_tab to "[TAB]",
+            R.id.fn_break to "[BREAK]"
+        )
+
+        for ((viewId, trigger) in fnKeyMap) {
+            root.findViewById<Button>(viewId)?.setOnClickListener {
+                // Eksekusi langsung ke AutoTextEngine tanpa aksi native Android
+                autoTextEngine.processKeyInput(trigger, currentInputConnection)
+            }
+        }
+
+        // Navigasi ke Huruf ABC
+        root.findViewById<Button>(R.id.fn_switch_abc)?.setOnClickListener {
+            showLayer(KeyboardLayer.ALPHA)
+        }
+
+        // Navigasi ke Simbol ?123
+        root.findViewById<Button>(R.id.fn_switch_sym)?.setOnClickListener {
+            showLayer(KeyboardLayer.SYMBOL_1)
+        }
+
+        // Spasi
+        root.findViewById<Button>(R.id.fn_space)?.setOnClickListener {
+            handleSpaceKey()
+        }
+
+        // Backspace dengan auto-repeat
+        attachRepeatBackspaceListener(root.findViewById(R.id.fn_key_backspace))
+
+        // Tombol Alinea Baru murni (\n)
+        root.findViewById<Button>(R.id.fn_new_line)?.setOnClickListener {
+            handleNewLineKey()
+        }
+
+        // Tombol ENTER (Aksi Kirim/Submit)
+        root.findViewById<Button>(R.id.fn_enter)?.setOnClickListener {
+            handleEnterKey()
+        }
+    }
+
+    /**
+     * Mengatur tombol kontrol khusus pada Layer Alfabet (Shift, Space, Backspace, Enter, dll).
      */
     private fun setupSpecialKeys(root: View) {
         // Tombol Shift / Caps
@@ -189,7 +374,7 @@ class CustomKeyboardService : InputMethodService() {
             refreshAlphaKeyLabels()
         }
 
-        // Tombol Backspace dengan fitur tahan untuk menghapus terus-menerus (continuous repeat)
+        // Tombol Backspace dengan continuous repeat on hold
         attachRepeatBackspaceListener(root.findViewById(R.id.key_backspace))
 
         // Tombol Spasi (Pemicu Utama Auto-Text / Shortcut Expansion)
@@ -197,27 +382,34 @@ class CustomKeyboardService : InputMethodService() {
             handleSpaceKey()
         }
 
-        // Tombol Alinea Baru (\n)
+        // Tombol Alinea Baru (\n) murni
         root.findViewById<Button>(R.id.key_new_line)?.setOnClickListener {
             handleNewLineKey()
         }
 
-        // Tombol Enter / Kirim / Cari (Click untuk Aksi IME, Tahan untuk Alinea Baru)
-        val keyEnterBtn = root.findViewById<ImageButton>(R.id.key_enter)
-        keyEnterBtn?.setOnClickListener {
+        // Tombol ENTER (Aksi Kirim/Submit)
+        root.findViewById<Button>(R.id.key_enter)?.setOnClickListener {
             handleEnterKey()
         }
-        keyEnterBtn?.setOnLongClickListener {
-            handleNewLineKey()
+
+        // Tombol Slash (/) dengan dukungan tap singkat & long-press menu popup
+        val keySlashBtn = root.findViewById<Button>(R.id.key_slash)
+        keySlashBtn?.setOnClickListener {
+            commitCharacter("/")
+        }
+        keySlashBtn?.setOnLongClickListener { view ->
+            // Cegah Re-creation & Looping Pop-up
+            if (fnPopupWindow?.isShowing == true) {
+                return@setOnLongClickListener true
+            }
+            // Haptic Feedback (getaran pendek)
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            showSlashMenuPopup(view)
+            // Wajib kembalikan true agar Android System tidak memproses event lanjutan
             true
         }
 
-        // Tombol Slash (/) untuk akses cepat shortcut
-        root.findViewById<Button>(R.id.key_slash)?.setOnClickListener {
-            commitCharacter("/")
-        }
-
-        // Tombol Tanda Koma dan Titik
+        // Tanda Koma dan Titik
         root.findViewById<Button>(R.id.key_comma)?.setOnClickListener {
             commitCharacter(",")
         }
@@ -225,9 +417,76 @@ class CustomKeyboardService : InputMethodService() {
             commitCharacter(".")
         }
 
-        // Tombol Ganti Mode Simbol
+        // Tombol Ganti Mode Simbol (?123)
         root.findViewById<Button>(R.id.key_symbol_switch)?.setOnClickListener {
-            showSymbolKeyboard()
+            showLayer(KeyboardLayer.SYMBOL_1)
+        }
+
+        // Tombol Beralih ke Halaman Fn
+        root.findViewById<Button>(R.id.key_fn_switch)?.setOnClickListener {
+            showLayer(KeyboardLayer.FN)
+        }
+    }
+
+    /**
+     * Menampilkan menu popup melayang di atas tombol slash (/) saat ditekan lama (Long-Press).
+     * Opsi Menu:
+     * 1) Layer Fn (Tombol PC)
+     * 2) Pengaturan Aplikasi
+     */
+    private fun showSlashMenuPopup(anchorView: View) {
+        if (fnPopupWindow?.isShowing == true) {
+            return
+        }
+        try {
+            val themedContext = androidx.appcompat.view.ContextThemeWrapper(this, R.style.Theme_PKMobileKeyboard)
+            val inflater = LayoutInflater.from(themedContext)
+            val popupView = inflater.inflate(R.layout.popup_slash_menu, null)
+
+            val popupWindow = PopupWindow(
+                popupView,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                true
+            ).apply {
+                elevation = 16f
+                isOutsideTouchable = true
+                setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+                setOnDismissListener {
+                    if (fnPopupWindow == this) {
+                        fnPopupWindow = null
+                    }
+                }
+            }
+            fnPopupWindow = popupWindow
+
+            popupView.findViewById<View>(R.id.menu_layer_fn)?.setOnClickListener {
+                dismissFnPopup()
+                showLayer(KeyboardLayer.FN)
+            }
+
+            popupView.findViewById<View>(R.id.menu_settings)?.setOnClickListener {
+                dismissFnPopup()
+                val intent = Intent(this, SettingsActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                startActivity(intent)
+            }
+
+            popupView.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            )
+            val yOffset = -(anchorView.height + popupView.measuredHeight + 16)
+            try {
+                popupWindow.showAsDropDown(anchorView, 0, yOffset)
+            } catch (_: Exception) {
+                keyboardRoot?.let { root ->
+                    popupWindow.showAtLocation(root, Gravity.CENTER, 0, 0)
+                }
+            }
+        } catch (e: Throwable) {
+            android.util.Log.e("PKKeyboard", "Gagal menampilkan popup menu slash", e)
         }
     }
 
@@ -238,7 +497,6 @@ class CustomKeyboardService : InputMethodService() {
         val ic = currentInputConnection ?: return
         ic.commitText(text, 1)
 
-        // Catat karakter ke buffer auto-text engine
         if (text.isNotEmpty()) {
             for (ch in text) {
                 autoTextEngine.appendChar(ch, ic)
@@ -247,62 +505,82 @@ class CustomKeyboardService : InputMethodService() {
     }
 
     /**
-     * Menangani logika tombol Spasi (mendeteksi shortcut auto-text atau ketik spasi biasa).
+     * Menangani penekanan tombol Spasi (mendeteksi shortcut auto-text atau spasi biasa).
      */
     private fun handleSpaceKey() {
         val ic = currentInputConnection ?: return
-        // Delegasikan ke engine untuk auto-text replacement
         autoTextEngine.handleSpace(ic)
     }
 
     /**
-     * Menangani tombol Backspace (menghapus 1 karakter teks di input dan di buffer).
+     * Menangani tombol Backspace.
+     * Jika ada teks yang sedang diblok (selectedText tidak kosong):
+     * - Hapus hanya teks yang sedang diblok menggunakan commitText("", 1)
+     * - Reset buffer kata di autoTextEngine
+     * - JANGAN jalankan deleteSurroundingText(1, 0) agar spasi/karakter sebelumnya tidak ikut terhapus!
+     * Jika tidak ada teks yang diblok:
+     * - Jalankan logika penghapusan karakter normal seperti sebelumnya.
      */
     private fun handleBackspaceKey() {
         val ic = currentInputConnection ?: return
+
+        // 1. Periksa apakah ada teks yang sedang diblok / diseleksi
+        val selectedText = ic.getSelectedText(0)
+        if (!selectedText.isNullOrEmpty()) {
+            // Hapus hanya teks yang sedang diblok secara native
+            ic.commitText("", 1)
+            autoTextEngine.resetBuffer()
+            return
+        }
+
+        // 2. Jika tidak ada teks yang diblok, jalankan penghapusan normal
         ic.deleteSurroundingText(1, 0)
         autoTextEngine.handleBackspace(ic)
     }
 
     /**
-     * Menangani tombol khusus "Alinea Baru / Enter Line" (\n).
-     * Selalu mengeksekusi commitText("\n", 1) tanpa memicu aksi IME (Kirim/Cari).
+     * Menangani tombol Alinea Baru ("↵").
+     * Memanggil currentInputConnection.commitText("\n", 1) untuk baris baru murni.
      */
     private fun handleNewLineKey() {
+        val ic = currentInputConnection ?: return
+        ic.commitText("\n", 1)
+        autoTextEngine.resetBuffer()
+    }
+
+    /**
+     * Menangani tombol "ENTER" (Aksi Kirim / Submit).
+     * Memanggil sendDefaultEditorAction(true).
+     * Jika aksi editor tidak di-handle oleh input target, kirim fallback KeyEvent ENTER.
+     */
+    private fun handleEnterKey() {
         val ic = currentInputConnection ?: return
 
         // 1. Cek apakah ada shortcut sebelum kursor untuk diekspansi
         val expanded = autoTextEngine.handleEnter(ic)
         if (expanded) {
-            // Jika trigger cocok, sudah diekspansi ke teks pengganti, lalu tambahkan alinea baru
-            ic.commitText("\n", 1)
-        } else {
-            // Bukan trigger shortcut: langsung commit baris baru alinea (\n)
-            ic.commitText("\n", 1)
-            autoTextEngine.resetBuffer()
-        }
-    }
-
-    /**
-     * Menangani tombol "Action Enter / Kirim / Cari" (Key Code Standard Enter).
-     * 1. Cek apakah ada kata kunci shortcut untuk diekspansi.
-     * 2. Jika bukan shortcut, kirimkan aksi editor (sendDefaultEditorAction(true))
-     *    atau sendKeyChar('\n') sesuai imeOptions kolom teks.
-     */
-    private fun handleEnterKey() {
-        val ic = currentInputConnection ?: return
-
-        // 1. Cek apakah ada kata kunci shortcut sebelum aksi dieksekusi
-        val expanded = autoTextEngine.handleEnter(ic)
-        if (expanded) {
-            // Shortcut berhasil diekspansi saat tombol Enter ditekan
+            checkHideKeyboardOnSend()
             return
         }
 
-        // 2. Eksekusi aksi editor (Send, Search, Go, Next, Done) sesuai imeOptions
+        // 2. Eksekusi aksi kirim / submit editor (sendDefaultEditorAction)
         val actionHandled = sendDefaultEditorAction(true)
         if (!actionHandled) {
-            sendKeyChar('\n')
+            sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER)
+        }
+
+        checkHideKeyboardOnSend()
+    }
+
+    /**
+     * Memeriksa preferensi "Sembunyikan Keyboard setelah Kirim" (pref_hide_on_send).
+     * Jika aktif, keyboard ditutup otomatis setiap tombol ENTER ditekan.
+     */
+    private fun checkHideKeyboardOnSend() {
+        val prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE)
+        val isHideOnSend = prefs.getBoolean(SettingsActivity.PREF_HIDE_ON_SEND, false)
+        if (isHideOnSend) {
+            requestHideSelf(0)
         }
     }
 
@@ -322,25 +600,12 @@ class CustomKeyboardService : InputMethodService() {
         keyShiftButton?.setColorFilter(tintColor)
     }
 
-    private fun showAlphabetKeyboard() {
-        isSymbolMode = false
-        layoutAlpha?.visibility = View.VISIBLE
-        layoutSymbol?.visibility = View.GONE
-    }
-
-    private fun showSymbolKeyboard() {
-        isSymbolMode = true
-        layoutAlpha?.visibility = View.GONE
-        layoutSymbol?.visibility = View.VISIBLE
-    }
-
     /**
      * Memperbarui UI Suggestion Bar saat ada shortcut yang cocok.
      */
     private fun updateCandidateUI(shortcut: String?, expansion: String?) {
-        // Jamin eksekusi selalu berada di Main UI thread
-        if (android.os.Looper.myLooper() != android.os.Looper.getMainLooper()) {
-            android.os.Handler(android.os.Looper.getMainLooper()).post {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            Handler(Looper.getMainLooper()).post {
                 updateCandidateUI(shortcut, expansion)
             }
             return
@@ -365,15 +630,14 @@ class CustomKeyboardService : InputMethodService() {
         }
     }
 
-    // Handler untuk auto-repeat tombol backspace saat ditekan terus-menerus
-    private val backspaceHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    // Handler untuk auto-repeat tombol backspace saat ditahan
+    private val backspaceHandler = Handler(Looper.getMainLooper())
     private var isBackspaceRepeating = false
 
     private val backspaceRepeatRunnable = object : Runnable {
         override fun run() {
             if (isBackspaceRepeating) {
                 handleBackspaceKey()
-                // Interval penghapusan cepat (45 milidetik)
                 backspaceHandler.postDelayed(this, 45)
             }
         }
@@ -382,20 +646,18 @@ class CustomKeyboardService : InputMethodService() {
     /**
      * Memasang listener touch pada tombol backspace agar menghapus teks secara berkelanjutan saat ditahan.
      */
-    @android.annotation.SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility")
     private fun attachRepeatBackspaceListener(button: View?) {
         button?.setOnTouchListener { v, event ->
             when (event.action) {
-                android.view.MotionEvent.ACTION_DOWN -> {
+                MotionEvent.ACTION_DOWN -> {
                     v.isPressed = true
-                    // Hapus karakter pertama langsung
                     handleBackspaceKey()
                     isBackspaceRepeating = true
-                    // Mulai pengulangan cepat setelah jeda awal 350 milidetik
                     backspaceHandler.postDelayed(backspaceRepeatRunnable, 350)
                     true
                 }
-                android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> {
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     v.isPressed = false
                     isBackspaceRepeating = false
                     backspaceHandler.removeCallbacks(backspaceRepeatRunnable)
@@ -407,8 +669,26 @@ class CustomKeyboardService : InputMethodService() {
         }
     }
 
+    override fun onFinishInputView(finishingInput: Boolean) {
+        super.onFinishInputView(finishingInput)
+        dismissFnPopup()
+    }
+
+    /**
+     * Membersihkan dan menutup popup Fn/Slash secara aman untuk mencegah memory leak.
+     */
+    private fun dismissFnPopup() {
+        try {
+            if (fnPopupWindow?.isShowing == true) {
+                fnPopupWindow?.dismiss()
+            }
+        } catch (_: Exception) {}
+        fnPopupWindow = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        dismissFnPopup()
         isBackspaceRepeating = false
         backspaceHandler.removeCallbacks(backspaceRepeatRunnable)
         serviceScope.cancel()

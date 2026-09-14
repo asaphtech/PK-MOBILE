@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.pkmobile.keyboard.app-mergeDebugResources-35:/values-watch-v21/values-watch-v21.xml",
+            "outputFile": "com.pkmobile.keyboard.app-mergeDebugResources-36:/values-watch-v21/values-watch-v21.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\5eff2c2b6c1995db66c09b9038426334\\transformed\\appcompat-1.6.1\\res\\values-watch-v21\\values-watch-v21.xml",
+                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\5181d2a4b417e8cc71b3f6c5d58fad02\\transformed\\appcompat-1.6.1\\res\\values-watch-v21\\values-watch-v21.xml",
                     "from": {
                         "startLines": "2,6,10",
                         "startColumns": "4,4,4",

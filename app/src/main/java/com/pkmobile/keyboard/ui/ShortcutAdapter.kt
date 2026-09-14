@@ -32,6 +32,15 @@ class ShortcutAdapter(
         fun bind(item: ShortcutEntity) {
             binding.tvShortcutBadge.text = item.shortcut
             binding.tvExpansion.text = item.expansion
+
+            if (item.expansionMode.equals("SPACE", ignoreCase = true)) {
+                binding.tvModeBadge.text = "Spasi"
+                binding.tvModeBadge.setTextColor(binding.root.context.getColor(com.pkmobile.keyboard.R.color.candidate_text_highlight))
+            } else {
+                binding.tvModeBadge.text = "Instan"
+                binding.tvModeBadge.setTextColor(binding.root.context.getColor(com.pkmobile.keyboard.R.color.accent))
+            }
+
             binding.btnEdit.setOnClickListener {
                 onItemClick(item)
             }

@@ -45,4 +45,37 @@
             android:minLines="2" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Mode Ekspansi Teks"
+        android:textColor="@color/candidate_text_highlight"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rg_add_expansion_mode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp">
+
+        <RadioButton
+            android:id="@+id/rb_add_mode_instant"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Instan / Tanpa Spasi (e.g. /id langsung ekspansi)"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp" />
+
+        <RadioButton
+            android:id="@+id/rb_add_mode_space"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dengan Spasi / Enter (e.g. /id menunggu spasi/enter)"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp" />
+    </RadioGroup>
+
 </LinearLayout>

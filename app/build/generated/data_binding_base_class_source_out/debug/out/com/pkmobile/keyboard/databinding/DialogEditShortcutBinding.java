@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -32,14 +34,28 @@ public final class DialogEditShortcutBinding implements ViewBinding {
   @NonNull
   public final TextInputEditText etEditTrigger;
 
+  @NonNull
+  public final RadioButton rbEditModeInstant;
+
+  @NonNull
+  public final RadioButton rbEditModeSpace;
+
+  @NonNull
+  public final RadioGroup rgEditExpansionMode;
+
   private DialogEditShortcutBinding(@NonNull LinearLayout rootView,
       @NonNull MaterialButton btnEditCancel, @NonNull MaterialButton btnEditSave,
-      @NonNull TextInputEditText etEditExpansion, @NonNull TextInputEditText etEditTrigger) {
+      @NonNull TextInputEditText etEditExpansion, @NonNull TextInputEditText etEditTrigger,
+      @NonNull RadioButton rbEditModeInstant, @NonNull RadioButton rbEditModeSpace,
+      @NonNull RadioGroup rgEditExpansionMode) {
     this.rootView = rootView;
     this.btnEditCancel = btnEditCancel;
     this.btnEditSave = btnEditSave;
     this.etEditExpansion = etEditExpansion;
     this.etEditTrigger = etEditTrigger;
+    this.rbEditModeInstant = rbEditModeInstant;
+    this.rbEditModeSpace = rbEditModeSpace;
+    this.rgEditExpansionMode = rgEditExpansionMode;
   }
 
   @Override
@@ -93,8 +109,26 @@ public final class DialogEditShortcutBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.rb_edit_mode_instant;
+      RadioButton rbEditModeInstant = ViewBindings.findChildViewById(rootView, id);
+      if (rbEditModeInstant == null) {
+        break missingId;
+      }
+
+      id = R.id.rb_edit_mode_space;
+      RadioButton rbEditModeSpace = ViewBindings.findChildViewById(rootView, id);
+      if (rbEditModeSpace == null) {
+        break missingId;
+      }
+
+      id = R.id.rg_edit_expansion_mode;
+      RadioGroup rgEditExpansionMode = ViewBindings.findChildViewById(rootView, id);
+      if (rgEditExpansionMode == null) {
+        break missingId;
+      }
+
       return new DialogEditShortcutBinding((LinearLayout) rootView, btnEditCancel, btnEditSave,
-          etEditExpansion, etEditTrigger);
+          etEditExpansion, etEditTrigger, rbEditModeInstant, rbEditModeSpace, rgEditExpansionMode);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

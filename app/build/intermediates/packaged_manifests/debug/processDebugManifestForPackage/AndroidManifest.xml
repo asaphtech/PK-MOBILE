@@ -8,6 +8,9 @@
         android:minSdkVersion="24"
         android:targetSdkVersion="34" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <permission
         android:name="com.pkmobile.keyboard.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
@@ -38,6 +41,12 @@
             </intent-filter>
         </activity>
 
+        <!-- Activity Pengaturan Keyboard -->
+        <activity
+            android:name="com.pkmobile.keyboard.ui.SettingsActivity"
+            android:exported="true"
+            android:label="Pengaturan Keyboard" />
+
         <!-- Service Utama Input Method Editor (IME) -->
         <service
             android:name="com.pkmobile.keyboard.service.CustomKeyboardService"
@@ -61,7 +70,13 @@
                 android:name="androidx.emoji2.text.EmojiCompatInitializer"
                 android:value="androidx.startup" />
             <meta-data
+                android:name="io.github.jan.supabase.gotrue.SupabaseInitializer"
+                android:value="androidx.startup" />
+            <meta-data
                 android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="com.russhwolf.settings.SettingsInitializer"
                 android:value="androidx.startup" />
             <meta-data
                 android:name="androidx.profileinstaller.ProfileInstallerInitializer"

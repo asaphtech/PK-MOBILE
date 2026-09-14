@@ -8,159 +8,188 @@
 8        android:minSdkVersion="24"
 9        android:targetSdkVersion="34" />
 10
-11    <permission
-11-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
-12        android:name="com.pkmobile.keyboard.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-12-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
-13        android:protectionLevel="signature" />
-13-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
-14
-15    <uses-permission android:name="com.pkmobile.keyboard.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-15-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
-15-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
-16
-17    <application
-17-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:4:5-38:19
-18        android:allowBackup="true"
-18-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:5:9-35
-19        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-19-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
-20        android:debuggable="true"
-21        android:extractNativeLibs="false"
-22        android:icon="@drawable/ic_keyboard"
-22-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:6:9-45
-23        android:label="@string/app_name"
-23-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:7:9-41
-24        android:roundIcon="@drawable/ic_keyboard"
-24-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:8:9-50
-25        android:supportsRtl="true"
-25-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:9:9-35
-26        android:theme="@style/Theme.PKMobileKeyboard" >
-26-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:10:9-54
-27
-28        <!-- Activity Pengaturan & Pengelola Shortcut Auto-text -->
-29        <activity
-29-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:13:9-22:20
-30            android:name="com.pkmobile.keyboard.ui.MainActivity"
-30-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:14:13-44
-31            android:exported="true"
-31-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:15:13-36
-32            android:label="@string/app_name"
-32-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:17:13-45
-33            android:windowSoftInputMode="adjustResize" >
-33-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:16:13-55
-34            <intent-filter>
-34-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:18:13-21:29
-35                <action android:name="android.intent.action.MAIN" />
-35-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:19:17-69
-35-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:19:25-66
-36
-37                <category android:name="android.intent.category.LAUNCHER" />
-37-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:20:17-77
-37-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:20:27-74
-38            </intent-filter>
-39        </activity>
-40
-41        <!-- Service Utama Input Method Editor (IME) -->
-42        <service
-42-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:25:9-36:19
-43            android:name="com.pkmobile.keyboard.service.CustomKeyboardService"
-43-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:26:13-58
-44            android:exported="true"
-44-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:29:13-36
-45            android:label="@string/keyboard_service_name"
-45-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:27:13-58
-46            android:permission="android.permission.BIND_INPUT_METHOD" >
-46-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:28:13-70
-47            <intent-filter>
-47-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:30:13-32:29
-48                <action android:name="android.view.InputMethod" />
-48-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:31:17-67
-48-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:31:25-64
-49            </intent-filter>
-50
-51            <meta-data
-51-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:33:13-35:50
-52                android:name="android.view.im"
-52-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:34:17-47
-53                android:resource="@xml/method" />
-53-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:35:17-47
-54        </service>
-55
-56        <provider
-56-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
-57            android:name="androidx.startup.InitializationProvider"
-57-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:25:13-67
-58            android:authorities="com.pkmobile.keyboard.androidx-startup"
-58-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:26:13-68
-59            android:exported="false" >
-59-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:27:13-37
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:4:5-67
+11-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:5:5-79
+12-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:5:22-76
+13
+14    <permission
+14-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
+15        android:name="com.pkmobile.keyboard.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+15-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
+16        android:protectionLevel="signature" />
+16-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
+17
+18    <uses-permission android:name="com.pkmobile.keyboard.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+18-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
+18-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
+19
+20    <application
+20-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:7:5-47:19
+21        android:allowBackup="true"
+21-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:8:9-35
+22        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+22-->[androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
+23        android:debuggable="true"
+24        android:extractNativeLibs="false"
+25        android:icon="@drawable/ic_keyboard"
+25-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:9:9-45
+26        android:label="@string/app_name"
+26-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:10:9-41
+27        android:roundIcon="@drawable/ic_keyboard"
+27-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:11:9-50
+28        android:supportsRtl="true"
+28-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:12:9-35
+29        android:theme="@style/Theme.PKMobileKeyboard" >
+29-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:13:9-54
+30
+31        <!-- Activity Pengaturan & Pengelola Shortcut Auto-text -->
+32        <activity
+32-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:16:9-25:20
+33            android:name="com.pkmobile.keyboard.ui.MainActivity"
+33-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:17:13-44
+34            android:exported="true"
+34-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:18:13-36
+35            android:label="@string/app_name"
+35-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:20:13-45
+36            android:windowSoftInputMode="adjustResize" >
+36-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:19:13-55
+37            <intent-filter>
+37-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:21:13-24:29
+38                <action android:name="android.intent.action.MAIN" />
+38-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:22:17-69
+38-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:22:25-66
+39
+40                <category android:name="android.intent.category.LAUNCHER" />
+40-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:23:17-77
+40-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:23:27-74
+41            </intent-filter>
+42        </activity>
+43
+44        <!-- Activity Pengaturan Keyboard -->
+45        <activity
+45-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:28:9-31:51
+46            android:name="com.pkmobile.keyboard.ui.SettingsActivity"
+46-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:29:13-48
+47            android:exported="true"
+47-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:30:13-36
+48            android:label="Pengaturan Keyboard" />
+48-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:31:13-48
+49
+50        <!-- Service Utama Input Method Editor (IME) -->
+51        <service
+51-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:34:9-45:19
+52            android:name="com.pkmobile.keyboard.service.CustomKeyboardService"
+52-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:35:13-58
+53            android:exported="true"
+53-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:38:13-36
+54            android:label="@string/keyboard_service_name"
+54-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:36:13-58
+55            android:permission="android.permission.BIND_INPUT_METHOD" >
+55-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:37:13-70
+56            <intent-filter>
+56-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:39:13-41:29
+57                <action android:name="android.view.InputMethod" />
+57-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:40:17-67
+57-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:40:25-64
+58            </intent-filter>
+59
 60            <meta-data
-60-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
-61                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-61-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:30:17-75
-62                android:value="androidx.startup" />
-62-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:31:17-49
-63            <meta-data
-63-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:29:13-31:52
-64                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-64-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:30:17-78
-65                android:value="androidx.startup" />
-65-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:31:17-49
-66            <meta-data
-66-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:29:13-31:52
-67                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-67-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:30:17-85
-68                android:value="androidx.startup" />
-68-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:31:17-49
-69        </provider>
-70
-71        <service
-71-->[androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
-72            android:name="androidx.room.MultiInstanceInvalidationService"
-72-->[androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
-73            android:directBootAware="true"
-73-->[androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
-74            android:exported="false" />
-74-->[androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
-75
-76        <receiver
-76-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:34:9-52:20
-77            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-77-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:35:13-76
-78            android:directBootAware="false"
-78-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:36:13-44
-79            android:enabled="true"
-79-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:37:13-35
-80            android:exported="true"
-80-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:38:13-36
-81            android:permission="android.permission.DUMP" >
-81-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:39:13-57
-82            <intent-filter>
-82-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:40:13-42:29
-83                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-83-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:41:17-91
-83-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:41:25-88
-84            </intent-filter>
-85            <intent-filter>
-85-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:43:13-45:29
-86                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-86-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:44:17-85
-86-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:44:25-82
-87            </intent-filter>
-88            <intent-filter>
-88-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:46:13-48:29
-89                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-89-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:47:17-88
-89-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:47:25-85
-90            </intent-filter>
-91            <intent-filter>
-91-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:49:13-51:29
-92                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-92-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:50:17-95
-92-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:50:25-92
-93            </intent-filter>
-94        </receiver>
-95    </application>
-96
-97</manifest>
+60-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:42:13-44:50
+61                android:name="android.view.im"
+61-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:43:17-47
+62                android:resource="@xml/method" />
+62-->C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:44:17-47
+63        </service>
+64
+65        <provider
+65-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
+66            android:name="androidx.startup.InitializationProvider"
+66-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:25:13-67
+67            android:authorities="com.pkmobile.keyboard.androidx-startup"
+67-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:26:13-68
+68            android:exported="false" >
+68-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:27:13-37
+69            <meta-data
+69-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
+70                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+70-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:30:17-75
+71                android:value="androidx.startup" />
+71-->[androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:31:17-49
+72            <meta-data
+72-->[io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:14:13-16:52
+73                android:name="io.github.jan.supabase.gotrue.SupabaseInitializer"
+73-->[io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:15:17-81
+74                android:value="androidx.startup" />
+74-->[io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:16:17-49
+75            <meta-data
+75-->[androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:29:13-31:52
+76                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+76-->[androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:30:17-78
+77                android:value="androidx.startup" />
+77-->[androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:31:17-49
+78            <meta-data
+78-->[com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:29:13-31:52
+79                android:name="com.russhwolf.settings.SettingsInitializer"
+79-->[com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:30:17-74
+80                android:value="androidx.startup" />
+80-->[com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:31:17-49
+81            <meta-data
+81-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+82                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+82-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+83                android:value="androidx.startup" />
+83-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+84        </provider>
+85
+86        <service
+86-->[androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
+87            android:name="androidx.room.MultiInstanceInvalidationService"
+87-->[androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
+88            android:directBootAware="true"
+88-->[androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
+89            android:exported="false" />
+89-->[androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
+90
+91        <receiver
+91-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+92            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+92-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+93            android:directBootAware="false"
+93-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+94            android:enabled="true"
+94-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+95            android:exported="true"
+95-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+96            android:permission="android.permission.DUMP" >
+96-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+97            <intent-filter>
+97-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+98                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+98-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+98-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+99            </intent-filter>
+100            <intent-filter>
+100-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+101                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+101-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+101-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+102            </intent-filter>
+103            <intent-filter>
+103-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+104                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+104-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+104-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+105            </intent-filter>
+106            <intent-filter>
+106-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+107                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+107-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+107-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+108            </intent-filter>
+109        </receiver>
+110    </application>
+111
+112</manifest>

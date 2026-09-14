@@ -51,7 +51,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR REPLACE INTO `shortcuts` (`id`,`shortcut`,`expansion`,`created_at`) VALUES (nullif(?, 0),?,?,?)";
+        return "INSERT OR REPLACE INTO `shortcuts` (`id`,`shortcut`,`expansion`,`expansion_mode`,`created_at`) VALUES (nullif(?, 0),?,?,?,?)";
       }
 
       @Override
@@ -60,7 +60,8 @@ public final class ShortcutDao_Impl implements ShortcutDao {
         statement.bindLong(1, entity.getId());
         statement.bindString(2, entity.getShortcut());
         statement.bindString(3, entity.getExpansion());
-        statement.bindLong(4, entity.getCreatedAt());
+        statement.bindString(4, entity.getExpansionMode());
+        statement.bindLong(5, entity.getCreatedAt());
       }
     };
     this.__deletionAdapterOfShortcutEntity = new EntityDeletionOrUpdateAdapter<ShortcutEntity>(__db) {
@@ -80,7 +81,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "UPDATE OR REPLACE `shortcuts` SET `id` = ?,`shortcut` = ?,`expansion` = ?,`created_at` = ? WHERE `id` = ?";
+        return "UPDATE OR REPLACE `shortcuts` SET `id` = ?,`shortcut` = ?,`expansion` = ?,`expansion_mode` = ?,`created_at` = ? WHERE `id` = ?";
       }
 
       @Override
@@ -89,8 +90,9 @@ public final class ShortcutDao_Impl implements ShortcutDao {
         statement.bindLong(1, entity.getId());
         statement.bindString(2, entity.getShortcut());
         statement.bindString(3, entity.getExpansion());
-        statement.bindLong(4, entity.getCreatedAt());
-        statement.bindLong(5, entity.getId());
+        statement.bindString(4, entity.getExpansionMode());
+        statement.bindLong(5, entity.getCreatedAt());
+        statement.bindLong(6, entity.getId());
       }
     };
     this.__preparedStmtOfDeleteById = new SharedSQLiteStatement(__db) {
@@ -249,6 +251,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
           final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
           final int _cursorIndexOfShortcut = CursorUtil.getColumnIndexOrThrow(_cursor, "shortcut");
           final int _cursorIndexOfExpansion = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion");
+          final int _cursorIndexOfExpansionMode = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_mode");
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "created_at");
           final List<ShortcutEntity> _result = new ArrayList<ShortcutEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
@@ -259,9 +262,11 @@ public final class ShortcutDao_Impl implements ShortcutDao {
             _tmpShortcut = _cursor.getString(_cursorIndexOfShortcut);
             final String _tmpExpansion;
             _tmpExpansion = _cursor.getString(_cursorIndexOfExpansion);
+            final String _tmpExpansionMode;
+            _tmpExpansionMode = _cursor.getString(_cursorIndexOfExpansionMode);
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
-            _item = new ShortcutEntity(_tmpId,_tmpShortcut,_tmpExpansion,_tmpCreatedAt);
+            _item = new ShortcutEntity(_tmpId,_tmpShortcut,_tmpExpansion,_tmpExpansionMode,_tmpCreatedAt);
             _result.add(_item);
           }
           return _result;
@@ -291,6 +296,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
           final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
           final int _cursorIndexOfShortcut = CursorUtil.getColumnIndexOrThrow(_cursor, "shortcut");
           final int _cursorIndexOfExpansion = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion");
+          final int _cursorIndexOfExpansionMode = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_mode");
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "created_at");
           final List<ShortcutEntity> _result = new ArrayList<ShortcutEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
@@ -301,9 +307,11 @@ public final class ShortcutDao_Impl implements ShortcutDao {
             _tmpShortcut = _cursor.getString(_cursorIndexOfShortcut);
             final String _tmpExpansion;
             _tmpExpansion = _cursor.getString(_cursorIndexOfExpansion);
+            final String _tmpExpansionMode;
+            _tmpExpansionMode = _cursor.getString(_cursorIndexOfExpansionMode);
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
-            _item = new ShortcutEntity(_tmpId,_tmpShortcut,_tmpExpansion,_tmpCreatedAt);
+            _item = new ShortcutEntity(_tmpId,_tmpShortcut,_tmpExpansion,_tmpExpansionMode,_tmpCreatedAt);
             _result.add(_item);
           }
           return _result;
@@ -332,6 +340,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
           final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
           final int _cursorIndexOfShortcut = CursorUtil.getColumnIndexOrThrow(_cursor, "shortcut");
           final int _cursorIndexOfExpansion = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion");
+          final int _cursorIndexOfExpansionMode = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_mode");
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "created_at");
           final ShortcutEntity _result;
           if (_cursor.moveToFirst()) {
@@ -341,9 +350,11 @@ public final class ShortcutDao_Impl implements ShortcutDao {
             _tmpShortcut = _cursor.getString(_cursorIndexOfShortcut);
             final String _tmpExpansion;
             _tmpExpansion = _cursor.getString(_cursorIndexOfExpansion);
+            final String _tmpExpansionMode;
+            _tmpExpansionMode = _cursor.getString(_cursorIndexOfExpansionMode);
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
-            _result = new ShortcutEntity(_tmpId,_tmpShortcut,_tmpExpansion,_tmpCreatedAt);
+            _result = new ShortcutEntity(_tmpId,_tmpShortcut,_tmpExpansion,_tmpExpansionMode,_tmpCreatedAt);
           } else {
             _result = null;
           }

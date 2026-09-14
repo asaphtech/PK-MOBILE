@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.pkmobile.keyboard.app-mergeDebugResources-35:/values-v16/values-v16.xml",
+            "outputFile": "com.pkmobile.keyboard.app-mergeDebugResources-36:/values-v16/values-v16.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\6b5cc757c54703e80202133351990f55\\transformed\\core-1.12.0\\res\\values-v16\\values-v16.xml",
+                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\c1d4f0a53b851505597be038a0e3d114\\transformed\\core-1.12.0\\res\\values-v16\\values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\5eff2c2b6c1995db66c09b9038426334\\transformed\\appcompat-1.6.1\\res\\values-v16\\values-v16.xml",
+                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\5181d2a4b417e8cc71b3f6c5d58fad02\\transformed\\appcompat-1.6.1\\res\\values-v16\\values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

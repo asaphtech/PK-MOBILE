@@ -1,29 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.pkmobile.keyboard.app-mergeDebugResources-35:/values-v23/values-v23.xml",
+            "outputFile": "com.pkmobile.keyboard.app-mergeDebugResources-36:/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\9ddcd6995085816b3b4145223fd9f629\\transformed\\cardview-1.0.0\\res\\values-v23\\values-v23.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endLines": "4",
-                        "endColumns": "12",
-                        "endOffsets": "200"
-                    },
-                    "to": {
-                        "startLines": "50",
-                        "startColumns": "4",
-                        "startOffsets": "3232",
-                        "endLines": "52",
-                        "endColumns": "12",
-                        "endOffsets": "3377"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\5eff2c2b6c1995db66c09b9038426334\\transformed\\appcompat-1.6.1\\res\\values-v23\\values-v23.xml",
+                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\5181d2a4b417e8cc71b3f6c5d58fad02\\transformed\\appcompat-1.6.1\\res\\values-v23\\values-v23.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,20,34,35,36,39,43,44,45,46",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -34,7 +15,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\fd20a4eab6e3ee4b3f63eb9950a2a50d\\transformed\\material-1.11.0\\res\\values-v23\\values-v23.xml",
+                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\4394b862e10746debfbc17c3cb87f40b\\transformed\\material-1.11.0\\res\\values-v23\\values-v23.xml",
                     "from": {
                         "startLines": "2,5,9,13,16,19,22,25,28,32",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4",
@@ -50,6 +31,25 @@
                         "endLines": "55,59,63,66,69,72,75,78,82,86",
                         "endColumns": "10,10,10,10,10,10,10,10,10,10",
                         "endOffsets": "3593,3735,3896,4106,4313,4520,4723,4925,5190,5463"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\CS14 LATOTO\\.gradle\\caches\\transforms-3\\dac48c23f87a4a3d952714261a82d97c\\transformed\\cardview-1.0.0\\res\\values-v23\\values-v23.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "200"
+                    },
+                    "to": {
+                        "startLines": "50",
+                        "startColumns": "4",
+                        "startOffsets": "3232",
+                        "endLines": "52",
+                        "endColumns": "12",
+                        "endOffsets": "3377"
                     }
                 }
             ]

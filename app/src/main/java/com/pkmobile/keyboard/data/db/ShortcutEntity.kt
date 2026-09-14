@@ -23,6 +23,9 @@ data class ShortcutEntity(
     @ColumnInfo(name = "expansion")
     val expansion: String,
 
+    @ColumnInfo(name = "expansion_mode", defaultValue = "INSTANT")
+    val expansionMode: String = "INSTANT",
+
     @ColumnInfo(name = "created_at")
     val createdAt: Long = System.currentTimeMillis()
 )

@@ -104,6 +104,12 @@ class MainActivity : AppCompatActivity() {
         binding.btnExportShortcut.setOnClickListener {
             showExportChoiceDialog()
         }
+
+        // Tombol Pengaturan Aplikasi
+        binding.btnSettings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -136,12 +142,19 @@ class MainActivity : AppCompatActivity() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_edit_shortcut, null)
         val etEditTrigger = dialogView.findViewById<TextInputEditText>(R.id.etEditTrigger)
         val etEditExpansion = dialogView.findViewById<TextInputEditText>(R.id.etEditExpansion)
+        val rbEditModeInstant = dialogView.findViewById<android.widget.RadioButton>(R.id.rb_edit_mode_instant)
+        val rbEditModeSpace = dialogView.findViewById<android.widget.RadioButton>(R.id.rb_edit_mode_space)
         val btnEditCancel = dialogView.findViewById<MaterialButton>(R.id.btnEditCancel)
         val btnEditSave = dialogView.findViewById<MaterialButton>(R.id.btnEditSave)
 
         // Isi form dengan data yang sedang diedit
         etEditTrigger.setText(shortcut.shortcut)
         etEditExpansion.setText(shortcut.expansion)
+        if (shortcut.expansionMode.equals("SPACE", ignoreCase = true)) {
+            rbEditModeSpace.isChecked = true
+        } else {
+            rbEditModeInstant.isChecked = true
+        }
 
         val dialog = MaterialAlertDialogBuilder(this)
             .setView(dialogView)
@@ -154,6 +167,7 @@ class MainActivity : AppCompatActivity() {
         btnEditSave.setOnClickListener {
             val rawTrigger = etEditTrigger.text?.toString() ?: ""
             val rawExpansion = etEditExpansion.text?.toString() ?: ""
+            val selectedMode = if (rbEditModeSpace.isChecked) "SPACE" else "INSTANT"
 
             // Bersihkan trigger input menggunakan ShortcutImporter.cleanTrigger()
             val cleanKey = ShortcutImporter.cleanTrigger(rawTrigger)
@@ -171,7 +185,8 @@ class MainActivity : AppCompatActivity() {
                 try {
                     val updatedEntity = shortcut.copy(
                         shortcut = cleanKey.lowercase(),
-                        expansion = cleanExp
+                        expansion = cleanExp,
+                        expansionMode = selectedMode
                     )
                     repository.update(updatedEntity)
 
@@ -217,16 +232,18 @@ class MainActivity : AppCompatActivity() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_shortcut, null)
         val etShortcut = dialogView.findViewById<TextInputEditText>(R.id.et_input_shortcut)
         val etExpansion = dialogView.findViewById<TextInputEditText>(R.id.et_input_expansion)
+        val rbAddModeSpace = dialogView.findViewById<android.widget.RadioButton>(R.id.rb_add_mode_space)
 
         MaterialAlertDialogBuilder(this)
             .setView(dialogView)
             .setPositiveButton(R.string.btn_save) { dialog, _ ->
                 val shortcutText = etShortcut.text?.toString()?.trim() ?: ""
                 val expansionText = etExpansion.text?.toString()?.trim() ?: ""
+                val selectedMode = if (rbAddModeSpace.isChecked) "SPACE" else "INSTANT"
 
                 if (shortcutText.isNotEmpty() && expansionText.isNotEmpty()) {
                     lifecycleScope.launch(Dispatchers.IO) {
-                        repository.insertShortcut(shortcutText, expansionText)
+                        repository.insertShortcut(shortcutText, expansionText, selectedMode)
                         withContext(Dispatchers.Main) {
                             Toast.makeText(this@MainActivity, R.string.toast_saved, Toast.LENGTH_SHORT).show()
                         }

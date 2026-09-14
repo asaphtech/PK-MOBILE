@@ -27,4 +27,5 @@
     <color name="key_text_secondary">#8E9297</color>
     <color name="key_divider">#202225</color>
     <color name="key_shadow">#121315</color>
+    <color name="key_action_delete">#ED4245</color>
 </resources>

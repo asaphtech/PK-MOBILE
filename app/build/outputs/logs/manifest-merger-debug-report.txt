@@ -1,57 +1,68 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:2:1-40:12
-INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:2:1-40:12
-INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:2:1-40:12
-INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:2:1-40:12
-MERGED from [androidx.databinding:viewbinding:8.3.2] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d2262143a04d8c32b4e3657dda0ca3cb\transformed\viewbinding-8.3.2\AndroidManifest.xml:2:1-7:12
-MERGED from [com.google.android.material:material:1.11.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fd20a4eab6e3ee4b3f63eb9950a2a50d\transformed\material-1.11.0\AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\73c9db1fda6939639a753cb93e9ea34b\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
-MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d9506116eb9db96b53c0cf5fe6c9a1d8\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5eff2c2b6c1995db66c09b9038426334\transformed\appcompat-1.6.1\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\bbc37859171f1d17f1e5e03e82f2beb0\transformed\emoji2-views-helper-1.2.0\AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:17:1-35:12
-MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\aa2d5ff23c39eecf3f73fa959cf3a039\transformed\viewpager2-1.0.0\AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.fragment:fragment:1.3.6] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5c2d3962099bf74531f314845975abc4\transformed\fragment-1.3.6\AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.activity:activity:1.8.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fa6b3430888c9f7837efcdfd7e5dca2c\transformed\activity-1.8.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1b363fc691558774131be2a671080740\transformed\drawerlayout-1.1.1\AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\16017e0a3da23a359618166e620dd46b\transformed\coordinatorlayout-1.1.0\AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2e5ad7599625de58d1e4a70f40690080\transformed\dynamicanimation-1.0.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.transition:transition:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\521a94829efcd1eac8cf7f90ddba596d\transformed\transition-1.2.0\AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\06d8f98d4cdfa8ddabcc12ab4e18f1d1\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5f112d98e27c81c9039c6ba1ca9070cc\transformed\vectordrawable-1.1.0\AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9e1201231fdf740b8016b67596dedec8\transformed\viewpager-1.0.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\88ed500c73f9d8433d96c1bf7da58104\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.loader:loader:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c60b9336b568a00b20ee33084c869534\transformed\loader-1.0.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.recyclerview:recyclerview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\dfbc3f4aefb2d74c074e02c24e1ef06d\transformed\recyclerview-1.1.0\AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.customview:customview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a54491c82c074bd5811f8292d44e51fd\transformed\customview-1.1.0\AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:17:1-30:12
-MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a6f16b76328ed9b7d1a7f0668b88086\transformed\savedstate-1.2.1\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5a1e413b15df62f483fc7edc7c2ac5e0\transformed\lifecycle-livedata-core-ktx-2.7.0\AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.lifecycle:lifecycle-livedata:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4014a2f11d63c11daa40c3f93a7014fc\transformed\lifecycle-livedata-2.7.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c2b756a2962d565e418acec6a0cfe56e\transformed\lifecycle-livedata-core-2.7.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:17:1-35:12
-MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\7f97fa7526b37815ad6f9f0b93a1291f\transformed\lifecycle-viewmodel-2.7.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.lifecycle:lifecycle-runtime:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\df3706a4025bf2fb2d267134a6fc7269\transformed\lifecycle-runtime-2.7.0\AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2f9f7f3290b3e60ae66a5cf112229cd0\transformed\lifecycle-runtime-ktx-2.7.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\53c94669803ee54391dfec051af6315e\transformed\lifecycle-viewmodel-savedstate-2.7.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\8078ecf868e9288d2f2e3d36f14d8bf5\transformed\core-ktx-1.12.0\AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:17:1-31:12
-MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2684dc865d0b4abde5edbea5fa79956f\transformed\room-ktx-2.6.1\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c854b1ed6c23e22ee3b4bfd76a8caa56\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\b76e751bd34722227f80ffb5da778a6f\transformed\sqlite-2.4.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c8222a08753805d1931488e0ae72be6b\transformed\annotation-experimental-1.3.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f553bcbc38cba7fd99e0d02295754c74\transformed\cursoradapter-1.0.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9ddcd6995085816b3b4145223fd9f629\transformed\cardview-1.0.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fa18fdf27666d6f685ba5c2f83068da5\transformed\core-runtime-2.2.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3a7723b6fcb1bd4ff1676b01c7e85987\transformed\interpolator-1.0.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5ab681090366e399ec6aaa3c0d5abc31\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:17:1-27:12
-MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:17:1-55:12
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ab84af5e083aaf8a5ef20b8554e56a28\transformed\startup-runtime-1.1.1\AndroidManifest.xml:17:1-33:12
-MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f9109ad27432db41138c6f213a74a879\transformed\tracing-1.0.0\AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2bc2273cde30404156fbf97c0060ca43\transformed\documentfile-1.0.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2aa3e48a3bcf1d4bd71b27aae0e21ede\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.print:print:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3eda96abfd5f02d2058131a6ab7e8488\transformed\print-1.0.0\AndroidManifest.xml:17:1-22:12
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:2:1-49:12
+INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:2:1-49:12
+INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:2:1-49:12
+INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:2:1-49:12
+MERGED from [androidx.databinding:viewbinding:8.3.2] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\60104f0b5cc8b9c209c06fa497025615\transformed\viewbinding-8.3.2\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.material:material:1.11.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4394b862e10746debfbc17c3cb87f40b\transformed\material-1.11.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d144c8f510b680f19e5cd5fa9f13c4da\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\db819eef163480dc766861dde9309958\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5181d2a4b417e8cc71b3f6c5d58fad02\transformed\appcompat-1.6.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3cbab1385f7e364bdc3acfabee62d1d8\transformed\emoji2-views-helper-1.2.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a0f388fc6882ecf9feba54870ec21dfd\transformed\viewpager2-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.fragment:fragment:1.3.6] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\44b9c6e115fce7ac312b9dc13dc6783a\transformed\fragment-1.3.6\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.activity:activity:1.8.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9cefe8a83b8999ef247221d0eddf05c6\transformed\activity-1.8.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5e8ce73b048ec56e0032805ebc95e076\transformed\drawerlayout-1.1.1\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\95533bcb9aa7d588e1ba387d09ab25a0\transformed\coordinatorlayout-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ac0d9412abd2245d12626e37bbd6e8f6\transformed\dynamicanimation-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.transition:transition:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\90eca42bce4e897f1926415267f940f6\transformed\transition-1.2.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a811b5919db3e5e49d95d7f6c22abe56\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2e41e05c03b7a5bf4c00e36d8f5f839b\transformed\vectordrawable-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a29ed6d9e2f3d95ed94ea966e45c8755\transformed\viewpager-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d495fba6571587506738147f2cf09f9b\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\793bef6ed2c3e14964dd4c91b6a311b8\transformed\loader-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.recyclerview:recyclerview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5ef6bec1a7651a3d59e0f1209145c4e4\transformed\recyclerview-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.customview:customview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\e215c057ea0b7ad3e97692b27dce5559\transformed\customview-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [io.github.jan-tennert.supabase:postgrest-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\7adfaaa2046ddce6157a1b0347b2c13c\transformed\postgrest-kt-debug\AndroidManifest.xml:2:1-7:12
+MERGED from [io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:2:1-20:12
+MERGED from [androidx.browser:browser:1.8.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9c3fa7540b8176010c457ba2a34ec031\transformed\browser-1.8.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:17:1-30:12
+MERGED from [io.github.jan-tennert.supabase:supabase-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2209886f1b76bade9f2a5574a0446bbb\transformed\supabase-kt-debug\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\49973e53a061708acadf8e99a40a6850\transformed\savedstate-1.2.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\0d7f67416a83f8e2b4d04c5540f427e6\transformed\lifecycle-viewmodel-2.8.3\AndroidManifest.xml:2:1-5:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\656f956de78896ab0a842e67605d8b2f\transformed\lifecycle-viewmodel-release\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\664343a61890d89822d7a559a7fdafff\transformed\lifecycle-runtime-ktx-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3a400c6d4d1021ead1686b150737e17d\transformed\lifecycle-livedata-core-ktx-2.8.3\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5d6933c6072c6d38f931c282d0ca08ad\transformed\lifecycle-runtime-release\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9dc17971487d7ce79efbbfbee6284e57\transformed\lifecycle-livedata-core-2.8.3\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ca83dc8cfab3467ca3dd1eaa0de6bb28\transformed\lifecycle-livedata-2.8.3\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\7afe08f954276b03ab4004398ea25160\transformed\lifecycle-viewmodel-savedstate-2.8.3\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\906c8573cafab0c508e85e5a7894fc4e\transformed\core-ktx-1.12.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:17:1-31:12
+MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2c975df042b00b2eee2fc0800aac1387\transformed\room-ktx-2.6.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\38536b814bb0c460e8dd3a20f35da42a\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c8f8f437f8a73a6e19190b7b77ef162f\transformed\sqlite-2.4.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\277304c70cfe1cffce61f46d402dd9b6\transformed\annotation-experimental-1.4.0\AndroidManifest.xml:2:1-7:12
+MERGED from [com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:17:1-35:12
+MERGED from [com.russhwolf:multiplatform-settings-coroutines-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b6ff9bca7c8f8141b81a095953c0a13\transformed\multiplatform-settings-coroutines-debug\AndroidManifest.xml:2:1-7:12
+MERGED from [com.soywiz.korlibs.krypto:krypto-android:4.0.10] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\79f4f8cf363673eff7bf482ad05dcbbd\transformed\krypto-debug\AndroidManifest.xml:2:1-9:12
+MERGED from [co.touchlab:kermit-android-debug:2.0.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f402470e9e8baddd57aae7efca083ca5\transformed\kermit-debug\AndroidManifest.xml:2:1-7:12
+MERGED from [com.russhwolf:multiplatform-settings-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\814dbed405d760e8404213de7c0d0867\transformed\multiplatform-settings-debug\AndroidManifest.xml:2:1-7:12
+MERGED from [co.touchlab:kermit-core-android-debug:2.0.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\32ea3b3900aebf4743b63d2066839af8\transformed\kermit-core-debug\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\46a092e3d216cd5d05233c257bc7cee2\transformed\cursoradapter-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\dac48c23f87a4a3d952714261a82d97c\transformed\cardview-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae0e4725438bb6f51828449777dd348f\transformed\core-runtime-2.2.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\af83527f12601b1150a90866e6d1d23c\transformed\interpolator-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c70f7376378a761b6c46a92ffe93ed67\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:17:1-55:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c2963f43542d485d99e76fe400e08953\transformed\startup-runtime-1.1.1\AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6af6f0a317b16bc17e1f80ef022477cb\transformed\tracing-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5e7612df74e5f248491f7d400669d0f6\transformed\documentfile-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c753f71ea9d549e7f57683ffcafb4f33\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.print:print:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f760063e72af8fef38355c14edf98601\transformed\print-1.0.0\AndroidManifest.xml:17:1-22:12
 	package
 		INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml
 	android:versionName
@@ -60,286 +71,344 @@ MERGED from [androidx.print:print:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\tra
 		INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:4:5-67
+	android:name
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:4:22-64
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:5:5-79
+	android:name
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:5:22-76
 application
-ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:4:5-38:19
-INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:4:5-38:19
-MERGED from [com.google.android.material:material:1.11.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fd20a4eab6e3ee4b3f63eb9950a2a50d\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
-MERGED from [com.google.android.material:material:1.11.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fd20a4eab6e3ee4b3f63eb9950a2a50d\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
-MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\73c9db1fda6939639a753cb93e9ea34b\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
-MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\73c9db1fda6939639a753cb93e9ea34b\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
-MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:23:5-33:19
-MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:23:5-33:19
-MERGED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:28:5-89
-MERGED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:28:5-89
-MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:23:5-33:19
-MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:23:5-33:19
-MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:23:5-29:19
-MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:23:5-29:19
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5ab681090366e399ec6aaa3c0d5abc31\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5ab681090366e399ec6aaa3c0d5abc31\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
-MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:23:5-53:19
-MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:23:5-53:19
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ab84af5e083aaf8a5ef20b8554e56a28\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ab84af5e083aaf8a5ef20b8554e56a28\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:7:5-47:19
+INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:7:5-47:19
+MERGED from [com.google.android.material:material:1.11.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4394b862e10746debfbc17c3cb87f40b\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
+MERGED from [com.google.android.material:material:1.11.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4394b862e10746debfbc17c3cb87f40b\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
+MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d144c8f510b680f19e5cd5fa9f13c4da\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
+MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d144c8f510b680f19e5cd5fa9f13c4da\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
+MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:23:5-33:19
+MERGED from [io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:8:5-18:19
+MERGED from [io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:8:5-18:19
+MERGED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:28:5-89
+MERGED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:28:5-89
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:23:5-29:19
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:23:5-29:19
+MERGED from [com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:23:5-33:19
+MERGED from [com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c70f7376378a761b6c46a92ffe93ed67\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c70f7376378a761b6c46a92ffe93ed67\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c2963f43542d485d99e76fe400e08953\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c2963f43542d485d99e76fe400e08953\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
 	android:extractNativeLibs
 		INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml
 	android:appComponentFactory
-		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
+		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:9:9-35
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:12:9-35
 	android:label
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:7:9-41
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:10:9-41
 	android:roundIcon
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:8:9-50
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:11:9-50
 	android:icon
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:6:9-45
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:9:9-45
 	android:allowBackup
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:5:9-35
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:8:9-35
 	android:theme
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:10:9-54
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:13:9-54
 activity#com.pkmobile.keyboard.ui.MainActivity
-ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:13:9-22:20
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:16:9-25:20
 	android:label
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:17:13-45
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:20:13-45
 	android:windowSoftInputMode
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:16:13-55
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:19:13-55
 	android:exported
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:15:13-36
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:18:13-36
 	android:name
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:14:13-44
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:17:13-44
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:18:13-21:29
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:21:13-24:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:19:17-69
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:22:17-69
 	android:name
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:19:25-66
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:22:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:20:17-77
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:23:17-77
 	android:name
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:20:27-74
-service#com.pkmobile.keyboard.service.CustomKeyboardService
-ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:25:9-36:19
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:23:27-74
+activity#com.pkmobile.keyboard.ui.SettingsActivity
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:28:9-31:51
 	android:label
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:27:13-58
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:31:13-48
 	android:exported
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:29:13-36
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:30:13-36
+	android:name
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:29:13-48
+service#com.pkmobile.keyboard.service.CustomKeyboardService
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:34:9-45:19
+	android:label
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:36:13-58
+	android:exported
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:38:13-36
 	android:permission
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:28:13-70
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:37:13-70
 	android:name
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:26:13-58
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:35:13-58
 intent-filter#action:name:android.view.InputMethod
-ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:30:13-32:29
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:39:13-41:29
 action#android.view.InputMethod
-ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:31:17-67
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:40:17-67
 	android:name
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:31:25-64
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:40:25-64
 meta-data#android.view.im
-ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:33:13-35:50
+ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:42:13-44:50
 	android:resource
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:35:17-47
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:44:17-47
 	android:name
-		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:34:17-47
+		ADDED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml:43:17-47
 uses-sdk
 INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml
 INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml
-MERGED from [androidx.databinding:viewbinding:8.3.2] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d2262143a04d8c32b4e3657dda0ca3cb\transformed\viewbinding-8.3.2\AndroidManifest.xml:5:5-44
-MERGED from [androidx.databinding:viewbinding:8.3.2] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d2262143a04d8c32b4e3657dda0ca3cb\transformed\viewbinding-8.3.2\AndroidManifest.xml:5:5-44
-MERGED from [com.google.android.material:material:1.11.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fd20a4eab6e3ee4b3f63eb9950a2a50d\transformed\material-1.11.0\AndroidManifest.xml:20:5-44
-MERGED from [com.google.android.material:material:1.11.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fd20a4eab6e3ee4b3f63eb9950a2a50d\transformed\material-1.11.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\73c9db1fda6939639a753cb93e9ea34b\transformed\constraintlayout-2.1.4\AndroidManifest.xml:5:5-7:41
-MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\73c9db1fda6939639a753cb93e9ea34b\transformed\constraintlayout-2.1.4\AndroidManifest.xml:5:5-7:41
-MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d9506116eb9db96b53c0cf5fe6c9a1d8\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:20:5-44
-MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d9506116eb9db96b53c0cf5fe6c9a1d8\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:20:5-44
-MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5eff2c2b6c1995db66c09b9038426334\transformed\appcompat-1.6.1\AndroidManifest.xml:20:5-44
-MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5eff2c2b6c1995db66c09b9038426334\transformed\appcompat-1.6.1\AndroidManifest.xml:20:5-44
-MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\bbc37859171f1d17f1e5e03e82f2beb0\transformed\emoji2-views-helper-1.2.0\AndroidManifest.xml:5:5-44
-MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\bbc37859171f1d17f1e5e03e82f2beb0\transformed\emoji2-views-helper-1.2.0\AndroidManifest.xml:5:5-44
-MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:21:5-44
-MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:21:5-44
-MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\aa2d5ff23c39eecf3f73fa959cf3a039\transformed\viewpager2-1.0.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\aa2d5ff23c39eecf3f73fa959cf3a039\transformed\viewpager2-1.0.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.fragment:fragment:1.3.6] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5c2d3962099bf74531f314845975abc4\transformed\fragment-1.3.6\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.fragment:fragment:1.3.6] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5c2d3962099bf74531f314845975abc4\transformed\fragment-1.3.6\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.activity:activity:1.8.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fa6b3430888c9f7837efcdfd7e5dca2c\transformed\activity-1.8.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.activity:activity:1.8.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fa6b3430888c9f7837efcdfd7e5dca2c\transformed\activity-1.8.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1b363fc691558774131be2a671080740\transformed\drawerlayout-1.1.1\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1b363fc691558774131be2a671080740\transformed\drawerlayout-1.1.1\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\16017e0a3da23a359618166e620dd46b\transformed\coordinatorlayout-1.1.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\16017e0a3da23a359618166e620dd46b\transformed\coordinatorlayout-1.1.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2e5ad7599625de58d1e4a70f40690080\transformed\dynamicanimation-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2e5ad7599625de58d1e4a70f40690080\transformed\dynamicanimation-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.transition:transition:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\521a94829efcd1eac8cf7f90ddba596d\transformed\transition-1.2.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.transition:transition:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\521a94829efcd1eac8cf7f90ddba596d\transformed\transition-1.2.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\06d8f98d4cdfa8ddabcc12ab4e18f1d1\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\06d8f98d4cdfa8ddabcc12ab4e18f1d1\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5f112d98e27c81c9039c6ba1ca9070cc\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5f112d98e27c81c9039c6ba1ca9070cc\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9e1201231fdf740b8016b67596dedec8\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9e1201231fdf740b8016b67596dedec8\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\88ed500c73f9d8433d96c1bf7da58104\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\88ed500c73f9d8433d96c1bf7da58104\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.loader:loader:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c60b9336b568a00b20ee33084c869534\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.loader:loader:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c60b9336b568a00b20ee33084c869534\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.recyclerview:recyclerview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\dfbc3f4aefb2d74c074e02c24e1ef06d\transformed\recyclerview-1.1.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.recyclerview:recyclerview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\dfbc3f4aefb2d74c074e02c24e1ef06d\transformed\recyclerview-1.1.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.customview:customview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a54491c82c074bd5811f8292d44e51fd\transformed\customview-1.1.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.customview:customview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a54491c82c074bd5811f8292d44e51fd\transformed\customview-1.1.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a6f16b76328ed9b7d1a7f0668b88086\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
-MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a6f16b76328ed9b7d1a7f0668b88086\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5a1e413b15df62f483fc7edc7c2ac5e0\transformed\lifecycle-livedata-core-ktx-2.7.0\AndroidManifest.xml:5:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5a1e413b15df62f483fc7edc7c2ac5e0\transformed\lifecycle-livedata-core-ktx-2.7.0\AndroidManifest.xml:5:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4014a2f11d63c11daa40c3f93a7014fc\transformed\lifecycle-livedata-2.7.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4014a2f11d63c11daa40c3f93a7014fc\transformed\lifecycle-livedata-2.7.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c2b756a2962d565e418acec6a0cfe56e\transformed\lifecycle-livedata-core-2.7.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c2b756a2962d565e418acec6a0cfe56e\transformed\lifecycle-livedata-core-2.7.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:21:5-44
-MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:21:5-44
-MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\7f97fa7526b37815ad6f9f0b93a1291f\transformed\lifecycle-viewmodel-2.7.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\7f97fa7526b37815ad6f9f0b93a1291f\transformed\lifecycle-viewmodel-2.7.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-runtime:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\df3706a4025bf2fb2d267134a6fc7269\transformed\lifecycle-runtime-2.7.0\AndroidManifest.xml:5:5-44
-MERGED from [androidx.lifecycle:lifecycle-runtime:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\df3706a4025bf2fb2d267134a6fc7269\transformed\lifecycle-runtime-2.7.0\AndroidManifest.xml:5:5-44
-MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2f9f7f3290b3e60ae66a5cf112229cd0\transformed\lifecycle-runtime-ktx-2.7.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2f9f7f3290b3e60ae66a5cf112229cd0\transformed\lifecycle-runtime-ktx-2.7.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\53c94669803ee54391dfec051af6315e\transformed\lifecycle-viewmodel-savedstate-2.7.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\53c94669803ee54391dfec051af6315e\transformed\lifecycle-viewmodel-savedstate-2.7.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\8078ecf868e9288d2f2e3d36f14d8bf5\transformed\core-ktx-1.12.0\AndroidManifest.xml:5:5-44
-MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\8078ecf868e9288d2f2e3d36f14d8bf5\transformed\core-ktx-1.12.0\AndroidManifest.xml:5:5-44
-MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:21:5-44
-MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:21:5-44
-MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2684dc865d0b4abde5edbea5fa79956f\transformed\room-ktx-2.6.1\AndroidManifest.xml:20:5-44
-MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2684dc865d0b4abde5edbea5fa79956f\transformed\room-ktx-2.6.1\AndroidManifest.xml:20:5-44
-MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c854b1ed6c23e22ee3b4bfd76a8caa56\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c854b1ed6c23e22ee3b4bfd76a8caa56\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\b76e751bd34722227f80ffb5da778a6f\transformed\sqlite-2.4.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\b76e751bd34722227f80ffb5da778a6f\transformed\sqlite-2.4.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c8222a08753805d1931488e0ae72be6b\transformed\annotation-experimental-1.3.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c8222a08753805d1931488e0ae72be6b\transformed\annotation-experimental-1.3.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f553bcbc38cba7fd99e0d02295754c74\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f553bcbc38cba7fd99e0d02295754c74\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9ddcd6995085816b3b4145223fd9f629\transformed\cardview-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9ddcd6995085816b3b4145223fd9f629\transformed\cardview-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fa18fdf27666d6f685ba5c2f83068da5\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\fa18fdf27666d6f685ba5c2f83068da5\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3a7723b6fcb1bd4ff1676b01c7e85987\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3a7723b6fcb1bd4ff1676b01c7e85987\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5ab681090366e399ec6aaa3c0d5abc31\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5ab681090366e399ec6aaa3c0d5abc31\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:21:5-44
-MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:21:5-44
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ab84af5e083aaf8a5ef20b8554e56a28\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ab84af5e083aaf8a5ef20b8554e56a28\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
-MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f9109ad27432db41138c6f213a74a879\transformed\tracing-1.0.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f9109ad27432db41138c6f213a74a879\transformed\tracing-1.0.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2bc2273cde30404156fbf97c0060ca43\transformed\documentfile-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2bc2273cde30404156fbf97c0060ca43\transformed\documentfile-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2aa3e48a3bcf1d4bd71b27aae0e21ede\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2aa3e48a3bcf1d4bd71b27aae0e21ede\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.print:print:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3eda96abfd5f02d2058131a6ab7e8488\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.print:print:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3eda96abfd5f02d2058131a6ab7e8488\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.databinding:viewbinding:8.3.2] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\60104f0b5cc8b9c209c06fa497025615\transformed\viewbinding-8.3.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.databinding:viewbinding:8.3.2] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\60104f0b5cc8b9c209c06fa497025615\transformed\viewbinding-8.3.2\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.material:material:1.11.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4394b862e10746debfbc17c3cb87f40b\transformed\material-1.11.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.material:material:1.11.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4394b862e10746debfbc17c3cb87f40b\transformed\material-1.11.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d144c8f510b680f19e5cd5fa9f13c4da\transformed\constraintlayout-2.1.4\AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d144c8f510b680f19e5cd5fa9f13c4da\transformed\constraintlayout-2.1.4\AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\db819eef163480dc766861dde9309958\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\db819eef163480dc766861dde9309958\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5181d2a4b417e8cc71b3f6c5d58fad02\transformed\appcompat-1.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5181d2a4b417e8cc71b3f6c5d58fad02\transformed\appcompat-1.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3cbab1385f7e364bdc3acfabee62d1d8\transformed\emoji2-views-helper-1.2.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3cbab1385f7e364bdc3acfabee62d1d8\transformed\emoji2-views-helper-1.2.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a0f388fc6882ecf9feba54870ec21dfd\transformed\viewpager2-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a0f388fc6882ecf9feba54870ec21dfd\transformed\viewpager2-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.3.6] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\44b9c6e115fce7ac312b9dc13dc6783a\transformed\fragment-1.3.6\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.3.6] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\44b9c6e115fce7ac312b9dc13dc6783a\transformed\fragment-1.3.6\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.8.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9cefe8a83b8999ef247221d0eddf05c6\transformed\activity-1.8.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.8.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9cefe8a83b8999ef247221d0eddf05c6\transformed\activity-1.8.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5e8ce73b048ec56e0032805ebc95e076\transformed\drawerlayout-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5e8ce73b048ec56e0032805ebc95e076\transformed\drawerlayout-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\95533bcb9aa7d588e1ba387d09ab25a0\transformed\coordinatorlayout-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\95533bcb9aa7d588e1ba387d09ab25a0\transformed\coordinatorlayout-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ac0d9412abd2245d12626e37bbd6e8f6\transformed\dynamicanimation-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ac0d9412abd2245d12626e37bbd6e8f6\transformed\dynamicanimation-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.transition:transition:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\90eca42bce4e897f1926415267f940f6\transformed\transition-1.2.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.transition:transition:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\90eca42bce4e897f1926415267f940f6\transformed\transition-1.2.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a811b5919db3e5e49d95d7f6c22abe56\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a811b5919db3e5e49d95d7f6c22abe56\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2e41e05c03b7a5bf4c00e36d8f5f839b\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2e41e05c03b7a5bf4c00e36d8f5f839b\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a29ed6d9e2f3d95ed94ea966e45c8755\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\a29ed6d9e2f3d95ed94ea966e45c8755\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d495fba6571587506738147f2cf09f9b\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\d495fba6571587506738147f2cf09f9b\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\793bef6ed2c3e14964dd4c91b6a311b8\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\793bef6ed2c3e14964dd4c91b6a311b8\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.recyclerview:recyclerview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5ef6bec1a7651a3d59e0f1209145c4e4\transformed\recyclerview-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.recyclerview:recyclerview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5ef6bec1a7651a3d59e0f1209145c4e4\transformed\recyclerview-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.customview:customview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\e215c057ea0b7ad3e97692b27dce5559\transformed\customview-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.customview:customview:1.1.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\e215c057ea0b7ad3e97692b27dce5559\transformed\customview-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [io.github.jan-tennert.supabase:postgrest-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\7adfaaa2046ddce6157a1b0347b2c13c\transformed\postgrest-kt-debug\AndroidManifest.xml:5:5-44
+MERGED from [io.github.jan-tennert.supabase:postgrest-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\7adfaaa2046ddce6157a1b0347b2c13c\transformed\postgrest-kt-debug\AndroidManifest.xml:5:5-44
+MERGED from [io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:6:5-44
+MERGED from [io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:6:5-44
+MERGED from [androidx.browser:browser:1.8.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9c3fa7540b8176010c457ba2a34ec031\transformed\browser-1.8.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.browser:browser:1.8.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9c3fa7540b8176010c457ba2a34ec031\transformed\browser-1.8.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:20:5-44
+MERGED from [io.github.jan-tennert.supabase:supabase-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2209886f1b76bade9f2a5574a0446bbb\transformed\supabase-kt-debug\AndroidManifest.xml:5:5-44
+MERGED from [io.github.jan-tennert.supabase:supabase-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2209886f1b76bade9f2a5574a0446bbb\transformed\supabase-kt-debug\AndroidManifest.xml:5:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\49973e53a061708acadf8e99a40a6850\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\49973e53a061708acadf8e99a40a6850\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\0d7f67416a83f8e2b4d04c5540f427e6\transformed\lifecycle-viewmodel-2.8.3\AndroidManifest.xml:4:5-43
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\0d7f67416a83f8e2b4d04c5540f427e6\transformed\lifecycle-viewmodel-2.8.3\AndroidManifest.xml:4:5-43
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\656f956de78896ab0a842e67605d8b2f\transformed\lifecycle-viewmodel-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\656f956de78896ab0a842e67605d8b2f\transformed\lifecycle-viewmodel-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\664343a61890d89822d7a559a7fdafff\transformed\lifecycle-runtime-ktx-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\664343a61890d89822d7a559a7fdafff\transformed\lifecycle-runtime-ktx-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3a400c6d4d1021ead1686b150737e17d\transformed\lifecycle-livedata-core-ktx-2.8.3\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3a400c6d4d1021ead1686b150737e17d\transformed\lifecycle-livedata-core-ktx-2.8.3\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5d6933c6072c6d38f931c282d0ca08ad\transformed\lifecycle-runtime-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5d6933c6072c6d38f931c282d0ca08ad\transformed\lifecycle-runtime-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9dc17971487d7ce79efbbfbee6284e57\transformed\lifecycle-livedata-core-2.8.3\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\9dc17971487d7ce79efbbfbee6284e57\transformed\lifecycle-livedata-core-2.8.3\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ca83dc8cfab3467ca3dd1eaa0de6bb28\transformed\lifecycle-livedata-2.8.3\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ca83dc8cfab3467ca3dd1eaa0de6bb28\transformed\lifecycle-livedata-2.8.3\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\7afe08f954276b03ab4004398ea25160\transformed\lifecycle-viewmodel-savedstate-2.8.3\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\7afe08f954276b03ab4004398ea25160\transformed\lifecycle-viewmodel-savedstate-2.8.3\AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\906c8573cafab0c508e85e5a7894fc4e\transformed\core-ktx-1.12.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\906c8573cafab0c508e85e5a7894fc4e\transformed\core-ktx-1.12.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2c975df042b00b2eee2fc0800aac1387\transformed\room-ktx-2.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\2c975df042b00b2eee2fc0800aac1387\transformed\room-ktx-2.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\38536b814bb0c460e8dd3a20f35da42a\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\38536b814bb0c460e8dd3a20f35da42a\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c8f8f437f8a73a6e19190b7b77ef162f\transformed\sqlite-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c8f8f437f8a73a6e19190b7b77ef162f\transformed\sqlite-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\277304c70cfe1cffce61f46d402dd9b6\transformed\annotation-experimental-1.4.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\277304c70cfe1cffce61f46d402dd9b6\transformed\annotation-experimental-1.4.0\AndroidManifest.xml:5:5-44
+MERGED from [com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:21:5-44
+MERGED from [com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:21:5-44
+MERGED from [com.russhwolf:multiplatform-settings-coroutines-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b6ff9bca7c8f8141b81a095953c0a13\transformed\multiplatform-settings-coroutines-debug\AndroidManifest.xml:5:5-44
+MERGED from [com.russhwolf:multiplatform-settings-coroutines-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b6ff9bca7c8f8141b81a095953c0a13\transformed\multiplatform-settings-coroutines-debug\AndroidManifest.xml:5:5-44
+MERGED from [com.soywiz.korlibs.krypto:krypto-android:4.0.10] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\79f4f8cf363673eff7bf482ad05dcbbd\transformed\krypto-debug\AndroidManifest.xml:5:5-7:41
+MERGED from [com.soywiz.korlibs.krypto:krypto-android:4.0.10] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\79f4f8cf363673eff7bf482ad05dcbbd\transformed\krypto-debug\AndroidManifest.xml:5:5-7:41
+MERGED from [co.touchlab:kermit-android-debug:2.0.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f402470e9e8baddd57aae7efca083ca5\transformed\kermit-debug\AndroidManifest.xml:5:5-44
+MERGED from [co.touchlab:kermit-android-debug:2.0.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f402470e9e8baddd57aae7efca083ca5\transformed\kermit-debug\AndroidManifest.xml:5:5-44
+MERGED from [com.russhwolf:multiplatform-settings-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\814dbed405d760e8404213de7c0d0867\transformed\multiplatform-settings-debug\AndroidManifest.xml:5:5-44
+MERGED from [com.russhwolf:multiplatform-settings-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\814dbed405d760e8404213de7c0d0867\transformed\multiplatform-settings-debug\AndroidManifest.xml:5:5-44
+MERGED from [co.touchlab:kermit-core-android-debug:2.0.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\32ea3b3900aebf4743b63d2066839af8\transformed\kermit-core-debug\AndroidManifest.xml:5:5-44
+MERGED from [co.touchlab:kermit-core-android-debug:2.0.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\32ea3b3900aebf4743b63d2066839af8\transformed\kermit-core-debug\AndroidManifest.xml:5:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\46a092e3d216cd5d05233c257bc7cee2\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\46a092e3d216cd5d05233c257bc7cee2\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\dac48c23f87a4a3d952714261a82d97c\transformed\cardview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\dac48c23f87a4a3d952714261a82d97c\transformed\cardview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae0e4725438bb6f51828449777dd348f\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae0e4725438bb6f51828449777dd348f\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\af83527f12601b1150a90866e6d1d23c\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\af83527f12601b1150a90866e6d1d23c\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c70f7376378a761b6c46a92ffe93ed67\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c70f7376378a761b6c46a92ffe93ed67\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c2963f43542d485d99e76fe400e08953\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c2963f43542d485d99e76fe400e08953\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6af6f0a317b16bc17e1f80ef022477cb\transformed\tracing-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6af6f0a317b16bc17e1f80ef022477cb\transformed\tracing-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5e7612df74e5f248491f7d400669d0f6\transformed\documentfile-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\5e7612df74e5f248491f7d400669d0f6\transformed\documentfile-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c753f71ea9d549e7f57683ffcafb4f33\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c753f71ea9d549e7f57683ffcafb4f33\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f760063e72af8fef38355c14edf98601\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f760063e72af8fef38355c14edf98601\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
 	android:targetSdkVersion
 		INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml
 	android:minSdkVersion
 		INJECTED from C:\Users\CS14 LATOTO\JOY POIPET\PK MOBILE\app\src\main\AndroidManifest.xml
 provider#androidx.startup.InitializationProvider
-ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
-MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:24:9-32:20
-MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:24:9-32:20
-MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:24:9-32:20
-MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:24:9-32:20
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ab84af5e083aaf8a5ef20b8554e56a28\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
-MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ab84af5e083aaf8a5ef20b8554e56a28\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
+ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
+MERGED from [io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:9:9-17:20
+MERGED from [io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:9:9-17:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:24:9-32:20
+MERGED from [com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:24:9-32:20
+MERGED from [com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c2963f43542d485d99e76fe400e08953\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c2963f43542d485d99e76fe400e08953\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
 	tools:node
-		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:28:13-31
+		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:28:13-31
 	android:authorities
-		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:26:13-68
+		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:26:13-68
 	android:exported
-		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:27:13-37
+		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:27:13-37
 	android:name
-		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:25:13-67
+		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:25:13-67
 meta-data#androidx.emoji2.text.EmojiCompatInitializer
-ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
+ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
 	android:value
-		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:31:17-49
+		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:31:17-49
 	android:name
-		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f24dc0eec0902d66372288ffce35eeb8\transformed\emoji2-1.2.0\AndroidManifest.xml:30:17-75
+		ADDED from [androidx.emoji2:emoji2:1.2.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\323a0121a6e5e3c59c1c4d67e150ea20\transformed\emoji2-1.2.0\AndroidManifest.xml:30:17-75
+meta-data#io.github.jan.supabase.gotrue.SupabaseInitializer
+ADDED from [io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:14:13-16:52
+	android:value
+		ADDED from [io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:16:17-49
+	android:name
+		ADDED from [io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\17f9a35a0e7afdf585d057e8a7baf5c3\transformed\gotrue-kt-debug\AndroidManifest.xml:15:17-81
 permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
-ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
+ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
 	android:protectionLevel
-		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
+		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
 	android:name
-		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
+		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
 permission#com.pkmobile.keyboard.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
-ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
+ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
 	android:protectionLevel
-		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
+		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
 	android:name
-		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
+		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
 uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
-ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
+ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
 	android:name
-		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
+		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
 uses-permission#com.pkmobile.keyboard.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
-ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
+ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
 	android:name
-		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b5cc757c54703e80202133351990f55\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
+		ADDED from [androidx.core:core:1.12.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\c1d4f0a53b851505597be038a0e3d114\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
 meta-data#androidx.lifecycle.ProcessLifecycleInitializer
-ADDED from [androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:29:13-31:52
+ADDED from [androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:29:13-31:52
 	android:value
-		ADDED from [androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:31:17-49
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:31:17-49
 	android:name
-		ADDED from [androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3ac384ac556f61d3875bb13a4902c186\transformed\lifecycle-process-2.7.0\AndroidManifest.xml:30:17-78
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\4b59b59fa0f355d563b2902e29e55616\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:30:17-78
 service#androidx.room.MultiInstanceInvalidationService
-ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
+ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
 	android:exported
-		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
 	tools:ignore
-		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:28:13-60
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:28:13-60
 	android:directBootAware
-		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
 	android:name
-		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\3d90c11e816321da3df99f8852fa253e\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
-meta-data#androidx.profileinstaller.ProfileInstallerInitializer
-ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:29:13-31:52
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\1a509920cfb8a200e64d0be6d5e18b4d\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
+meta-data#com.russhwolf.settings.SettingsInitializer
+ADDED from [com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:29:13-31:52
 	android:value
-		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:31:17-49
+		ADDED from [com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:31:17-49
 	android:name
-		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:30:17-85
+		ADDED from [com.russhwolf:multiplatform-settings-no-arg-android-debug:1.1.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\6b9962fa5a04bcff1b0d0510b380d455\transformed\multiplatform-settings-no-arg-debug\AndroidManifest.xml:30:17-74
+meta-data#androidx.profileinstaller.ProfileInstallerInitializer
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
 receiver#androidx.profileinstaller.ProfileInstallReceiver
-ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:34:9-52:20
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
 	android:enabled
-		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:37:13-35
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
 	android:exported
-		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:38:13-36
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
 	android:permission
-		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:39:13-57
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
 	android:directBootAware
-		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:36:13-44
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
 	android:name
-		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:35:13-76
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
 intent-filter#action:name:androidx.profileinstaller.action.INSTALL_PROFILE
-ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:40:13-42:29
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
 action#androidx.profileinstaller.action.INSTALL_PROFILE
-ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:41:17-91
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
 	android:name
-		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:41:25-88
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
 intent-filter#action:name:androidx.profileinstaller.action.SKIP_FILE
-ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:43:13-45:29
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
 action#androidx.profileinstaller.action.SKIP_FILE
-ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:44:17-85
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
 	android:name
-		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:44:25-82
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
 intent-filter#action:name:androidx.profileinstaller.action.SAVE_PROFILE
-ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:46:13-48:29
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
 action#androidx.profileinstaller.action.SAVE_PROFILE
-ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:47:17-88
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
 	android:name
-		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:47:25-85
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
 intent-filter#action:name:androidx.profileinstaller.action.BENCHMARK_OPERATION
-ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:49:13-51:29
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
 action#androidx.profileinstaller.action.BENCHMARK_OPERATION
-ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:50:17-95
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
 	android:name
-		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\ae1d7e5508c3eb5cdae1e1cdbeb5ac41\transformed\profileinstaller-1.3.0\AndroidManifest.xml:50:25-92
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CS14 LATOTO\.gradle\caches\transforms-3\f29306e501d958ab73b9bb200badd1d0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92

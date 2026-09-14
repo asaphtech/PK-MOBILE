@@ -9,10 +9,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
+data class CachedShortcut(
+    val expansion: String,
+    val expansionMode: String = "INSTANT"
+)
+
 /**
  * Engine logika Auto-Text / Shortcut Expansion (seperti pada Perfect Keyboard).
  * Mengelola pelacakan kata kunci trigger (termasuk karakter awalan /, //, ., @, _, -, #, $)
- * dan melakukan ekspansi teks otomatis secara case-insensitive saat tombol SPASI atau ENTER ditekan.
+ * dan melakukan ekspansi teks otomatis secara case-insensitive:
+ * - Mode INSTANT: langsung diekspansi begitu kata kunci cocok.
+ * - Mode SPACE: ditahan hingga tombol SPASI atau ENTER ditekan.
  */
 class AutoTextEngine(
     private val repository: ShortcutRepository,
@@ -21,21 +28,24 @@ class AutoTextEngine(
     // Buffer penyimpan kata yang sedang diketik
     private val currentWordBuffer = StringBuilder()
 
-    // Cache in-memory untuk pencarian instan O(1) case-insensitive (lowercase key -> expansion)
-    private val shortcutCache = ConcurrentHashMap<String, String>()
+    // Cache in-memory untuk pencarian instan O(1) case-insensitive (lowercase key -> CachedShortcut)
+    private val shortcutCache = ConcurrentHashMap<String, CachedShortcut>()
 
     // Listener untuk memperbarui tampilan suggestion bar di UI keyboard
     var onCandidateUpdateListener: ((shortcut: String?, expansion: String?) -> Unit)? = null
+
+    // Mode Ekspansi Auto-Text Global (fallback): false = Manual (Spasi/Enter), true = Otomatis/Instan
+    var isInstantMode: Boolean = false
 
     init {
         // Sinkronisasi data Room Database ke cache memori secara reaktif
         scope.launch(Dispatchers.IO) {
             repository.allShortcutsFlow.collectLatest { list ->
-                val newCache = HashMap<String, String>()
+                val newCache = HashMap<String, CachedShortcut>()
                 for (item in list) {
                     val key = item.shortcut.trim().lowercase()
                     if (key.isNotEmpty()) {
-                        newCache[key] = item.expansion
+                        newCache[key] = CachedShortcut(item.expansion, item.expansionMode)
                     }
                 }
                 shortcutCache.clear()
@@ -57,7 +67,9 @@ class AutoTextEngine(
         return c.isLetterOrDigit() ||
                 c == '/' || c == '\\' || c == '.' || c == '@' ||
                 c == '_' || c == '-' || c == '#' || c == '$' ||
-                c == '~' || c == '!' || c == '?' || c == ':' || c == ';'
+                c == '~' || c == '!' || c == '?' || c == ':' || c == ';' ||
+                c == '[' || c == ']' || c == '<' || c == '>' || c == '{' || c == '}' ||
+                c == '=' || c == '|' || c == '^' || c == '`'
     }
 
     /**
@@ -71,6 +83,23 @@ class AutoTextEngine(
             currentWordBuffer.setLength(0)
         }
         checkCandidateMatch(ic)
+
+        // Mode Ekspansi Per-Shortcut:
+        // Jika shortcut.expansionMode == "INSTANT" (atau global isInstantMode true),
+        // lakukan ekspansi teks secara langsung tanpa menunggu spasi/enter.
+        if (ic != null) {
+            val matchedWord = findMatchingWord(ic)
+            val cached = if (matchedWord != null) shortcutCache[matchedWord.lowercase()] else null
+            if (matchedWord != null && cached != null) {
+                val shouldInstantExpand = cached.expansionMode.equals("INSTANT", ignoreCase = true) || isInstantMode
+                if (shouldInstantExpand) {
+                    val cleanExpansion = formatExpansion(cached.expansion)
+                    ic.deleteSurroundingText(matchedWord.length, 0)
+                    ic.commitText(cleanExpansion, 1)
+                    resetBuffer()
+                }
+            }
+        }
     }
 
     /**
@@ -116,17 +145,29 @@ class AutoTextEngine(
      * maupun dari kata sebelum kursor di InputConnection.
      */
     private fun findMatchingWord(ic: InputConnection?): String? {
-        // 1. Cek dari buffer internal
+        // 1. Cek dari buffer internal (mendukung kata berawalan slash ganda //, tripel ///, angka //1)
         val bufferWord = currentWordBuffer.toString().trim()
-        if (bufferWord.isNotEmpty() && shortcutCache.containsKey(bufferWord.lowercase())) {
-            return bufferWord
+        if (bufferWord.isNotEmpty()) {
+            val lower = bufferWord.lowercase()
+            if (shortcutCache.containsKey(lower)) {
+                return bufferWord
+            }
         }
 
         // 2. Cek langsung dari teks sebelum kursor di InputConnection
         if (ic != null) {
             val icWord = getLastWordFromInputConnection(ic).trim()
-            if (icWord.isNotEmpty() && shortcutCache.containsKey(icWord.lowercase())) {
-                return icWord
+            if (icWord.isNotEmpty()) {
+                val lower = icWord.lowercase()
+                if (shortcutCache.containsKey(lower)) {
+                    return icWord
+                }
+                // 3. Fallback pencocokan fleksibel untuk trigger ganda/tripel jika buffer kursor memuat slash berlebih
+                for (key in shortcutCache.keys) {
+                    if (lower.endsWith(key) && (lower.length == key.length || lower[lower.length - key.length - 1] == '/')) {
+                        return icWord.substring(icWord.length - key.length)
+                    }
+                }
             }
         }
 
@@ -139,8 +180,8 @@ class AutoTextEngine(
     fun checkCandidateMatch(ic: InputConnection?) {
         val word = findMatchingWord(ic)
         if (word != null) {
-            val expansion = shortcutCache[word.lowercase()]
-            onCandidateUpdateListener?.invoke(word, formatExpansion(expansion ?: ""))
+            val cached = shortcutCache[word.lowercase()]
+            onCandidateUpdateListener?.invoke(word, formatExpansion(cached?.expansion ?: ""))
         } else {
             val currentWord = currentWordBuffer.toString()
             if (currentWord.isNotEmpty()) {
@@ -162,10 +203,10 @@ class AutoTextEngine(
         if (inputConnection == null) return false
 
         val matchedWord = findMatchingWord(inputConnection)
-        val expansion = if (matchedWord != null) shortcutCache[matchedWord.lowercase()] else null
+        val cached = if (matchedWord != null) shortcutCache[matchedWord.lowercase()] else null
 
-        return if (matchedWord != null && expansion != null) {
-            val cleanExpansion = formatExpansion(expansion)
+        return if (matchedWord != null && cached != null) {
+            val cleanExpansion = formatExpansion(cached.expansion)
             // Hapus sejumlah karakter kata kunci trigger yang tertulis di layar
             inputConnection.deleteSurroundingText(matchedWord.length, 0)
             // Masukkan teks ekspansi diikuti spasi
@@ -191,10 +232,10 @@ class AutoTextEngine(
         if (inputConnection == null) return false
 
         val matchedWord = findMatchingWord(inputConnection)
-        val expansion = if (matchedWord != null) shortcutCache[matchedWord.lowercase()] else null
+        val cached = if (matchedWord != null) shortcutCache[matchedWord.lowercase()] else null
 
-        return if (matchedWord != null && expansion != null) {
-            val cleanExpansion = formatExpansion(expansion)
+        return if (matchedWord != null && cached != null) {
+            val cleanExpansion = formatExpansion(cached.expansion)
             // Hapus sejumlah karakter kata kunci trigger
             inputConnection.deleteSurroundingText(matchedWord.length, 0)
             // Masukkan teks ekspansi
@@ -214,10 +255,10 @@ class AutoTextEngine(
         if (inputConnection == null) return false
 
         val matchedWord = findMatchingWord(inputConnection)
-        val expansion = if (matchedWord != null) shortcutCache[matchedWord.lowercase()] else null
+        val cached = if (matchedWord != null) shortcutCache[matchedWord.lowercase()] else null
 
-        return if (matchedWord != null && expansion != null) {
-            val cleanExpansion = formatExpansion(expansion)
+        return if (matchedWord != null && cached != null) {
+            val cleanExpansion = formatExpansion(cached.expansion)
             inputConnection.deleteSurroundingText(matchedWord.length, 0)
             inputConnection.commitText("$cleanExpansion ", 1)
             resetBuffer()
@@ -240,6 +281,38 @@ class AutoTextEngine(
             .replace("\r", "\n")
             .replace("\\n", "\n")
             .replace("\\t", "\t")
+    }
+
+    /**
+     * Memproses penekanan tombol khusus Fn (misal: "[F5]", "[ESC]", "[DEL]", dll).
+     * Mengecek kecocokan shortcut secara case-insensitive baik dalam format berbingkai "[F5]"
+     * maupun tanpa bingkai "F5". Jika cocok, langsung diekspansi ke kolom teks target.
+     * Jika tidak cocok, commit string trigger agar teks tetap terinput tanpa memicu fungsi native Android.
+     *
+     * @return true jika shortcut berhasil diekspansi, false jika commit teks biasa.
+     */
+    fun processKeyInput(triggerKey: String, inputConnection: InputConnection?): Boolean {
+        if (inputConnection == null) return false
+
+        val cleanKey = triggerKey.trim()
+        val lowerKey = cleanKey.lowercase()
+        val rawKeyWithoutBrackets = lowerKey.removeSurrounding("[", "]")
+
+        val cached = shortcutCache[lowerKey]
+            ?: shortcutCache[rawKeyWithoutBrackets]
+            ?: shortcutCache["[$rawKeyWithoutBrackets]"]
+
+        return if (cached != null) {
+            val cleanExpansion = formatExpansion(cached.expansion)
+            inputConnection.commitText(cleanExpansion, 1)
+            resetBuffer()
+            true
+        } else {
+            // Commit teks trigger langsung tanpa memicu fungsi native sistem Android
+            inputConnection.commitText(cleanKey, 1)
+            resetBuffer()
+            false
+        }
     }
 
     /**

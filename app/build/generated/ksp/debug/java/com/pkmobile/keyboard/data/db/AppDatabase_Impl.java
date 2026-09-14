@@ -32,13 +32,13 @@ public final class AppDatabase_Impl extends AppDatabase {
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(1) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(2) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS `shortcuts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `shortcut` TEXT NOT NULL, `expansion` TEXT NOT NULL, `created_at` INTEGER NOT NULL)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `shortcuts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `shortcut` TEXT NOT NULL, `expansion` TEXT NOT NULL, `expansion_mode` TEXT NOT NULL DEFAULT 'INSTANT', `created_at` INTEGER NOT NULL)");
         db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_shortcuts_shortcut` ON `shortcuts` (`shortcut`)");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e4b6f482adb2fc0139c5ea659deb1e4b')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b20a5edefd6a9b5346c1666e5a671a6c')");
       }
 
       @Override
@@ -87,10 +87,11 @@ public final class AppDatabase_Impl extends AppDatabase {
       @NonNull
       public RoomOpenHelper.ValidationResult onValidateSchema(
           @NonNull final SupportSQLiteDatabase db) {
-        final HashMap<String, TableInfo.Column> _columnsShortcuts = new HashMap<String, TableInfo.Column>(4);
+        final HashMap<String, TableInfo.Column> _columnsShortcuts = new HashMap<String, TableInfo.Column>(5);
         _columnsShortcuts.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsShortcuts.put("shortcut", new TableInfo.Column("shortcut", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsShortcuts.put("expansion", new TableInfo.Column("expansion", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsShortcuts.put("expansion_mode", new TableInfo.Column("expansion_mode", "TEXT", true, 0, "'INSTANT'", TableInfo.CREATED_FROM_ENTITY));
         _columnsShortcuts.put("created_at", new TableInfo.Column("created_at", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysShortcuts = new HashSet<TableInfo.ForeignKey>(0);
         final HashSet<TableInfo.Index> _indicesShortcuts = new HashSet<TableInfo.Index>(1);
@@ -104,7 +105,7 @@ public final class AppDatabase_Impl extends AppDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "e4b6f482adb2fc0139c5ea659deb1e4b", "e6fc70f9d085a6f57debd1375aea4358");
+    }, "b20a5edefd6a9b5346c1666e5a671a6c", "6d87e24da899518adc12908da8c2c00c");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;

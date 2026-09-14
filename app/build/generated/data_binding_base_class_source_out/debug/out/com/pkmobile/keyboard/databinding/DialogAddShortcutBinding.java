@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -25,11 +27,25 @@ public final class DialogAddShortcutBinding implements ViewBinding {
   @NonNull
   public final TextInputEditText etInputShortcut;
 
+  @NonNull
+  public final RadioButton rbAddModeInstant;
+
+  @NonNull
+  public final RadioButton rbAddModeSpace;
+
+  @NonNull
+  public final RadioGroup rgAddExpansionMode;
+
   private DialogAddShortcutBinding(@NonNull LinearLayout rootView,
-      @NonNull TextInputEditText etInputExpansion, @NonNull TextInputEditText etInputShortcut) {
+      @NonNull TextInputEditText etInputExpansion, @NonNull TextInputEditText etInputShortcut,
+      @NonNull RadioButton rbAddModeInstant, @NonNull RadioButton rbAddModeSpace,
+      @NonNull RadioGroup rgAddExpansionMode) {
     this.rootView = rootView;
     this.etInputExpansion = etInputExpansion;
     this.etInputShortcut = etInputShortcut;
+    this.rbAddModeInstant = rbAddModeInstant;
+    this.rbAddModeSpace = rbAddModeSpace;
+    this.rgAddExpansionMode = rgAddExpansionMode;
   }
 
   @Override
@@ -71,8 +87,26 @@ public final class DialogAddShortcutBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.rb_add_mode_instant;
+      RadioButton rbAddModeInstant = ViewBindings.findChildViewById(rootView, id);
+      if (rbAddModeInstant == null) {
+        break missingId;
+      }
+
+      id = R.id.rb_add_mode_space;
+      RadioButton rbAddModeSpace = ViewBindings.findChildViewById(rootView, id);
+      if (rbAddModeSpace == null) {
+        break missingId;
+      }
+
+      id = R.id.rg_add_expansion_mode;
+      RadioGroup rgAddExpansionMode = ViewBindings.findChildViewById(rootView, id);
+      if (rgAddExpansionMode == null) {
+        break missingId;
+      }
+
       return new DialogAddShortcutBinding((LinearLayout) rootView, etInputExpansion,
-          etInputShortcut);
+          etInputShortcut, rbAddModeInstant, rbAddModeSpace, rgAddExpansionMode);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

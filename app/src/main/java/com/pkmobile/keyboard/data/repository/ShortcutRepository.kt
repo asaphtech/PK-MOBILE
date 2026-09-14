@@ -16,13 +16,21 @@ class ShortcutRepository(private val shortcutDao: ShortcutDao) {
         return shortcutDao.findByShortcut(shortcut.trim().lowercase())?.expansion
     }
 
-    suspend fun insertShortcut(shortcut: String, expansion: String): Long {
+    suspend fun insertShortcut(shortcut: String, expansion: String, expansionMode: String = "INSTANT"): Long {
         val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(shortcut).lowercase()
         val entity = ShortcutEntity(
             shortcut = cleanKey,
-            expansion = expansion.trim()
+            expansion = expansion.trim(),
+            expansionMode = expansionMode
         )
         return shortcutDao.insertOrUpdate(entity)
+    }
+
+    suspend fun insertOrUpdate(entity: ShortcutEntity): Long {
+        val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(entity.shortcut).lowercase()
+        val cleanExp = entity.expansion.trim()
+        val cleanEntity = entity.copy(shortcut = cleanKey, expansion = cleanExp)
+        return shortcutDao.insertOrUpdate(cleanEntity)
     }
 
     suspend fun update(shortcut: ShortcutEntity): Int {
@@ -37,7 +45,8 @@ class ShortcutRepository(private val shortcutDao: ShortcutDao) {
 
         val updated = shortcut.copy(
             shortcut = cleanKey,
-            expansion = cleanExp
+            expansion = cleanExp,
+            expansionMode = shortcut.expansionMode
         )
         val rows = shortcutDao.update(updated)
         if (rows == 0) {
@@ -54,7 +63,8 @@ class ShortcutRepository(private val shortcutDao: ShortcutDao) {
                 if (cleanKey.isNotBlank() && cleanExp.isNotBlank()) {
                     ShortcutEntity(
                         shortcut = cleanKey,
-                        expansion = cleanExp
+                        expansion = cleanExp,
+                        expansionMode = entity.expansionMode
                     )
                 } else null
             }
@@ -62,7 +72,7 @@ class ShortcutRepository(private val shortcutDao: ShortcutDao) {
         }
     }
 
-    suspend fun importShortcuts(pairs: List<Pair<String, String>>, clearExisting: Boolean = false): Int {
+    suspend fun importShortcuts(pairs: List<Pair<String, String>>, clearExisting: Boolean = false, defaultMode: String = "INSTANT"): Int {
         if (clearExisting) {
             shortcutDao.deleteAll()
         }
@@ -73,7 +83,8 @@ class ShortcutRepository(private val shortcutDao: ShortcutDao) {
             if (cleanKey.isNotBlank() && cleanExp.isNotBlank()) {
                 ShortcutEntity(
                     shortcut = cleanKey,
-                    expansion = cleanExp
+                    expansion = cleanExp,
+                    expansionMode = defaultMode
                 )
             } else null
         }
@@ -93,7 +104,7 @@ class ShortcutRepository(private val shortcutDao: ShortcutDao) {
             if (cleanKey != item.shortcut) {
                 shortcutDao.delete(item)
                 if (cleanKey.isNotBlank()) {
-                    shortcutDao.insertOrUpdate(ShortcutEntity(shortcut = cleanKey, expansion = cleanExp))
+                    shortcutDao.insertOrUpdate(ShortcutEntity(shortcut = cleanKey, expansion = cleanExp, expansionMode = item.expansionMode))
                     updatedCount++
                 }
             }

@@ -30,15 +30,19 @@ public final class ItemShortcutBinding implements ViewBinding {
   public final TextView tvExpansion;
 
   @NonNull
+  public final TextView tvModeBadge;
+
+  @NonNull
   public final TextView tvShortcutBadge;
 
   private ItemShortcutBinding(@NonNull CardView rootView, @NonNull ImageButton btnDelete,
-      @NonNull ImageButton btnEdit, @NonNull TextView tvExpansion,
+      @NonNull ImageButton btnEdit, @NonNull TextView tvExpansion, @NonNull TextView tvModeBadge,
       @NonNull TextView tvShortcutBadge) {
     this.rootView = rootView;
     this.btnDelete = btnDelete;
     this.btnEdit = btnEdit;
     this.tvExpansion = tvExpansion;
+    this.tvModeBadge = tvModeBadge;
     this.tvShortcutBadge = tvShortcutBadge;
   }
 
@@ -87,6 +91,12 @@ public final class ItemShortcutBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tv_mode_badge;
+      TextView tvModeBadge = ViewBindings.findChildViewById(rootView, id);
+      if (tvModeBadge == null) {
+        break missingId;
+      }
+
       id = R.id.tv_shortcut_badge;
       TextView tvShortcutBadge = ViewBindings.findChildViewById(rootView, id);
       if (tvShortcutBadge == null) {
@@ -94,7 +104,7 @@ public final class ItemShortcutBinding implements ViewBinding {
       }
 
       return new ItemShortcutBinding((CardView) rootView, btnDelete, btnEdit, tvExpansion,
-          tvShortcutBadge);
+          tvModeBadge, tvShortcutBadge);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

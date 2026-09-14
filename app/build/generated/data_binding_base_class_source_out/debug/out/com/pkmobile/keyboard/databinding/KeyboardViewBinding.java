@@ -28,6 +28,99 @@ public final class KeyboardViewBinding implements ViewBinding {
   public final LinearLayout candidateBar;
 
   @NonNull
+  public final Button fnAlt;
+
+  @NonNull
+  public final Button fnBreak;
+
+  @NonNull
+  public final Button fnCaps;
+
+  @NonNull
+  public final Button fnCtrl;
+
+  @NonNull
+  public final Button fnDel;
+
+  @NonNull
+  public final Button fnEnd;
+
+  @NonNull
+  public final Button fnEnter;
+
+  @NonNull
+  public final Button fnEsc;
+
+  @NonNull
+  public final Button fnF1;
+
+  @NonNull
+  public final Button fnF10;
+
+  @NonNull
+  public final Button fnF11;
+
+  @NonNull
+  public final Button fnF12;
+
+  @NonNull
+  public final Button fnF2;
+
+  @NonNull
+  public final Button fnF3;
+
+  @NonNull
+  public final Button fnF4;
+
+  @NonNull
+  public final Button fnF5;
+
+  @NonNull
+  public final Button fnF6;
+
+  @NonNull
+  public final Button fnF7;
+
+  @NonNull
+  public final Button fnF8;
+
+  @NonNull
+  public final Button fnF9;
+
+  @NonNull
+  public final Button fnHome;
+
+  @NonNull
+  public final Button fnIns;
+
+  @NonNull
+  public final ImageButton fnKeyBackspace;
+
+  @NonNull
+  public final Button fnNewLine;
+
+  @NonNull
+  public final Button fnPgdn;
+
+  @NonNull
+  public final Button fnPgup;
+
+  @NonNull
+  public final Button fnPrtscn;
+
+  @NonNull
+  public final Button fnSpace;
+
+  @NonNull
+  public final Button fnSwitchAbc;
+
+  @NonNull
+  public final Button fnSwitchSym;
+
+  @NonNull
+  public final Button fnTab;
+
+  @NonNull
   public final Button keyA;
 
   @NonNull
@@ -49,10 +142,13 @@ public final class KeyboardViewBinding implements ViewBinding {
   public final Button keyE;
 
   @NonNull
-  public final ImageButton keyEnter;
+  public final Button keyEnter;
 
   @NonNull
   public final Button keyF;
+
+  @NonNull
+  public final Button keyFnSwitch;
 
   @NonNull
   public final Button keyG;
@@ -139,7 +235,13 @@ public final class KeyboardViewBinding implements ViewBinding {
   public final LinearLayout layoutAlpha;
 
   @NonNull
+  public final LinearLayout layoutFn;
+
+  @NonNull
   public final LinearLayout layoutSymbol;
+
+  @NonNull
+  public final LinearLayout layoutSymbol2;
 
   @NonNull
   public final Button sym0;
@@ -149,6 +251,114 @@ public final class KeyboardViewBinding implements ViewBinding {
 
   @NonNull
   public final Button sym2;
+
+  @NonNull
+  public final Button sym2Backslash;
+
+  @NonNull
+  public final Button sym2Backtick;
+
+  @NonNull
+  public final Button sym2BraceClose;
+
+  @NonNull
+  public final Button sym2BraceOpen;
+
+  @NonNull
+  public final Button sym2BracketClose;
+
+  @NonNull
+  public final Button sym2BracketOpen;
+
+  @NonNull
+  public final Button sym2Bullet;
+
+  @NonNull
+  public final Button sym2Caret;
+
+  @NonNull
+  public final Button sym2Cent;
+
+  @NonNull
+  public final Button sym2Comma;
+
+  @NonNull
+  public final Button sym2Copy;
+
+  @NonNull
+  public final Button sym2Degree;
+
+  @NonNull
+  public final Button sym2Ellipsis;
+
+  @NonNull
+  public final Button sym2Enter;
+
+  @NonNull
+  public final Button sym2Equal;
+
+  @NonNull
+  public final Button sym2Euro;
+
+  @NonNull
+  public final Button sym2Greater;
+
+  @NonNull
+  public final Button sym2GuillemetLeft;
+
+  @NonNull
+  public final Button sym2GuillemetRight;
+
+  @NonNull
+  public final ImageButton sym2KeyBackspace;
+
+  @NonNull
+  public final Button sym2Less;
+
+  @NonNull
+  public final Button sym2NewLine;
+
+  @NonNull
+  public final Button sym2Notequal;
+
+  @NonNull
+  public final Button sym2PageSwitch;
+
+  @NonNull
+  public final Button sym2Period;
+
+  @NonNull
+  public final Button sym2Pipe;
+
+  @NonNull
+  public final Button sym2Plusminus;
+
+  @NonNull
+  public final Button sym2Pound;
+
+  @NonNull
+  public final Button sym2Reg;
+
+  @NonNull
+  public final Button sym2Section;
+
+  @NonNull
+  public final Button sym2Space;
+
+  @NonNull
+  public final Button sym2SwitchAbc;
+
+  @NonNull
+  public final Button sym2SwitchFn;
+
+  @NonNull
+  public final Button sym2Tilde;
+
+  @NonNull
+  public final Button sym2Underscore;
+
+  @NonNull
+  public final Button sym2Yen;
 
   @NonNull
   public final Button sym3;
@@ -187,7 +397,7 @@ public final class KeyboardViewBinding implements ViewBinding {
   public final Button symDollar;
 
   @NonNull
-  public final ImageButton symEnter;
+  public final Button symEnter;
 
   @NonNull
   public final Button symExclamation;
@@ -203,6 +413,9 @@ public final class KeyboardViewBinding implements ViewBinding {
 
   @NonNull
   public final Button symNewLine;
+
+  @NonNull
+  public final Button symPageSwitch;
 
   @NonNull
   public final Button symParenClose;
@@ -244,6 +457,9 @@ public final class KeyboardViewBinding implements ViewBinding {
   public final Button symSwitchAbc;
 
   @NonNull
+  public final Button symSwitchFn;
+
+  @NonNull
   public final TextView tvCandidatePrefix;
 
   @NonNull
@@ -251,32 +467,87 @@ public final class KeyboardViewBinding implements ViewBinding {
 
   private KeyboardViewBinding(@NonNull LinearLayout rootView,
       @NonNull LinearLayout btnCandidateChip, @NonNull LinearLayout candidateBar,
+      @NonNull Button fnAlt, @NonNull Button fnBreak, @NonNull Button fnCaps,
+      @NonNull Button fnCtrl, @NonNull Button fnDel, @NonNull Button fnEnd, @NonNull Button fnEnter,
+      @NonNull Button fnEsc, @NonNull Button fnF1, @NonNull Button fnF10, @NonNull Button fnF11,
+      @NonNull Button fnF12, @NonNull Button fnF2, @NonNull Button fnF3, @NonNull Button fnF4,
+      @NonNull Button fnF5, @NonNull Button fnF6, @NonNull Button fnF7, @NonNull Button fnF8,
+      @NonNull Button fnF9, @NonNull Button fnHome, @NonNull Button fnIns,
+      @NonNull ImageButton fnKeyBackspace, @NonNull Button fnNewLine, @NonNull Button fnPgdn,
+      @NonNull Button fnPgup, @NonNull Button fnPrtscn, @NonNull Button fnSpace,
+      @NonNull Button fnSwitchAbc, @NonNull Button fnSwitchSym, @NonNull Button fnTab,
       @NonNull Button keyA, @NonNull Button keyB, @NonNull ImageButton keyBackspace,
       @NonNull Button keyC, @NonNull Button keyComma, @NonNull Button keyD, @NonNull Button keyE,
-      @NonNull ImageButton keyEnter, @NonNull Button keyF, @NonNull Button keyG,
-      @NonNull Button keyH, @NonNull Button keyI, @NonNull Button keyJ, @NonNull Button keyK,
-      @NonNull Button keyL, @NonNull Button keyM, @NonNull Button keyN, @NonNull Button keyNewLine,
-      @NonNull Button keyO, @NonNull Button keyP, @NonNull Button keyPeriod, @NonNull Button keyQ,
-      @NonNull Button keyR, @NonNull Button keyS, @NonNull ImageButton keyShift,
-      @NonNull Button keySlash, @NonNull Button keySpace, @NonNull Button keySymbolSwitch,
-      @NonNull Button keyT, @NonNull Button keyU, @NonNull Button keyV, @NonNull Button keyW,
-      @NonNull Button keyX, @NonNull Button keyY, @NonNull Button keyZ,
-      @NonNull LinearLayout keyboardRoot, @NonNull LinearLayout layoutAlpha,
-      @NonNull LinearLayout layoutSymbol, @NonNull Button sym0, @NonNull Button sym1,
-      @NonNull Button sym2, @NonNull Button sym3, @NonNull Button sym4, @NonNull Button sym5,
+      @NonNull Button keyEnter, @NonNull Button keyF, @NonNull Button keyFnSwitch,
+      @NonNull Button keyG, @NonNull Button keyH, @NonNull Button keyI, @NonNull Button keyJ,
+      @NonNull Button keyK, @NonNull Button keyL, @NonNull Button keyM, @NonNull Button keyN,
+      @NonNull Button keyNewLine, @NonNull Button keyO, @NonNull Button keyP,
+      @NonNull Button keyPeriod, @NonNull Button keyQ, @NonNull Button keyR, @NonNull Button keyS,
+      @NonNull ImageButton keyShift, @NonNull Button keySlash, @NonNull Button keySpace,
+      @NonNull Button keySymbolSwitch, @NonNull Button keyT, @NonNull Button keyU,
+      @NonNull Button keyV, @NonNull Button keyW, @NonNull Button keyX, @NonNull Button keyY,
+      @NonNull Button keyZ, @NonNull LinearLayout keyboardRoot, @NonNull LinearLayout layoutAlpha,
+      @NonNull LinearLayout layoutFn, @NonNull LinearLayout layoutSymbol,
+      @NonNull LinearLayout layoutSymbol2, @NonNull Button sym0, @NonNull Button sym1,
+      @NonNull Button sym2, @NonNull Button sym2Backslash, @NonNull Button sym2Backtick,
+      @NonNull Button sym2BraceClose, @NonNull Button sym2BraceOpen,
+      @NonNull Button sym2BracketClose, @NonNull Button sym2BracketOpen, @NonNull Button sym2Bullet,
+      @NonNull Button sym2Caret, @NonNull Button sym2Cent, @NonNull Button sym2Comma,
+      @NonNull Button sym2Copy, @NonNull Button sym2Degree, @NonNull Button sym2Ellipsis,
+      @NonNull Button sym2Enter, @NonNull Button sym2Equal, @NonNull Button sym2Euro,
+      @NonNull Button sym2Greater, @NonNull Button sym2GuillemetLeft,
+      @NonNull Button sym2GuillemetRight, @NonNull ImageButton sym2KeyBackspace,
+      @NonNull Button sym2Less, @NonNull Button sym2NewLine, @NonNull Button sym2Notequal,
+      @NonNull Button sym2PageSwitch, @NonNull Button sym2Period, @NonNull Button sym2Pipe,
+      @NonNull Button sym2Plusminus, @NonNull Button sym2Pound, @NonNull Button sym2Reg,
+      @NonNull Button sym2Section, @NonNull Button sym2Space, @NonNull Button sym2SwitchAbc,
+      @NonNull Button sym2SwitchFn, @NonNull Button sym2Tilde, @NonNull Button sym2Underscore,
+      @NonNull Button sym2Yen, @NonNull Button sym3, @NonNull Button sym4, @NonNull Button sym5,
       @NonNull Button sym6, @NonNull Button sym7, @NonNull Button sym8, @NonNull Button sym9,
       @NonNull Button symAmp, @NonNull Button symAt, @NonNull Button symColon,
-      @NonNull Button symComma, @NonNull Button symDollar, @NonNull ImageButton symEnter,
+      @NonNull Button symComma, @NonNull Button symDollar, @NonNull Button symEnter,
       @NonNull Button symExclamation, @NonNull Button symHash, @NonNull ImageButton symKeyBackspace,
-      @NonNull Button symMinus, @NonNull Button symNewLine, @NonNull Button symParenClose,
-      @NonNull Button symParenOpen, @NonNull Button symPercent, @NonNull Button symPeriod,
-      @NonNull Button symPlus, @NonNull Button symQuestion, @NonNull Button symQuote,
-      @NonNull Button symSemicolon, @NonNull Button symSinglequote, @NonNull Button symSlash,
-      @NonNull Button symSpace, @NonNull Button symStar, @NonNull Button symSwitchAbc,
+      @NonNull Button symMinus, @NonNull Button symNewLine, @NonNull Button symPageSwitch,
+      @NonNull Button symParenClose, @NonNull Button symParenOpen, @NonNull Button symPercent,
+      @NonNull Button symPeriod, @NonNull Button symPlus, @NonNull Button symQuestion,
+      @NonNull Button symQuote, @NonNull Button symSemicolon, @NonNull Button symSinglequote,
+      @NonNull Button symSlash, @NonNull Button symSpace, @NonNull Button symStar,
+      @NonNull Button symSwitchAbc, @NonNull Button symSwitchFn,
       @NonNull TextView tvCandidatePrefix, @NonNull TextView tvCandidateText) {
     this.rootView = rootView;
     this.btnCandidateChip = btnCandidateChip;
     this.candidateBar = candidateBar;
+    this.fnAlt = fnAlt;
+    this.fnBreak = fnBreak;
+    this.fnCaps = fnCaps;
+    this.fnCtrl = fnCtrl;
+    this.fnDel = fnDel;
+    this.fnEnd = fnEnd;
+    this.fnEnter = fnEnter;
+    this.fnEsc = fnEsc;
+    this.fnF1 = fnF1;
+    this.fnF10 = fnF10;
+    this.fnF11 = fnF11;
+    this.fnF12 = fnF12;
+    this.fnF2 = fnF2;
+    this.fnF3 = fnF3;
+    this.fnF4 = fnF4;
+    this.fnF5 = fnF5;
+    this.fnF6 = fnF6;
+    this.fnF7 = fnF7;
+    this.fnF8 = fnF8;
+    this.fnF9 = fnF9;
+    this.fnHome = fnHome;
+    this.fnIns = fnIns;
+    this.fnKeyBackspace = fnKeyBackspace;
+    this.fnNewLine = fnNewLine;
+    this.fnPgdn = fnPgdn;
+    this.fnPgup = fnPgup;
+    this.fnPrtscn = fnPrtscn;
+    this.fnSpace = fnSpace;
+    this.fnSwitchAbc = fnSwitchAbc;
+    this.fnSwitchSym = fnSwitchSym;
+    this.fnTab = fnTab;
     this.keyA = keyA;
     this.keyB = keyB;
     this.keyBackspace = keyBackspace;
@@ -286,6 +557,7 @@ public final class KeyboardViewBinding implements ViewBinding {
     this.keyE = keyE;
     this.keyEnter = keyEnter;
     this.keyF = keyF;
+    this.keyFnSwitch = keyFnSwitch;
     this.keyG = keyG;
     this.keyH = keyH;
     this.keyI = keyI;
@@ -314,10 +586,48 @@ public final class KeyboardViewBinding implements ViewBinding {
     this.keyZ = keyZ;
     this.keyboardRoot = keyboardRoot;
     this.layoutAlpha = layoutAlpha;
+    this.layoutFn = layoutFn;
     this.layoutSymbol = layoutSymbol;
+    this.layoutSymbol2 = layoutSymbol2;
     this.sym0 = sym0;
     this.sym1 = sym1;
     this.sym2 = sym2;
+    this.sym2Backslash = sym2Backslash;
+    this.sym2Backtick = sym2Backtick;
+    this.sym2BraceClose = sym2BraceClose;
+    this.sym2BraceOpen = sym2BraceOpen;
+    this.sym2BracketClose = sym2BracketClose;
+    this.sym2BracketOpen = sym2BracketOpen;
+    this.sym2Bullet = sym2Bullet;
+    this.sym2Caret = sym2Caret;
+    this.sym2Cent = sym2Cent;
+    this.sym2Comma = sym2Comma;
+    this.sym2Copy = sym2Copy;
+    this.sym2Degree = sym2Degree;
+    this.sym2Ellipsis = sym2Ellipsis;
+    this.sym2Enter = sym2Enter;
+    this.sym2Equal = sym2Equal;
+    this.sym2Euro = sym2Euro;
+    this.sym2Greater = sym2Greater;
+    this.sym2GuillemetLeft = sym2GuillemetLeft;
+    this.sym2GuillemetRight = sym2GuillemetRight;
+    this.sym2KeyBackspace = sym2KeyBackspace;
+    this.sym2Less = sym2Less;
+    this.sym2NewLine = sym2NewLine;
+    this.sym2Notequal = sym2Notequal;
+    this.sym2PageSwitch = sym2PageSwitch;
+    this.sym2Period = sym2Period;
+    this.sym2Pipe = sym2Pipe;
+    this.sym2Plusminus = sym2Plusminus;
+    this.sym2Pound = sym2Pound;
+    this.sym2Reg = sym2Reg;
+    this.sym2Section = sym2Section;
+    this.sym2Space = sym2Space;
+    this.sym2SwitchAbc = sym2SwitchAbc;
+    this.sym2SwitchFn = sym2SwitchFn;
+    this.sym2Tilde = sym2Tilde;
+    this.sym2Underscore = sym2Underscore;
+    this.sym2Yen = sym2Yen;
     this.sym3 = sym3;
     this.sym4 = sym4;
     this.sym5 = sym5;
@@ -336,6 +646,7 @@ public final class KeyboardViewBinding implements ViewBinding {
     this.symKeyBackspace = symKeyBackspace;
     this.symMinus = symMinus;
     this.symNewLine = symNewLine;
+    this.symPageSwitch = symPageSwitch;
     this.symParenClose = symParenClose;
     this.symParenOpen = symParenOpen;
     this.symPercent = symPercent;
@@ -349,6 +660,7 @@ public final class KeyboardViewBinding implements ViewBinding {
     this.symSpace = symSpace;
     this.symStar = symStar;
     this.symSwitchAbc = symSwitchAbc;
+    this.symSwitchFn = symSwitchFn;
     this.tvCandidatePrefix = tvCandidatePrefix;
     this.tvCandidateText = tvCandidateText;
   }
@@ -389,6 +701,192 @@ public final class KeyboardViewBinding implements ViewBinding {
       id = R.id.candidate_bar;
       LinearLayout candidateBar = ViewBindings.findChildViewById(rootView, id);
       if (candidateBar == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_alt;
+      Button fnAlt = ViewBindings.findChildViewById(rootView, id);
+      if (fnAlt == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_break;
+      Button fnBreak = ViewBindings.findChildViewById(rootView, id);
+      if (fnBreak == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_caps;
+      Button fnCaps = ViewBindings.findChildViewById(rootView, id);
+      if (fnCaps == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_ctrl;
+      Button fnCtrl = ViewBindings.findChildViewById(rootView, id);
+      if (fnCtrl == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_del;
+      Button fnDel = ViewBindings.findChildViewById(rootView, id);
+      if (fnDel == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_end;
+      Button fnEnd = ViewBindings.findChildViewById(rootView, id);
+      if (fnEnd == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_enter;
+      Button fnEnter = ViewBindings.findChildViewById(rootView, id);
+      if (fnEnter == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_esc;
+      Button fnEsc = ViewBindings.findChildViewById(rootView, id);
+      if (fnEsc == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f1;
+      Button fnF1 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF1 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f10;
+      Button fnF10 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF10 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f11;
+      Button fnF11 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF11 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f12;
+      Button fnF12 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF12 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f2;
+      Button fnF2 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF2 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f3;
+      Button fnF3 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF3 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f4;
+      Button fnF4 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF4 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f5;
+      Button fnF5 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF5 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f6;
+      Button fnF6 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF6 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f7;
+      Button fnF7 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF7 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f8;
+      Button fnF8 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF8 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_f9;
+      Button fnF9 = ViewBindings.findChildViewById(rootView, id);
+      if (fnF9 == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_home;
+      Button fnHome = ViewBindings.findChildViewById(rootView, id);
+      if (fnHome == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_ins;
+      Button fnIns = ViewBindings.findChildViewById(rootView, id);
+      if (fnIns == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_key_backspace;
+      ImageButton fnKeyBackspace = ViewBindings.findChildViewById(rootView, id);
+      if (fnKeyBackspace == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_new_line;
+      Button fnNewLine = ViewBindings.findChildViewById(rootView, id);
+      if (fnNewLine == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_pgdn;
+      Button fnPgdn = ViewBindings.findChildViewById(rootView, id);
+      if (fnPgdn == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_pgup;
+      Button fnPgup = ViewBindings.findChildViewById(rootView, id);
+      if (fnPgup == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_prtscn;
+      Button fnPrtscn = ViewBindings.findChildViewById(rootView, id);
+      if (fnPrtscn == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_space;
+      Button fnSpace = ViewBindings.findChildViewById(rootView, id);
+      if (fnSpace == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_switch_abc;
+      Button fnSwitchAbc = ViewBindings.findChildViewById(rootView, id);
+      if (fnSwitchAbc == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_switch_sym;
+      Button fnSwitchSym = ViewBindings.findChildViewById(rootView, id);
+      if (fnSwitchSym == null) {
+        break missingId;
+      }
+
+      id = R.id.fn_tab;
+      Button fnTab = ViewBindings.findChildViewById(rootView, id);
+      if (fnTab == null) {
         break missingId;
       }
 
@@ -435,7 +933,7 @@ public final class KeyboardViewBinding implements ViewBinding {
       }
 
       id = R.id.key_enter;
-      ImageButton keyEnter = ViewBindings.findChildViewById(rootView, id);
+      Button keyEnter = ViewBindings.findChildViewById(rootView, id);
       if (keyEnter == null) {
         break missingId;
       }
@@ -443,6 +941,12 @@ public final class KeyboardViewBinding implements ViewBinding {
       id = R.id.key_f;
       Button keyF = ViewBindings.findChildViewById(rootView, id);
       if (keyF == null) {
+        break missingId;
+      }
+
+      id = R.id.key_fn_switch;
+      Button keyFnSwitch = ViewBindings.findChildViewById(rootView, id);
+      if (keyFnSwitch == null) {
         break missingId;
       }
 
@@ -610,9 +1114,21 @@ public final class KeyboardViewBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.layout_fn;
+      LinearLayout layoutFn = ViewBindings.findChildViewById(rootView, id);
+      if (layoutFn == null) {
+        break missingId;
+      }
+
       id = R.id.layout_symbol;
       LinearLayout layoutSymbol = ViewBindings.findChildViewById(rootView, id);
       if (layoutSymbol == null) {
+        break missingId;
+      }
+
+      id = R.id.layout_symbol2;
+      LinearLayout layoutSymbol2 = ViewBindings.findChildViewById(rootView, id);
+      if (layoutSymbol2 == null) {
         break missingId;
       }
 
@@ -631,6 +1147,222 @@ public final class KeyboardViewBinding implements ViewBinding {
       id = R.id.sym_2;
       Button sym2 = ViewBindings.findChildViewById(rootView, id);
       if (sym2 == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_backslash;
+      Button sym2Backslash = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Backslash == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_backtick;
+      Button sym2Backtick = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Backtick == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_brace_close;
+      Button sym2BraceClose = ViewBindings.findChildViewById(rootView, id);
+      if (sym2BraceClose == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_brace_open;
+      Button sym2BraceOpen = ViewBindings.findChildViewById(rootView, id);
+      if (sym2BraceOpen == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_bracket_close;
+      Button sym2BracketClose = ViewBindings.findChildViewById(rootView, id);
+      if (sym2BracketClose == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_bracket_open;
+      Button sym2BracketOpen = ViewBindings.findChildViewById(rootView, id);
+      if (sym2BracketOpen == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_bullet;
+      Button sym2Bullet = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Bullet == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_caret;
+      Button sym2Caret = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Caret == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_cent;
+      Button sym2Cent = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Cent == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_comma;
+      Button sym2Comma = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Comma == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_copy;
+      Button sym2Copy = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Copy == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_degree;
+      Button sym2Degree = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Degree == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_ellipsis;
+      Button sym2Ellipsis = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Ellipsis == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_enter;
+      Button sym2Enter = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Enter == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_equal;
+      Button sym2Equal = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Equal == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_euro;
+      Button sym2Euro = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Euro == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_greater;
+      Button sym2Greater = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Greater == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_guillemet_left;
+      Button sym2GuillemetLeft = ViewBindings.findChildViewById(rootView, id);
+      if (sym2GuillemetLeft == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_guillemet_right;
+      Button sym2GuillemetRight = ViewBindings.findChildViewById(rootView, id);
+      if (sym2GuillemetRight == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_key_backspace;
+      ImageButton sym2KeyBackspace = ViewBindings.findChildViewById(rootView, id);
+      if (sym2KeyBackspace == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_less;
+      Button sym2Less = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Less == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_new_line;
+      Button sym2NewLine = ViewBindings.findChildViewById(rootView, id);
+      if (sym2NewLine == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_notequal;
+      Button sym2Notequal = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Notequal == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_page_switch;
+      Button sym2PageSwitch = ViewBindings.findChildViewById(rootView, id);
+      if (sym2PageSwitch == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_period;
+      Button sym2Period = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Period == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_pipe;
+      Button sym2Pipe = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Pipe == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_plusminus;
+      Button sym2Plusminus = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Plusminus == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_pound;
+      Button sym2Pound = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Pound == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_reg;
+      Button sym2Reg = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Reg == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_section;
+      Button sym2Section = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Section == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_space;
+      Button sym2Space = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Space == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_switch_abc;
+      Button sym2SwitchAbc = ViewBindings.findChildViewById(rootView, id);
+      if (sym2SwitchAbc == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_switch_fn;
+      Button sym2SwitchFn = ViewBindings.findChildViewById(rootView, id);
+      if (sym2SwitchFn == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_tilde;
+      Button sym2Tilde = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Tilde == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_underscore;
+      Button sym2Underscore = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Underscore == null) {
+        break missingId;
+      }
+
+      id = R.id.sym2_yen;
+      Button sym2Yen = ViewBindings.findChildViewById(rootView, id);
+      if (sym2Yen == null) {
         break missingId;
       }
 
@@ -707,7 +1439,7 @@ public final class KeyboardViewBinding implements ViewBinding {
       }
 
       id = R.id.sym_enter;
-      ImageButton symEnter = ViewBindings.findChildViewById(rootView, id);
+      Button symEnter = ViewBindings.findChildViewById(rootView, id);
       if (symEnter == null) {
         break missingId;
       }
@@ -739,6 +1471,12 @@ public final class KeyboardViewBinding implements ViewBinding {
       id = R.id.sym_new_line;
       Button symNewLine = ViewBindings.findChildViewById(rootView, id);
       if (symNewLine == null) {
+        break missingId;
+      }
+
+      id = R.id.sym_page_switch;
+      Button symPageSwitch = ViewBindings.findChildViewById(rootView, id);
+      if (symPageSwitch == null) {
         break missingId;
       }
 
@@ -820,6 +1558,12 @@ public final class KeyboardViewBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.sym_switch_fn;
+      Button symSwitchFn = ViewBindings.findChildViewById(rootView, id);
+      if (symSwitchFn == null) {
+        break missingId;
+      }
+
       id = R.id.tv_candidate_prefix;
       TextView tvCandidatePrefix = ViewBindings.findChildViewById(rootView, id);
       if (tvCandidatePrefix == null) {
@@ -832,15 +1576,25 @@ public final class KeyboardViewBinding implements ViewBinding {
         break missingId;
       }
 
-      return new KeyboardViewBinding((LinearLayout) rootView, btnCandidateChip, candidateBar, keyA,
-          keyB, keyBackspace, keyC, keyComma, keyD, keyE, keyEnter, keyF, keyG, keyH, keyI, keyJ,
-          keyK, keyL, keyM, keyN, keyNewLine, keyO, keyP, keyPeriod, keyQ, keyR, keyS, keyShift,
-          keySlash, keySpace, keySymbolSwitch, keyT, keyU, keyV, keyW, keyX, keyY, keyZ,
-          keyboardRoot, layoutAlpha, layoutSymbol, sym0, sym1, sym2, sym3, sym4, sym5, sym6, sym7,
-          sym8, sym9, symAmp, symAt, symColon, symComma, symDollar, symEnter, symExclamation,
-          symHash, symKeyBackspace, symMinus, symNewLine, symParenClose, symParenOpen, symPercent,
-          symPeriod, symPlus, symQuestion, symQuote, symSemicolon, symSinglequote, symSlash,
-          symSpace, symStar, symSwitchAbc, tvCandidatePrefix, tvCandidateText);
+      return new KeyboardViewBinding((LinearLayout) rootView, btnCandidateChip, candidateBar, fnAlt,
+          fnBreak, fnCaps, fnCtrl, fnDel, fnEnd, fnEnter, fnEsc, fnF1, fnF10, fnF11, fnF12, fnF2,
+          fnF3, fnF4, fnF5, fnF6, fnF7, fnF8, fnF9, fnHome, fnIns, fnKeyBackspace, fnNewLine,
+          fnPgdn, fnPgup, fnPrtscn, fnSpace, fnSwitchAbc, fnSwitchSym, fnTab, keyA, keyB,
+          keyBackspace, keyC, keyComma, keyD, keyE, keyEnter, keyF, keyFnSwitch, keyG, keyH, keyI,
+          keyJ, keyK, keyL, keyM, keyN, keyNewLine, keyO, keyP, keyPeriod, keyQ, keyR, keyS,
+          keyShift, keySlash, keySpace, keySymbolSwitch, keyT, keyU, keyV, keyW, keyX, keyY, keyZ,
+          keyboardRoot, layoutAlpha, layoutFn, layoutSymbol, layoutSymbol2, sym0, sym1, sym2,
+          sym2Backslash, sym2Backtick, sym2BraceClose, sym2BraceOpen, sym2BracketClose,
+          sym2BracketOpen, sym2Bullet, sym2Caret, sym2Cent, sym2Comma, sym2Copy, sym2Degree,
+          sym2Ellipsis, sym2Enter, sym2Equal, sym2Euro, sym2Greater, sym2GuillemetLeft,
+          sym2GuillemetRight, sym2KeyBackspace, sym2Less, sym2NewLine, sym2Notequal, sym2PageSwitch,
+          sym2Period, sym2Pipe, sym2Plusminus, sym2Pound, sym2Reg, sym2Section, sym2Space,
+          sym2SwitchAbc, sym2SwitchFn, sym2Tilde, sym2Underscore, sym2Yen, sym3, sym4, sym5, sym6,
+          sym7, sym8, sym9, symAmp, symAt, symColon, symComma, symDollar, symEnter, symExclamation,
+          symHash, symKeyBackspace, symMinus, symNewLine, symPageSwitch, symParenClose,
+          symParenOpen, symPercent, symPeriod, symPlus, symQuestion, symQuote, symSemicolon,
+          symSinglequote, symSlash, symSpace, symStar, symSwitchAbc, symSwitchFn, tvCandidatePrefix,
+          tvCandidateText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
