@@ -108,13 +108,25 @@ export default function DashboardPage() {
     setLoading(true);
     try {
       const client = getSupabaseClient();
+
+      // 1. Dapatkan user yang sedang aktif
+      const { data: { user: currentUser } } = await client.auth.getUser();
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
+      setUser(currentUser);
+
+      // 2. Tambahkan filter .eq("user_id", currentUser.id)
       const { data, error } = await client
         .from('shortcuts')
         .select('*')
-        .order('id', { ascending: false });
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false });
 
       if (error) {
         showToast('error', `Gagal memuat data: ${error.message}`);
+        console.error('Gagal mengambil data:', error);
       } else {
         const formatted: ShortcutItem[] = (data || []).map((item: any) => ({
           id: item.id,
@@ -131,6 +143,7 @@ export default function DashboardPage() {
       }
     } catch (err: any) {
       showToast('error', `Kesalahan koneksi: ${err.message}`);
+      console.error('Kesalahan koneksi:', err);
     } finally {
       setLoading(false);
     }
@@ -181,6 +194,12 @@ export default function DashboardPage() {
 
     try {
       const client = getSupabaseClient();
+      const { data: { user: currentUser } } = await client.auth.getUser();
+      const activeUserId = currentUser?.id || user?.id;
+      if (!activeUserId) {
+        throw new Error('Sesi login tidak valid atau telah kedaluwarsa. Silakan login kembali.');
+      }
+
       const cleanTrigger = formTrigger.trim().toLowerCase();
       const cleanExpansion = formExpansion.trim();
 
@@ -189,7 +208,7 @@ export default function DashboardPage() {
         expansion_text: cleanExpansion,
         category: formCategory,
         expansion_mode: formMode,
-        user_id: user?.id,
+        user_id: activeUserId, // <--- ID user yang sedang aktif
       };
 
       if (editingItem?.id && (editingItem.trigger_code || editingItem.shortcut) && (editingItem.trigger_code || editingItem.shortcut).trim().toLowerCase() !== cleanTrigger) {
@@ -302,12 +321,20 @@ export default function DashboardPage() {
 
     try {
       const client = getSupabaseClient();
+
+      // Dapatkan user yang sedang aktif dari session/auth
+      const { data: { user: currentUser } } = await client.auth.getUser();
+      const activeUserId = currentUser?.id || user?.id;
+      if (!activeUserId) {
+        throw new Error('Sesi login tidak valid atau telah kedaluwarsa. Silakan login kembali.');
+      }
+
       const payload = csvPreview.map(item => ({
         trigger_code: (item.trigger_code || item.shortcut || '').trim().toLowerCase(),
         expansion_text: (item.expansion_text || item.expansion || '').trim(),
         category: item.category || 'Umum',
         expansion_mode: item.expansion_mode || 'INSTANT',
-        user_id: user?.id,
+        user_id: activeUserId, // <--- ID user yang sedang aktif
       }));
 
       const { error } = await (client as any)
@@ -373,12 +400,20 @@ export default function DashboardPage() {
 
     try {
       const client = getSupabaseClient();
+
+      // Dapatkan user yang sedang aktif dari session/auth
+      const { data: { user: currentUser } } = await client.auth.getUser();
+      const activeUserId = currentUser?.id || user?.id;
+      if (!activeUserId) {
+        throw new Error('Sesi login tidak valid atau telah kedaluwarsa. Silakan login kembali.');
+      }
+
       const payload = pkParseResult.validShortcuts.map(item => ({
         trigger_code: item.trigger.trim().toLowerCase(),
         expansion_text: item.expansion.trim(),
         category: pkCategory || 'Perfect Keyboard',
         expansion_mode: pkMode,
-        user_id: user?.id,
+        user_id: activeUserId, // <--- ID user yang sedang aktif
       }));
 
       const { error } = await (client as any)

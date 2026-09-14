@@ -230,6 +230,77 @@ function validateTrigger(
 }
 
 /**
+ * Parser Khusus Format Teks Ekspor Perfect Keyboard (.txt / .kps)
+ * Memisahkan item berdasarkan delimiter {end-of-item},
+ * membaca kode trigger dari baris 'at1s: <trigger>',
+ * membaca isi pesan dari 'm: <pesan>',
+ * dan mengonversi tag <ent__> menjadi baris baru (\n).
+ */
+export function parseTxtExport(fileContent: string): Array<{
+  trigger_code: string;
+  expansion_text: string;
+  category: string;
+  expansion_mode: string;
+}> {
+  // Split per item berdasarkan delimiter {end-of-item}
+  const rawItems = fileContent.split('{end-of-item}');
+  const shortcuts: Array<{
+    trigger_code: string;
+    expansion_text: string;
+    category: string;
+    expansion_mode: string;
+  }> = [];
+
+  for (const item of rawItems) {
+    if (!item.trim()) continue;
+
+    let trigger = '';
+    let expansion = '';
+
+    // Ekstrak trigger dari baris 'at1s:'
+    const triggerMatch = item.match(/^at1s:\s*(.+)$/m) || item.match(/^(?:at1|at2s|trigger|hotkey):\s*(.+)$/m);
+    if (triggerMatch) {
+      trigger = triggerMatch[1].trim();
+    }
+
+    // Ekstrak isi pesan dari 'm:'
+    const messageIndex = item.indexOf('\nm: ');
+    const altMessageIndex = item.indexOf('m: ');
+
+    let rawMessage = '';
+    if (messageIndex !== -1) {
+      rawMessage = item.substring(messageIndex + 4);
+    } else if (altMessageIndex !== -1) {
+      rawMessage = item.substring(altMessageIndex + 3);
+    }
+
+    if (rawMessage) {
+      // Potong jika ada properti berikutnya di luar 'm:' (jika ada)
+      // Ganti tag <ent__> menjadi baris baru (\n)
+      expansion = rawMessage
+        .replace(/<ent__>/gi, '\n')
+        .replace(/<enter>/gi, '\n')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/\r\n/g, '\n')
+        .replace(/\r/g, '\n')
+        .trim();
+    }
+
+    // Jika trigger dan expansion valid, masukkan ke array
+    if (trigger && expansion) {
+      shortcuts.push({
+        trigger_code: cleanTriggerString(trigger),
+        expansion_text: expansion,
+        category: 'Perfect Keyboard',
+        expansion_mode: 'INSTANT'
+      });
+    }
+  }
+
+  return shortcuts;
+}
+
+/**
  * Parser utama konten file Perfect Keyboard (.4pk / .kps / .txt)
  */
 export function parsePerfectKeyboardFile(rawText: string): PerfectKeyboardParseResult {
@@ -242,8 +313,19 @@ export function parsePerfectKeyboardFile(rawText: string): PerfectKeyboardParseR
     return { totalParsed: 0, validShortcuts: [], failedShortcuts: [] };
   }
 
-  // 1. Parsing jika dokumen berformat XML / Perfect Keyboard MTW
-  if (trimmed.startsWith('<') || (trimmed.includes('<tscut>') && trimmed.includes('<macroText>')) || trimmed.includes('<macro')) {
+  // 1. Format Ekspor Teks Perfect Keyboard ({end-of-item})
+  if (rawText.includes('{end-of-item}')) {
+    parseEndOfItemFormat(rawText, (item, lineNum) => {
+      const val = validateTrigger(item.trigger, item.expansion, seenTriggers, lineNum);
+      if (val.isValid) {
+        validShortcuts.push({ lineNum, trigger: val.trigger, expansion: val.expansion });
+      } else {
+        failedShortcuts.push(val.failed);
+      }
+    });
+  }
+  // 2. Format XML / Perfect Keyboard MTW
+  else if (trimmed.startsWith('<') || (trimmed.includes('<tscut>') && trimmed.includes('<macroText>')) || trimmed.includes('<macro')) {
     parseXmlFormat(rawText, (item, lineNum) => {
       const val = validateTrigger(item.trigger, item.expansion, seenTriggers, lineNum);
       if (val.isValid) {
@@ -253,7 +335,7 @@ export function parsePerfectKeyboardFile(rawText: string): PerfectKeyboardParseR
       }
     });
   } else {
-    // 2. Parsing format teks baris demi baris (Delimited / Key-Value / Bulk Text)
+    // 3. Format teks baris demi baris (Delimited / Key-Value / Bulk Text)
     parseTextFormat(rawText, (item, lineNum) => {
       const val = validateTrigger(item.trigger, item.expansion, seenTriggers, lineNum);
       if (val.isValid) {
@@ -269,6 +351,63 @@ export function parsePerfectKeyboardFile(rawText: string): PerfectKeyboardParseR
     validShortcuts,
     failedShortcuts
   };
+}
+
+/**
+ * Parsing teks ekspor Perfect Keyboard dengan pembatas {end-of-item}
+ */
+function parseEndOfItemFormat(
+  fileContent: string,
+  onItem: (item: { trigger: string; expansion: string }, lineNum: number) => void
+) {
+  const rawItems = fileContent.split('{end-of-item}');
+  let currentLine = 1;
+
+  for (let i = 0; i < rawItems.length; i++) {
+    const item = rawItems[i];
+    const trimmed = item.trim();
+    if (!trimmed) {
+      currentLine += (item.match(/\n/g) || []).length;
+      continue;
+    }
+
+    const lineNum = currentLine;
+    currentLine += (item.match(/\n/g) || []).length;
+
+    let trigger = '';
+    let expansion = '';
+
+    // Ekstrak trigger dari baris 'at1s:'
+    const triggerMatch = item.match(/^at1s:\s*(.+)$/m) || item.match(/^(?:at1|at2s|trigger|hotkey|shortcut|name):\s*(.+)$/m);
+    if (triggerMatch) {
+      trigger = triggerMatch[1].trim();
+    }
+
+    // Ekstrak isi pesan dari 'm:'
+    const messageIndex = item.indexOf('\nm: ');
+    const altMessageIndex = item.indexOf('m: ');
+
+    let rawMessage = '';
+    if (messageIndex !== -1) {
+      rawMessage = item.substring(messageIndex + 4);
+    } else if (altMessageIndex !== -1) {
+      rawMessage = item.substring(altMessageIndex + 3);
+    }
+
+    if (rawMessage) {
+      expansion = rawMessage
+        .replace(/<ent__>/gi, '\n')
+        .replace(/<enter>/gi, '\n')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/\r\n/g, '\n')
+        .replace(/\r/g, '\n')
+        .trim();
+    }
+
+    if (trigger || expansion) {
+      onItem({ trigger, expansion }, lineNum);
+    }
+  }
 }
 
 /**
