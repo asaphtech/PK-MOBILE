@@ -107,7 +107,7 @@ function generateSuggestion(rawTrigger: string): string {
 function validateTrigger(
   rawTrigger: string,
   rawExpansion: string,
-  seenTriggers: Set<string>,
+  seenTriggers: Map<string, number>,
   lineNum: number
 ): { isValid: true; trigger: string; expansion: string } | { isValid: false; failed: FailedShortcut } {
   const trigger = cleanTriggerString(rawTrigger);
@@ -205,26 +205,26 @@ function validateTrigger(
     };
   }
 
-  // 7. Cek Duplikat di Dalam File yang Sama
+  // 7. Auto-Rename untuk Trigger Duplikat di Dalam File yang Sama
+  // Menambah angka urutan otomatis (_1, _2, dst.) agar semua data tetap bisa diimpor tanpa hilang
   const normalizedKey = trigger.toLowerCase();
+  let finalTrigger = trigger;
+
   if (seenTriggers.has(normalizedKey)) {
-    return {
-      isValid: false,
-      failed: {
-        lineNum,
-        rawTrigger: trigger,
-        rawExpansion: expansion,
-        reason: `Trigger duplikat ("${trigger}" sudah terdaftar pada baris sebelumnya di dalam file ini).`,
-        suggestion: `Ubah kode trigger agar unik (misal: "${trigger}1" atau "${trigger}2").`
-      }
-    };
+    const count = seenTriggers.get(normalizedKey)! + 1;
+    seenTriggers.set(normalizedKey, count);
+
+    // Tambahkan sufiks urutan otomatis (contoh: /otosc_1, /otosc_2)
+    finalTrigger = `${trigger}_${count - 1}`;
+    seenTriggers.set(finalTrigger.toLowerCase(), 1);
+  } else {
+    seenTriggers.set(normalizedKey, 1);
   }
 
   // Lolos Semua Validasi
-  seenTriggers.add(normalizedKey);
   return {
     isValid: true,
-    trigger,
+    trigger: finalTrigger,
     expansion
   };
 }
@@ -250,6 +250,7 @@ export function parseTxtExport(fileContent: string): Array<{
     category: string;
     expansion_mode: string;
   }> = [];
+  const seenTriggers = new Map<string, number>();
 
   for (const item of rawItems) {
     if (!item.trim()) continue;
@@ -286,10 +287,25 @@ export function parseTxtExport(fileContent: string): Array<{
         .trim();
     }
 
-    // Jika trigger dan expansion valid, masukkan ke array
+    // Jika trigger dan expansion valid, masukkan ke array dengan auto-rename duplikat
     if (trigger && expansion) {
+      let finalTrigger = cleanTriggerString(trigger);
+      const normalized = finalTrigger.toLowerCase();
+
+      // Jika trigger sudah pernah muncul sebelumnya dalam file ini
+      if (seenTriggers.has(normalized)) {
+        const count = seenTriggers.get(normalized)! + 1;
+        seenTriggers.set(normalized, count);
+
+        // Tambahkan sufiks urutan otomatis (contoh: /otosc_1, /otosc_2)
+        finalTrigger = `${finalTrigger}_${count - 1}`;
+        seenTriggers.set(finalTrigger.toLowerCase(), 1);
+      } else {
+        seenTriggers.set(normalized, 1);
+      }
+
       shortcuts.push({
-        trigger_code: cleanTriggerString(trigger),
+        trigger_code: finalTrigger,
         expansion_text: expansion,
         category: 'Perfect Keyboard',
         expansion_mode: 'INSTANT'
@@ -306,7 +322,7 @@ export function parseTxtExport(fileContent: string): Array<{
 export function parsePerfectKeyboardFile(rawText: string): PerfectKeyboardParseResult {
   const validShortcuts: ValidShortcut[] = [];
   const failedShortcuts: FailedShortcut[] = [];
-  const seenTriggers = new Set<string>();
+  const seenTriggers = new Map<string, number>();
 
   const trimmed = rawText.trim();
   if (!trimmed) {
