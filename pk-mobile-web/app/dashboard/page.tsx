@@ -7,8 +7,12 @@ import {
   Search, Plus, Upload, LogOut, Edit2, Trash2, Zap, Space,
   FileSpreadsheet, AlertCircle, CheckCircle2, RefreshCw, X,
   Tag, MessageSquare, Copy, Check, ChevronDown, Filter,
-  Layers, Smartphone, ExternalLink
+  Layers, Smartphone, ExternalLink, AlertTriangle, FolderOpen, FileText
 } from 'lucide-react';
+import {
+  parsePerfectKeyboardFile,
+  PerfectKeyboardParseResult
+} from '@/lib/perfectKeyboardParser';
 
 const CATEGORIES = [
   'Semua Kategori',
@@ -55,6 +59,16 @@ export default function DashboardPage() {
   const [csvPreview, setCsvPreview] = useState<ShortcutItem[]>([]);
   const [csvFileName, setCsvFileName] = useState('');
   const [importStatus, setImportStatus] = useState<{ success?: string; error?: string }>({});
+
+  // Modal Import Perfect Keyboard (.4pk, .kps, .txt)
+  const [isPkModalOpen, setIsPkModalOpen] = useState(false);
+  const [pkFileName, setPkFileName] = useState('');
+  const [pkParseResult, setPkParseResult] = useState<PerfectKeyboardParseResult | null>(null);
+  const [pkActiveTab, setPkActiveTab] = useState<'failed' | 'valid'>('failed');
+  const [pkCategory, setPkCategory] = useState('Perfect Keyboard');
+  const [pkMode, setPkMode] = useState<'INSTANT' | 'SPACE'>('INSTANT');
+  const [pkStatus, setPkStatus] = useState<{ success?: string; error?: string }>({});
+  const [isPkProcessing, setIsPkProcessing] = useState(false);
 
   // Modal Delete Confirm
   const [deleteTarget, setDeleteTarget] = useState<ShortcutItem | null>(null);
@@ -314,6 +328,87 @@ export default function DashboardPage() {
     }
   };
 
+  // =========================================================================
+  // HANDLER IMPORT FILE PERFECT KEYBOARD (.4pk, .kps, .txt)
+  // =========================================================================
+  const handlePkFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPkFileName(file.name);
+    setIsPkProcessing(true);
+    setPkStatus({});
+    setPkParseResult(null);
+
+    try {
+      // 1. Baca file secara asynchronous menggunakan FileReader / file.text()
+      const text = await file.text();
+
+      // 2. Parsing dan klasifikasi trigger valid vs tidak didukung
+      const result = parsePerfectKeyboardFile(text);
+      setPkParseResult(result);
+
+      // Default tab: sorot failed jika ada yang tidak didukung agar CS waspada
+      if (result.failedShortcuts.length > 0) {
+        setPkActiveTab('failed');
+      } else {
+        setPkActiveTab('valid');
+      }
+
+      if (result.totalParsed === 0) {
+        setPkStatus({ error: 'Tidak ada data shortcut atau macro yang terdeteksi di dalam file ini.' });
+      }
+    } catch (err: any) {
+      setPkStatus({ error: `Gagal membaca file: ${err.message || err}` });
+    } finally {
+      setIsPkProcessing(false);
+      e.target.value = '';
+    }
+  };
+
+  const executePkBatchInsert = async () => {
+    if (!pkParseResult || pkParseResult.validShortcuts.length === 0) return;
+    setActionLoading(true);
+    setPkStatus({});
+
+    try {
+      const client = getSupabaseClient();
+      const payload = pkParseResult.validShortcuts.map(item => ({
+        trigger_code: item.trigger.trim().toLowerCase(),
+        expansion_text: item.expansion.trim(),
+        category: pkCategory || 'Perfect Keyboard',
+        expansion_mode: pkMode,
+        user_id: user?.id,
+      }));
+
+      const { error } = await (client as any)
+        .from('shortcuts')
+        .upsert(payload, { onConflict: 'user_id, trigger_code' });
+
+      if (error) throw error;
+
+      showToast(
+        'success',
+        `Berhasil mengimpor ${pkParseResult.validShortcuts.length} shortcut Perfect Keyboard ke database!`
+      );
+      setPkStatus({
+        success: `Berhasil mengimpor ${pkParseResult.validShortcuts.length} shortcut ke Supabase Cloud. Seluruh shortcut ini siap disinkronkan ke HP Android CS!`
+      });
+      await fetchShortcuts();
+    } catch (err: any) {
+      setPkStatus({ error: `Gagal menyimpan ke Supabase: ${err.message}` });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const resetPkModal = () => {
+    setIsPkModalOpen(false);
+    setPkParseResult(null);
+    setPkFileName('');
+    setPkStatus({});
+  };
+
   // Filter & Search logic
   const filteredShortcuts = useMemo(() => {
     return shortcuts.filter(item => {
@@ -483,6 +578,18 @@ export default function DashboardPage() {
               title="Perbarui Data"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-indigo-400' : ''}`} />
+            </button>
+
+            {/* Tombol Impor File Perfect Keyboard (.4pk) */}
+            <button
+              onClick={() => {
+                setPkStatus({});
+                setIsPkModalOpen(true);
+              }}
+              className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 text-xs font-semibold flex items-center gap-2 border border-slate-700/80 transition-colors shadow-sm"
+              title="Impor template dari file Perfect Keyboard (.4pk, .kps, .txt)"
+            >
+              <span>📁 Impor File Perfect Keyboard (.4pk)</span>
             </button>
 
             {/* Tombol Import CSV */}
@@ -865,6 +972,306 @@ export default function DashboardPage() {
                   <span>Import {csvPreview.length > 0 ? `${csvPreview.length} Data` : 'Sekarang'}</span>
                 )}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Import File Perfect Keyboard (.4pk, .kps, .txt) */}
+      {isPkModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md animate-in fade-in">
+          <div className="w-full max-w-4xl max-h-[92vh] flex flex-col bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-5 sm:p-7 relative">
+            {/* Tombol Tutup */}
+            <button
+              onClick={resetPkModal}
+              className="absolute right-5 top-5 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header Modal */}
+            <div className="mb-4 pr-8">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <span className="text-xl">📁</span>
+                <span>Impor File Perfect Keyboard (.4pk / .kps / .txt)</span>
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Parsing otomatis template Perfect Keyboard dengan deteksi proteksi tombol fisik PC untuk keyboard HP Android.
+              </p>
+            </div>
+
+            {/* Status Alert (Error / Success) */}
+            {pkStatus.error && (
+              <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center gap-2 shrink-0">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{pkStatus.error}</span>
+              </div>
+            )}
+            {pkStatus.success && (
+              <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2 shrink-0">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{pkStatus.success}</span>
+              </div>
+            )}
+
+            {/* State A: Belum Memilih File */}
+            {!pkParseResult ? (
+              <div className="p-10 border-2 border-dashed border-slate-700/80 hover:border-indigo-500/60 rounded-2xl bg-slate-950/60 text-center transition-all flex flex-col items-center justify-center my-6">
+                <input
+                  type="file"
+                  accept=".4pk,.kps,.txt"
+                  onChange={handlePkFileChange}
+                  className="hidden"
+                  id="pk_modal_file_input"
+                />
+                <label htmlFor="pk_modal_file_input" className="cursor-pointer flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 hover:scale-105 transition-transform">
+                    {isPkProcessing ? (
+                      <RefreshCw className="w-8 h-8 animate-spin text-indigo-400" />
+                    ) : (
+                      <FolderOpen className="w-8 h-8" />
+                    )}
+                  </div>
+                  <div>
+                    <span className="text-sm font-semibold text-slate-200 block">
+                      {isPkProcessing ? 'Sedang membaca dan menganalisis berkas...' : 'Pilih atau Tarik File Perfect Keyboard (.4pk, .kps, .txt)'}
+                    </span>
+                    <span className="text-xs text-slate-500 block mt-1">
+                      Mendukung format Macro Text Wizard (MTW), XML, key-value, dan delimited text.
+                    </span>
+                  </div>
+                  <span className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-colors mt-2 inline-flex items-center gap-2">
+                    <Upload className="w-4 h-4" />
+                    <span>Pilih Berkas dari Komputer</span>
+                  </span>
+                </label>
+              </div>
+            ) : (
+              /* State B: Hasil Parsing Tersedia */
+              <div className="flex-1 overflow-y-auto pr-1 space-y-4 min-h-0">
+                {/* File info bar */}
+                <div className="flex flex-wrap items-center justify-between p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-indigo-400" />
+                    <span className="font-semibold text-slate-200">{pkFileName}</span>
+                  </div>
+                  <label htmlFor="pk_modal_file_change" className="text-indigo-400 hover:text-indigo-300 font-medium cursor-pointer text-xs underline">
+                    Ganti File
+                    <input
+                      type="file"
+                      accept=".4pk,.kps,.txt"
+                      onChange={handlePkFileChange}
+                      className="hidden"
+                      id="pk_modal_file_change"
+                    />
+                  </label>
+                </div>
+
+                {/* 4. Kartu Ringkasan Status Impor */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800">
+                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Terbaca</div>
+                    <div className="text-2xl font-bold text-white mt-0.5">{pkParseResult.totalParsed}</div>
+                    <div className="text-[11px] text-slate-500 mt-0.5">Macro dalam berkas</div>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30">
+                    <div className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Valid (HP Ready)</span>
+                    </div>
+                    <div className="text-2xl font-bold text-emerald-400 mt-0.5">{pkParseResult.validShortcuts.length}</div>
+                    <div className="text-[11px] text-emerald-500/80 mt-0.5">Siap diimpor ke DB</div>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-500/30">
+                    <div className="text-[11px] font-semibold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+                      <AlertTriangle className="w-3.5 h-3.5" />
+                      <span>Tidak Didukung</span>
+                    </div>
+                    <div className="text-2xl font-bold text-amber-400 mt-0.5">{pkParseResult.failedShortcuts.length}</div>
+                    <div className="text-[11px] text-amber-500/80 mt-0.5">Tombol PC / Tidak valid</div>
+                  </div>
+                </div>
+
+                {/* Tab Navigation */}
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+                  <button
+                    type="button"
+                    onClick={() => setPkActiveTab('failed')}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors ${
+                      pkActiveTab === 'failed'
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                    }`}
+                  >
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <span>Daftar Tidak Didukung ({pkParseResult.failedShortcuts.length})</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPkActiveTab('valid')}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors ${
+                      pkActiveTab === 'valid'
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Shortcut Siap Diimpor ({pkParseResult.validShortcuts.length})</span>
+                  </button>
+                </div>
+
+                {/* TAB 1: TABEL LAPORAN BERWARNA (WARNING / AMBER) */}
+                {pkActiveTab === 'failed' && (
+                  <div className="space-y-3">
+                    {pkParseResult.failedShortcuts.length === 0 ? (
+                      <div className="p-8 text-center rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-400">
+                        <CheckCircle2 className="w-7 h-7 text-emerald-400 mx-auto mb-2" />
+                        Semua shortcut dalam file ini valid dan dapat digunakan di keyboard HP Android!
+                      </div>
+                    ) : (
+                      <div className="rounded-xl border border-amber-500/30 bg-amber-950/10 overflow-hidden">
+                        <div className="p-3.5 bg-amber-500/10 border-b border-amber-500/20 text-xs text-amber-300 flex items-start gap-2.5">
+                          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
+                          <div>
+                            <span className="font-bold block">Peringatan Kompatibilitas Keyboard HP Android:</span>
+                            <span className="text-amber-200/80 text-[11px]">
+                              Shortcut di bawah ini disisihkan otomatis karena menggunakan tombol fisik PC (Function keys F1-F12, Enter, Esc), kombinasi tombol (Ctrl, Alt), atau trigger duplikat.
+                            </span>
+                          </div>
+                        </div>
+                        <div className="max-h-64 overflow-y-auto">
+                          <table className="w-full text-left border-collapse text-xs">
+                            <thead>
+                              <tr className="border-b border-amber-500/20 bg-amber-950/40 text-[11px] font-bold text-amber-400 uppercase tracking-wider sticky top-0 backdrop-blur">
+                                <th className="py-2.5 px-3 w-16">Baris</th>
+                                <th className="py-2.5 px-3 w-36">Trigger Asli (.4pk)</th>
+                                <th className="py-2.5 px-3 min-w-[200px]">Alasan Tidak Diproses</th>
+                                <th className="py-2.5 px-3 min-w-[240px]">Saran Tindakan</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-amber-500/10">
+                              {pkParseResult.failedShortcuts.map((item, idx) => (
+                                <tr key={idx} className="hover:bg-amber-500/5 transition-colors">
+                                  <td className="py-2.5 px-3 font-mono text-slate-400">#{item.lineNum}</td>
+                                  <td className="py-2.5 px-3">
+                                    <span className="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-500/30 text-amber-300 font-mono font-bold text-xs">
+                                      {item.rawTrigger}
+                                    </span>
+                                  </td>
+                                  <td className="py-2.5 px-3 text-amber-200/90 leading-relaxed">
+                                    {item.reason}
+                                  </td>
+                                  <td className="py-2.5 px-3 text-emerald-300/95 leading-relaxed font-medium">
+                                    {item.suggestion}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* TAB 2: SHORTCUT LOLOS VALIDASI */}
+                {pkActiveTab === 'valid' && (
+                  <div className="space-y-3">
+                    {pkParseResult.validShortcuts.length === 0 ? (
+                      <div className="p-8 text-center rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-400">
+                        Tidak ada shortcut yang lolos validasi pada file ini. Silakan sesuaikan trigger pada file asal atau periksa daftar tidak didukung.
+                      </div>
+                    ) : (
+                      <>
+                        {/* Pengaturan Kategori & Mode */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-400 mb-1.5">
+                              Kategori untuk Data yang Diimpor:
+                            </label>
+                            <select
+                              value={pkCategory}
+                              onChange={(e) => setPkCategory(e.target.value)}
+                              className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500"
+                            >
+                              <option value="Perfect Keyboard">Perfect Keyboard (Khusus)</option>
+                              {FORM_CATEGORIES.map(c => (
+                                <option key={c} value={c}>{c}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-400 mb-1.5">
+                              Mode Ekspansi Auto-Text:
+                            </label>
+                            <select
+                              value={pkMode}
+                              onChange={(e) => setPkMode(e.target.value as any)}
+                              className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500"
+                            >
+                              <option value="INSTANT">INSTANT (Langsung ekspansi saat diketik)</option>
+                              <option value="SPACE">SPACE (Ditahan hingga tombol Spasi/Enter ditekan)</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* Tabel Preview Valid */}
+                        <div className="rounded-xl border border-slate-800 bg-slate-950/60 overflow-hidden">
+                          <div className="max-h-56 overflow-y-auto">
+                            <table className="w-full text-left border-collapse text-xs">
+                              <thead>
+                                <tr className="border-b border-slate-800 bg-slate-900/90 text-[11px] font-bold text-slate-400 uppercase tracking-wider sticky top-0 backdrop-blur">
+                                  <th className="py-2.5 px-3 w-16">Baris</th>
+                                  <th className="py-2.5 px-3 w-36">Trigger Valid</th>
+                                  <th className="py-2.5 px-3">Isi Teks Balasan (Expansion)</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-800/60">
+                                {pkParseResult.validShortcuts.map((item, idx) => (
+                                  <tr key={idx} className="hover:bg-slate-900/40 transition-colors">
+                                    <td className="py-2 px-3 font-mono text-slate-500">#{item.lineNum}</td>
+                                    <td className="py-2 px-3 font-mono text-indigo-400 font-bold">{item.trigger}</td>
+                                    <td className="py-2 px-3 text-slate-300 truncate max-w-[340px]">{item.expansion}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Footer Buttons */}
+            <div className="flex items-center justify-between gap-3 pt-4 border-t border-slate-800 mt-4 shrink-0">
+              <button
+                type="button"
+                onClick={resetPkModal}
+                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+              >
+                {pkStatus.success ? 'Tutup' : 'Batal'}
+              </button>
+
+              {pkParseResult && pkParseResult.validShortcuts.length > 0 && !pkStatus.success && (
+                <button
+                  type="button"
+                  disabled={actionLoading}
+                  onClick={executePkBatchInsert}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white text-xs font-semibold shadow-lg shadow-emerald-600/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {actionLoading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <span>Simpan {pkParseResult.validShortcuts.length} Shortcut Valid ke Supabase</span>
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </div>
