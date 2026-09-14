@@ -14,7 +14,7 @@ import io.github.jan.supabase.postgrest.Postgrest
  */
 object SupabaseConfig {
     const val DEFAULT_SUPABASE_URL = "https://qeacrkiuiwxqbkapmyrc.supabase.co"
-    const val DEFAULT_ANON_KEY = "sb_anon_key_placeholder"
+    const val DEFAULT_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlYWNya2l1aXd4cWJrYXBteXJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzOTc4OTgsImV4cCI6MjEwNDk3Mzg5OH0.z0zzzriAO62vYTUeXsDxiwYBov1ubOGQ3cSA1TyzR5E"
 
     private const val PREFS_NAME = "pk_keyboard_prefs"
     const val PREF_ANON_KEY = "pref_supabase_anon_key"

@@ -382,7 +382,6 @@ class MainActivity : AppCompatActivity() {
         val btnBulkCancel = dialogView.findViewById<MaterialButton>(R.id.btn_bulk_cancel)
         val btnBulkProcess = dialogView.findViewById<MaterialButton>(R.id.btn_bulk_process)
 
-        var detectedPairs = emptyList<Pair<String, String>>()
         var parseJob: kotlinx.coroutines.Job? = null
 
         val dialog = MaterialAlertDialogBuilder(this)
@@ -394,7 +393,6 @@ class MainActivity : AppCompatActivity() {
             val text = editable?.toString() ?: ""
             parseJob?.cancel()
             if (text.isBlank()) {
-                detectedPairs = emptyList()
                 tvBulkPreviewCount.text = "Pratinjau: 0 shortcut terdeteksi"
                 tvBulkPreviewCount.setTextColor(getColor(R.color.text_secondary))
             } else {
@@ -403,7 +401,6 @@ class MainActivity : AppCompatActivity() {
                 parseJob = lifecycleScope.launch(Dispatchers.Default) {
                     val pairs = ShortcutImporter.parseBulkText(text)
                     withContext(Dispatchers.Main) {
-                        detectedPairs = pairs
                         tvBulkPreviewCount.text = "Pratinjau: ${pairs.size} shortcut terdeteksi"
                         if (pairs.isNotEmpty()) {
                             tvBulkPreviewCount.setTextColor(getColor(R.color.accent))
