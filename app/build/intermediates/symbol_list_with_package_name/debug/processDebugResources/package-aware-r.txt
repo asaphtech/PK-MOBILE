@@ -3019,6 +3019,7 @@ drawable ic_caps_lock
 drawable ic_clear_black_24
 drawable ic_clock_black_24dp
 drawable ic_delete
+drawable ic_edit
 drawable ic_keyboard
 drawable ic_keyboard_black_24dp
 drawable ic_keyboard_return
@@ -3203,13 +3204,20 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id btnEditCancel
+id btnEditSave
 id btn_add_shortcut
+id btn_bulk_cancel
+id btn_bulk_input
+id btn_bulk_process
 id btn_candidate_chip
 id btn_choose_file
 id btn_delete
+id btn_edit
 id btn_enable_ime
 id btn_export_shortcut
 id btn_import_shortcut
+id btn_open_bulk_input
 id btn_select_ime
 id buttonPanel
 id cache_measures
@@ -3217,6 +3225,7 @@ id callMeasure
 id cancel_button
 id candidate_bar
 id carryVelocity
+id cb_clear_before_import
 id center
 id centerCrop
 id centerInside
@@ -3293,6 +3302,9 @@ id end
 id endToStart
 id enterAlways
 id enterAlwaysCollapsed
+id etEditExpansion
+id etEditTrigger
+id et_bulk_input
 id et_input_expansion
 id et_input_shortcut
 id et_raw_import
@@ -3365,6 +3377,7 @@ id key_k
 id key_l
 id key_m
 id key_n
+id key_new_line
 id key_o
 id key_p
 id key_period
@@ -3372,6 +3385,7 @@ id key_q
 id key_r
 id key_s
 id key_shift
+id key_slash
 id key_space
 id key_symbol_switch
 id key_t
@@ -3602,6 +3616,7 @@ id sym_exclamation
 id sym_hash
 id sym_key_backspace
 id sym_minus
+id sym_new_line
 id sym_paren_close
 id sym_paren_open
 id sym_percent
@@ -3661,6 +3676,7 @@ id transition_position
 id transition_scene_layoutid_cache
 id transition_transform
 id triangle
+id tv_bulk_preview_count
 id tv_candidate_prefix
 id tv_candidate_text
 id tv_empty_shortcuts
@@ -3824,6 +3840,8 @@ layout design_navigation_menu_item
 layout design_text_input_end_icon
 layout design_text_input_start_icon
 layout dialog_add_shortcut
+layout dialog_bulk_input
+layout dialog_edit_shortcut
 layout dialog_import_shortcut
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity

@@ -144,11 +144,23 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
-                android:layout_weight="1.4"
+                android:layout_weight="1.2"
                 android:background="@drawable/bg_key_special"
                 android:text="\?123"
                 android:textColor="@color/key_text"
                 android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/key_slash"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
+                android:layout_weight="0.8"
+                android:background="@drawable/bg_key_special"
+                android:text="/"
+                android:textColor="@color/candidate_text_highlight"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/key_comma"
@@ -156,7 +168,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
-                android:layout_weight="1"
+                android:layout_weight="0.8"
                 android:background="@drawable/bg_key"
                 android:text=","
                 android:textColor="@color/key_text"
@@ -168,7 +180,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
-                android:layout_weight="4.6"
+                android:layout_weight="3.8"
                 android:background="@drawable/bg_key"
                 android:text="space"
                 android:textColor="@color/key_text_secondary"
@@ -180,21 +192,36 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
-                android:layout_weight="1"
+                android:layout_weight="0.8"
                 android:background="@drawable/bg_key"
                 android:text="."
                 android:textColor="@color/key_text"
                 android:textSize="18sp" />
 
+            <!-- Tombol Khusus Alinea Baru (\n) -->
+            <Button
+                android:id="@+id/key_new_line"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
+                android:layout_weight="1.2"
+                android:background="@drawable/bg_key_special"
+                android:text="↵\n"
+                android:textColor="@color/candidate_text_highlight"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- Tombol Action Enter / Kirim / Cari -->
             <ImageButton
                 android:id="@+id/key_enter"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
-                android:layout_weight="2"
+                android:layout_weight="1.5"
                 android:background="@drawable/bg_key_action"
-                android:contentDescription="Enter"
+                android:contentDescription="Action Enter"
                 android:src="@drawable/ic_keyboard_return" />
         </LinearLayout>
     </LinearLayout>
@@ -254,7 +281,7 @@
             <Button android:id="@+id/sym_colon" style="?android:attr/borderlessButtonStyle" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="1" android:background="@drawable/bg_key" android:text=":" android:textColor="@color/key_text" android:textSize="18sp" />
             <Button android:id="@+id/sym_semicolon" style="?android:attr/borderlessButtonStyle" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="1" android:background="@drawable/bg_key" android:text=";" android:textColor="@color/key_text" android:textSize="18sp" />
             <Button android:id="@+id/sym_exclamation" style="?android:attr/borderlessButtonStyle" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="1" android:background="@drawable/bg_key" android:text="!" android:textColor="@color/key_text" android:textSize="18sp" />
-            <Button android:id="@+id/sym_question" style="?android:attr/borderlessButtonStyle" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="1" android:background="@drawable/bg_key" android:text="?" android:textColor="@color/key_text" android:textSize="18sp" />
+            <Button android:id="@+id/sym_question" style="?android:attr/borderlessButtonStyle" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="1" android:background="@drawable/bg_key" android:text="\?" android:textColor="@color/key_text" android:textSize="18sp" />
 
             <ImageButton
                 android:id="@+id/sym_key_backspace"
@@ -292,7 +319,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
-                android:layout_weight="1"
+                android:layout_weight="0.8"
                 android:background="@drawable/bg_key"
                 android:text=","
                 android:textColor="@color/key_text"
@@ -304,7 +331,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
-                android:layout_weight="4.6"
+                android:layout_weight="3.8"
                 android:background="@drawable/bg_key"
                 android:text="space"
                 android:textColor="@color/key_text_secondary"
@@ -316,21 +343,36 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
-                android:layout_weight="1"
+                android:layout_weight="0.8"
                 android:background="@drawable/bg_key"
                 android:text="."
                 android:textColor="@color/key_text"
                 android:textSize="18sp" />
 
+            <!-- Tombol Khusus Alinea Baru di Mode Simbol (\n) -->
+            <Button
+                android:id="@+id/sym_new_line"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
+                android:layout_weight="1.2"
+                android:background="@drawable/bg_key_special"
+                android:text="↵\n"
+                android:textColor="@color/candidate_text_highlight"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- Tombol Action Enter di Mode Simbol -->
             <ImageButton
                 android:id="@+id/sym_enter"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="2dp"
-                android:layout_weight="2"
+                android:layout_weight="1.5"
                 android:background="@drawable/bg_key_action"
-                android:contentDescription="Enter"
+                android:contentDescription="Action Enter"
                 android:src="@drawable/ic_keyboard_return" />
         </LinearLayout>
     </LinearLayout>

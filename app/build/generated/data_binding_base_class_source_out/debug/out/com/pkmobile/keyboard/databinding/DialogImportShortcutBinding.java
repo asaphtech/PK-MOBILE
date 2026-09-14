@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 import com.pkmobile.keyboard.R;
 import java.lang.NullPointerException;
@@ -25,6 +26,12 @@ public final class DialogImportShortcutBinding implements ViewBinding {
   public final MaterialButton btnChooseFile;
 
   @NonNull
+  public final MaterialButton btnOpenBulkInput;
+
+  @NonNull
+  public final MaterialCheckBox cbClearBeforeImport;
+
+  @NonNull
   public final TextInputEditText etRawImport;
 
   @NonNull
@@ -34,10 +41,13 @@ public final class DialogImportShortcutBinding implements ViewBinding {
   public final TextView tvPreviewCount;
 
   private DialogImportShortcutBinding(@NonNull LinearLayout rootView,
-      @NonNull MaterialButton btnChooseFile, @NonNull TextInputEditText etRawImport,
+      @NonNull MaterialButton btnChooseFile, @NonNull MaterialButton btnOpenBulkInput,
+      @NonNull MaterialCheckBox cbClearBeforeImport, @NonNull TextInputEditText etRawImport,
       @NonNull TextView tvFileStatus, @NonNull TextView tvPreviewCount) {
     this.rootView = rootView;
     this.btnChooseFile = btnChooseFile;
+    this.btnOpenBulkInput = btnOpenBulkInput;
+    this.cbClearBeforeImport = cbClearBeforeImport;
     this.etRawImport = etRawImport;
     this.tvFileStatus = tvFileStatus;
     this.tvPreviewCount = tvPreviewCount;
@@ -76,6 +86,18 @@ public final class DialogImportShortcutBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btn_open_bulk_input;
+      MaterialButton btnOpenBulkInput = ViewBindings.findChildViewById(rootView, id);
+      if (btnOpenBulkInput == null) {
+        break missingId;
+      }
+
+      id = R.id.cb_clear_before_import;
+      MaterialCheckBox cbClearBeforeImport = ViewBindings.findChildViewById(rootView, id);
+      if (cbClearBeforeImport == null) {
+        break missingId;
+      }
+
       id = R.id.et_raw_import;
       TextInputEditText etRawImport = ViewBindings.findChildViewById(rootView, id);
       if (etRawImport == null) {
@@ -94,8 +116,8 @@ public final class DialogImportShortcutBinding implements ViewBinding {
         break missingId;
       }
 
-      return new DialogImportShortcutBinding((LinearLayout) rootView, btnChooseFile, etRawImport,
-          tvFileStatus, tvPreviewCount);
+      return new DialogImportShortcutBinding((LinearLayout) rootView, btnChooseFile,
+          btnOpenBulkInput, cbClearBeforeImport, etRawImport, tvFileStatus, tvPreviewCount);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

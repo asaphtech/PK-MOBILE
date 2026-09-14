@@ -9,6 +9,7 @@ import com.pkmobile.keyboard.data.db.ShortcutEntity
 import com.pkmobile.keyboard.databinding.ItemShortcutBinding
 
 class ShortcutAdapter(
+    private val onItemClick: (ShortcutEntity) -> Unit,
     private val onDeleteClick: (ShortcutEntity) -> Unit
 ) : ListAdapter<ShortcutEntity, ShortcutAdapter.ShortcutViewHolder>(DiffCallback) {
 
@@ -31,8 +32,14 @@ class ShortcutAdapter(
         fun bind(item: ShortcutEntity) {
             binding.tvShortcutBadge.text = item.shortcut
             binding.tvExpansion.text = item.expansion
+            binding.btnEdit.setOnClickListener {
+                onItemClick(item)
+            }
             binding.btnDelete.setOnClickListener {
                 onDeleteClick(item)
+            }
+            binding.root.setOnClickListener {
+                onItemClick(item)
             }
         }
     }

@@ -15,6 +15,7 @@ import androidx.room.util.DBUtil;
 import androidx.sqlite.db.SupportSQLiteStatement;
 import java.lang.Class;
 import java.lang.Exception;
+import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Object;
 import java.lang.Override;
@@ -38,7 +39,11 @@ public final class ShortcutDao_Impl implements ShortcutDao {
 
   private final EntityDeletionOrUpdateAdapter<ShortcutEntity> __deletionAdapterOfShortcutEntity;
 
+  private final EntityDeletionOrUpdateAdapter<ShortcutEntity> __updateAdapterOfShortcutEntity;
+
   private final SharedSQLiteStatement __preparedStmtOfDeleteById;
+
+  private final SharedSQLiteStatement __preparedStmtOfDeleteAll;
 
   public ShortcutDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
@@ -71,11 +76,36 @@ public final class ShortcutDao_Impl implements ShortcutDao {
         statement.bindLong(1, entity.getId());
       }
     };
+    this.__updateAdapterOfShortcutEntity = new EntityDeletionOrUpdateAdapter<ShortcutEntity>(__db) {
+      @Override
+      @NonNull
+      protected String createQuery() {
+        return "UPDATE OR REPLACE `shortcuts` SET `id` = ?,`shortcut` = ?,`expansion` = ?,`created_at` = ? WHERE `id` = ?";
+      }
+
+      @Override
+      protected void bind(@NonNull final SupportSQLiteStatement statement,
+          @NonNull final ShortcutEntity entity) {
+        statement.bindLong(1, entity.getId());
+        statement.bindString(2, entity.getShortcut());
+        statement.bindString(3, entity.getExpansion());
+        statement.bindLong(4, entity.getCreatedAt());
+        statement.bindLong(5, entity.getId());
+      }
+    };
     this.__preparedStmtOfDeleteById = new SharedSQLiteStatement(__db) {
       @Override
       @NonNull
       public String createQuery() {
         final String _query = "DELETE FROM shortcuts WHERE id = ?";
+        return _query;
+      }
+    };
+    this.__preparedStmtOfDeleteAll = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM shortcuts";
         return _query;
       }
     };
@@ -139,6 +169,26 @@ public final class ShortcutDao_Impl implements ShortcutDao {
   }
 
   @Override
+  public Object update(final ShortcutEntity shortcut,
+      final Continuation<? super Integer> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Integer>() {
+      @Override
+      @NonNull
+      public Integer call() throws Exception {
+        int _total = 0;
+        __db.beginTransaction();
+        try {
+          _total += __updateAdapterOfShortcutEntity.handle(shortcut);
+          __db.setTransactionSuccessful();
+          return _total;
+        } finally {
+          __db.endTransaction();
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
   public Object deleteById(final long id, final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
@@ -158,6 +208,29 @@ public final class ShortcutDao_Impl implements ShortcutDao {
           }
         } finally {
           __preparedStmtOfDeleteById.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object deleteAll(final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfDeleteAll.acquire();
+        try {
+          __db.beginTransaction();
+          try {
+            _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return Unit.INSTANCE;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfDeleteAll.release(_stmt);
         }
       }
     }, $completion);

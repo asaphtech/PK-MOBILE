@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -22,6 +23,9 @@ interface ShortcutDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdate(shortcut: ShortcutEntity): Long
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun update(shortcut: ShortcutEntity): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(shortcuts: List<ShortcutEntity>): List<Long>
 
@@ -30,4 +34,7 @@ interface ShortcutDao {
 
     @Query("DELETE FROM shortcuts WHERE id = :id")
     suspend fun deleteById(id: Long)
+
+    @Query("DELETE FROM shortcuts")
+    suspend fun deleteAll()
 }

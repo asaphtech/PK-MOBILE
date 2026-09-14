@@ -79,6 +79,9 @@ public final class KeyboardViewBinding implements ViewBinding {
   public final Button keyN;
 
   @NonNull
+  public final Button keyNewLine;
+
+  @NonNull
   public final Button keyO;
 
   @NonNull
@@ -98,6 +101,9 @@ public final class KeyboardViewBinding implements ViewBinding {
 
   @NonNull
   public final ImageButton keyShift;
+
+  @NonNull
+  public final Button keySlash;
 
   @NonNull
   public final Button keySpace;
@@ -196,6 +202,9 @@ public final class KeyboardViewBinding implements ViewBinding {
   public final Button symMinus;
 
   @NonNull
+  public final Button symNewLine;
+
+  @NonNull
   public final Button symParenClose;
 
   @NonNull
@@ -246,24 +255,25 @@ public final class KeyboardViewBinding implements ViewBinding {
       @NonNull Button keyC, @NonNull Button keyComma, @NonNull Button keyD, @NonNull Button keyE,
       @NonNull ImageButton keyEnter, @NonNull Button keyF, @NonNull Button keyG,
       @NonNull Button keyH, @NonNull Button keyI, @NonNull Button keyJ, @NonNull Button keyK,
-      @NonNull Button keyL, @NonNull Button keyM, @NonNull Button keyN, @NonNull Button keyO,
-      @NonNull Button keyP, @NonNull Button keyPeriod, @NonNull Button keyQ, @NonNull Button keyR,
-      @NonNull Button keyS, @NonNull ImageButton keyShift, @NonNull Button keySpace,
-      @NonNull Button keySymbolSwitch, @NonNull Button keyT, @NonNull Button keyU,
-      @NonNull Button keyV, @NonNull Button keyW, @NonNull Button keyX, @NonNull Button keyY,
-      @NonNull Button keyZ, @NonNull LinearLayout keyboardRoot, @NonNull LinearLayout layoutAlpha,
+      @NonNull Button keyL, @NonNull Button keyM, @NonNull Button keyN, @NonNull Button keyNewLine,
+      @NonNull Button keyO, @NonNull Button keyP, @NonNull Button keyPeriod, @NonNull Button keyQ,
+      @NonNull Button keyR, @NonNull Button keyS, @NonNull ImageButton keyShift,
+      @NonNull Button keySlash, @NonNull Button keySpace, @NonNull Button keySymbolSwitch,
+      @NonNull Button keyT, @NonNull Button keyU, @NonNull Button keyV, @NonNull Button keyW,
+      @NonNull Button keyX, @NonNull Button keyY, @NonNull Button keyZ,
+      @NonNull LinearLayout keyboardRoot, @NonNull LinearLayout layoutAlpha,
       @NonNull LinearLayout layoutSymbol, @NonNull Button sym0, @NonNull Button sym1,
       @NonNull Button sym2, @NonNull Button sym3, @NonNull Button sym4, @NonNull Button sym5,
       @NonNull Button sym6, @NonNull Button sym7, @NonNull Button sym8, @NonNull Button sym9,
       @NonNull Button symAmp, @NonNull Button symAt, @NonNull Button symColon,
       @NonNull Button symComma, @NonNull Button symDollar, @NonNull ImageButton symEnter,
       @NonNull Button symExclamation, @NonNull Button symHash, @NonNull ImageButton symKeyBackspace,
-      @NonNull Button symMinus, @NonNull Button symParenClose, @NonNull Button symParenOpen,
-      @NonNull Button symPercent, @NonNull Button symPeriod, @NonNull Button symPlus,
-      @NonNull Button symQuestion, @NonNull Button symQuote, @NonNull Button symSemicolon,
-      @NonNull Button symSinglequote, @NonNull Button symSlash, @NonNull Button symSpace,
-      @NonNull Button symStar, @NonNull Button symSwitchAbc, @NonNull TextView tvCandidatePrefix,
-      @NonNull TextView tvCandidateText) {
+      @NonNull Button symMinus, @NonNull Button symNewLine, @NonNull Button symParenClose,
+      @NonNull Button symParenOpen, @NonNull Button symPercent, @NonNull Button symPeriod,
+      @NonNull Button symPlus, @NonNull Button symQuestion, @NonNull Button symQuote,
+      @NonNull Button symSemicolon, @NonNull Button symSinglequote, @NonNull Button symSlash,
+      @NonNull Button symSpace, @NonNull Button symStar, @NonNull Button symSwitchAbc,
+      @NonNull TextView tvCandidatePrefix, @NonNull TextView tvCandidateText) {
     this.rootView = rootView;
     this.btnCandidateChip = btnCandidateChip;
     this.candidateBar = candidateBar;
@@ -284,6 +294,7 @@ public final class KeyboardViewBinding implements ViewBinding {
     this.keyL = keyL;
     this.keyM = keyM;
     this.keyN = keyN;
+    this.keyNewLine = keyNewLine;
     this.keyO = keyO;
     this.keyP = keyP;
     this.keyPeriod = keyPeriod;
@@ -291,6 +302,7 @@ public final class KeyboardViewBinding implements ViewBinding {
     this.keyR = keyR;
     this.keyS = keyS;
     this.keyShift = keyShift;
+    this.keySlash = keySlash;
     this.keySpace = keySpace;
     this.keySymbolSwitch = keySymbolSwitch;
     this.keyT = keyT;
@@ -323,6 +335,7 @@ public final class KeyboardViewBinding implements ViewBinding {
     this.symHash = symHash;
     this.symKeyBackspace = symKeyBackspace;
     this.symMinus = symMinus;
+    this.symNewLine = symNewLine;
     this.symParenClose = symParenClose;
     this.symParenOpen = symParenOpen;
     this.symPercent = symPercent;
@@ -481,6 +494,12 @@ public final class KeyboardViewBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.key_new_line;
+      Button keyNewLine = ViewBindings.findChildViewById(rootView, id);
+      if (keyNewLine == null) {
+        break missingId;
+      }
+
       id = R.id.key_o;
       Button keyO = ViewBindings.findChildViewById(rootView, id);
       if (keyO == null) {
@@ -520,6 +539,12 @@ public final class KeyboardViewBinding implements ViewBinding {
       id = R.id.key_shift;
       ImageButton keyShift = ViewBindings.findChildViewById(rootView, id);
       if (keyShift == null) {
+        break missingId;
+      }
+
+      id = R.id.key_slash;
+      Button keySlash = ViewBindings.findChildViewById(rootView, id);
+      if (keySlash == null) {
         break missingId;
       }
 
@@ -711,6 +736,12 @@ public final class KeyboardViewBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.sym_new_line;
+      Button symNewLine = ViewBindings.findChildViewById(rootView, id);
+      if (symNewLine == null) {
+        break missingId;
+      }
+
       id = R.id.sym_paren_close;
       Button symParenClose = ViewBindings.findChildViewById(rootView, id);
       if (symParenClose == null) {
@@ -803,13 +834,13 @@ public final class KeyboardViewBinding implements ViewBinding {
 
       return new KeyboardViewBinding((LinearLayout) rootView, btnCandidateChip, candidateBar, keyA,
           keyB, keyBackspace, keyC, keyComma, keyD, keyE, keyEnter, keyF, keyG, keyH, keyI, keyJ,
-          keyK, keyL, keyM, keyN, keyO, keyP, keyPeriod, keyQ, keyR, keyS, keyShift, keySpace,
-          keySymbolSwitch, keyT, keyU, keyV, keyW, keyX, keyY, keyZ, keyboardRoot, layoutAlpha,
-          layoutSymbol, sym0, sym1, sym2, sym3, sym4, sym5, sym6, sym7, sym8, sym9, symAmp, symAt,
-          symColon, symComma, symDollar, symEnter, symExclamation, symHash, symKeyBackspace,
-          symMinus, symParenClose, symParenOpen, symPercent, symPeriod, symPlus, symQuestion,
-          symQuote, symSemicolon, symSinglequote, symSlash, symSpace, symStar, symSwitchAbc,
-          tvCandidatePrefix, tvCandidateText);
+          keyK, keyL, keyM, keyN, keyNewLine, keyO, keyP, keyPeriod, keyQ, keyR, keyS, keyShift,
+          keySlash, keySpace, keySymbolSwitch, keyT, keyU, keyV, keyW, keyX, keyY, keyZ,
+          keyboardRoot, layoutAlpha, layoutSymbol, sym0, sym1, sym2, sym3, sym4, sym5, sym6, sym7,
+          sym8, sym9, symAmp, symAt, symColon, symComma, symDollar, symEnter, symExclamation,
+          symHash, symKeyBackspace, symMinus, symNewLine, symParenClose, symParenOpen, symPercent,
+          symPeriod, symPlus, symQuestion, symQuote, symSemicolon, symSinglequote, symSlash,
+          symSpace, symStar, symSwitchAbc, tvCandidatePrefix, tvCandidateText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

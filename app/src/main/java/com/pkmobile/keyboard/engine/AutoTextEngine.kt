@@ -6,108 +6,174 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Engine logika Auto-Text / Shortcut Expansion (mirip fitur Perfect Keyboard).
- * Mengelola buffer kata aktif dan melakukan penggantian teks secara otomatis saat tombol spasi ditekan.
+ * Engine logika Auto-Text / Shortcut Expansion (seperti pada Perfect Keyboard).
+ * Mengelola pelacakan kata kunci trigger (termasuk karakter awalan /, //, ., @, _, -, #, $)
+ * dan melakukan ekspansi teks otomatis secara case-insensitive saat tombol SPASI atau ENTER ditekan.
  */
 class AutoTextEngine(
     private val repository: ShortcutRepository,
     private val scope: CoroutineScope
 ) {
-    // Buffer penyimpan kata yang sedang diketik sebelum spasi / tanda baca
-    private val currentWordBuffer = java.lang.StringBuilder()
+    // Buffer penyimpan kata yang sedang diketik
+    private val currentWordBuffer = StringBuilder()
 
-    // Cache in-memory untuk pencarian instan O(1) tanpa lag database di UI thread
+    // Cache in-memory untuk pencarian instan O(1) case-insensitive (lowercase key -> expansion)
     private val shortcutCache = ConcurrentHashMap<String, String>()
 
-    // Listener untuk memperbarui tampilan suggestion strip di UI keyboard
+    // Listener untuk memperbarui tampilan suggestion bar di UI keyboard
     var onCandidateUpdateListener: ((shortcut: String?, expansion: String?) -> Unit)? = null
 
     init {
         // Sinkronisasi data Room Database ke cache memori secara reaktif
         scope.launch(Dispatchers.IO) {
             repository.allShortcutsFlow.collectLatest { list ->
-                shortcutCache.clear()
+                val newCache = HashMap<String, String>()
                 for (item in list) {
-                    shortcutCache[item.shortcut.lowercase()] = item.expansion
+                    val key = item.shortcut.trim().lowercase()
+                    if (key.isNotEmpty()) {
+                        newCache[key] = item.expansion
+                    }
                 }
-                // Update kembali status candidate jika ada perubahan data
-                checkCandidateMatch()
+                shortcutCache.clear()
+                shortcutCache.putAll(newCache)
+
+                // Pastikan callback listener dieksekusi di Main UI Thread
+                withContext(Dispatchers.Main) {
+                    checkCandidateMatch(null)
+                }
             }
         }
     }
 
     /**
+     * Memeriksa apakah karakter diizinkan masuk ke dalam kata trigger shortcut.
+     * Mengizinkan huruf, angka, serta simbol awalan trigger (/, \, ., @, _, -, #, $, ~, !, ?, :, ;).
+     */
+    fun isAllowedWordChar(c: Char): Boolean {
+        return c.isLetterOrDigit() ||
+                c == '/' || c == '\\' || c == '.' || c == '@' ||
+                c == '_' || c == '-' || c == '#' || c == '$' ||
+                c == '~' || c == '!' || c == '?' || c == ':' || c == ';'
+    }
+
+    /**
      * Menambahkan karakter teks ke buffer kata yang sedang diketik.
      */
-    fun appendChar(c: Char) {
-        if (c.isLetterOrDigit() || c == '_' || c == '-') {
+    fun appendChar(c: Char, ic: InputConnection? = null) {
+        if (isAllowedWordChar(c)) {
             currentWordBuffer.append(c)
         } else {
-            // Karakter pemisah / simbol selain huruf mereset buffer kata aktif
+            // Reset buffer kata jika menerima spasi, newline, atau pemisah lainnya
             currentWordBuffer.setLength(0)
         }
-        checkCandidateMatch()
+        checkCandidateMatch(ic)
     }
 
     /**
      * Menangani penekanan tombol backspace pada buffer.
      */
-    fun handleBackspace() {
+    fun handleBackspace(ic: InputConnection? = null) {
         if (currentWordBuffer.isNotEmpty()) {
             currentWordBuffer.deleteCharAt(currentWordBuffer.length - 1)
         }
-        checkCandidateMatch()
+        checkCandidateMatch(ic)
     }
 
     /**
-     * Membersihkan buffer (misal kursor dipindah atau enter ditekan).
+     * Membersihkan buffer kata aktif.
      */
     fun resetBuffer() {
         currentWordBuffer.setLength(0)
-        checkCandidateMatch()
+        onCandidateUpdateListener?.invoke(null, null)
     }
 
     /**
-     * Mengecek apakah kata di buffer saat ini cocok dengan shortcut yang terdaftar.
+     * Mengambil kata terakhir tepat sebelum kursor dari InputConnection
+     * sebagai verifikasi agar sinkronisasi tidak pernah meleset.
      */
-    private fun checkCandidateMatch() {
-        val word = currentWordBuffer.toString().lowercase()
-        if (word.isNotEmpty() && shortcutCache.containsKey(word)) {
-            val expansion = shortcutCache[word]
-            onCandidateUpdateListener?.invoke(word, expansion)
-        } else {
-            onCandidateUpdateListener?.invoke(null, null)
+    fun getLastWordFromInputConnection(ic: InputConnection?): String {
+        if (ic == null) return ""
+        try {
+            val charsBefore = ic.getTextBeforeCursor(64, 0)?.toString() ?: return ""
+            if (charsBefore.isEmpty()) return ""
+
+            var i = charsBefore.length - 1
+            while (i >= 0 && !charsBefore[i].isWhitespace() && charsBefore[i] != ',' && charsBefore[i] != '(' && charsBefore[i] != ')') {
+                i--
+            }
+            return charsBefore.substring(i + 1)
+        } catch (_: Exception) {
+            return ""
         }
     }
 
     /**
-     * Dipanggil saat tombol Space ditekan.
-     * Jika kata di buffer cocok dengan shortcut, lakukan auto-expansion:
-     * 1. Hapus kata shortcut yang terketik via deleteSurroundingText(panjang_kata, 0)
-     * 2. Tuliskan teks ekspansi + spasi via commitText(expansion + " ", 1)
+     * Mencari kecocokan shortcut secara case-insensitive baik dari buffer memori
+     * maupun dari kata sebelum kursor di InputConnection.
+     */
+    private fun findMatchingWord(ic: InputConnection?): String? {
+        // 1. Cek dari buffer internal
+        val bufferWord = currentWordBuffer.toString().trim()
+        if (bufferWord.isNotEmpty() && shortcutCache.containsKey(bufferWord.lowercase())) {
+            return bufferWord
+        }
+
+        // 2. Cek langsung dari teks sebelum kursor di InputConnection
+        if (ic != null) {
+            val icWord = getLastWordFromInputConnection(ic).trim()
+            if (icWord.isNotEmpty() && shortcutCache.containsKey(icWord.lowercase())) {
+                return icWord
+            }
+        }
+
+        return null
+    }
+
+    /**
+     * Memperbarui tampilan preview chip pada Candidate Suggestion Bar.
+     */
+    fun checkCandidateMatch(ic: InputConnection?) {
+        val word = findMatchingWord(ic)
+        if (word != null) {
+            val expansion = shortcutCache[word.lowercase()]
+            onCandidateUpdateListener?.invoke(word, formatExpansion(expansion ?: ""))
+        } else {
+            val currentWord = currentWordBuffer.toString()
+            if (currentWord.isNotEmpty()) {
+                onCandidateUpdateListener?.invoke(currentWord, null)
+            } else {
+                onCandidateUpdateListener?.invoke(null, null)
+            }
+        }
+    }
+
+    /**
+     * Menangani eksekusi tombol SPASI.
+     * Jika kata yang baru diketik cocok dengan shortcut (case-insensitive),
+     * hapus trigger dan gantikan dengan teks ekspansi + spasi.
      *
-     * @return true jika terjadi ekspansi auto-text, false jika spasi biasa.
+     * @return true jika auto-expansion berhasil dieksekusi, false jika spasi biasa.
      */
     fun handleSpace(inputConnection: InputConnection?): Boolean {
         if (inputConnection == null) return false
 
-        val typedWord = currentWordBuffer.toString()
-        val key = typedWord.lowercase()
+        val matchedWord = findMatchingWord(inputConnection)
+        val expansion = if (matchedWord != null) shortcutCache[matchedWord.lowercase()] else null
 
-        val expansion = shortcutCache[key]
-        return if (expansion != null && typedWord.isNotEmpty()) {
-            // Hapus kata kunci yang telah diketik
-            inputConnection.deleteSurroundingText(typedWord.length, 0)
-            // Masukkan teks ekspansi lengkap diikuti spasi
-            inputConnection.commitText("$expansion ", 1)
-            // Reset buffer kata
+        return if (matchedWord != null && expansion != null) {
+            val cleanExpansion = formatExpansion(expansion)
+            // Hapus sejumlah karakter kata kunci trigger yang tertulis di layar
+            inputConnection.deleteSurroundingText(matchedWord.length, 0)
+            // Masukkan teks ekspansi diikuti spasi
+            inputConnection.commitText("$cleanExpansion ", 1)
             resetBuffer()
             true
         } else {
-            // Bukan shortcut, masukkan karakter spasi standar
+            // Bukan shortcut, commit spasi biasa
             inputConnection.commitText(" ", 1)
             resetBuffer()
             false
@@ -115,23 +181,65 @@ class AutoTextEngine(
     }
 
     /**
-     * Dipanggil ketika user menekan preview chip di suggestion candidate bar.
+     * Menangani eksekusi tombol ENTER.
+     * Jika kata yang baru diketik cocok dengan shortcut (case-insensitive),
+     * hapus trigger dan gantikan dengan teks ekspansi.
+     *
+     * @return true jika auto-expansion berhasil dieksekusi, false jika enter biasa.
+     */
+    fun handleEnter(inputConnection: InputConnection?): Boolean {
+        if (inputConnection == null) return false
+
+        val matchedWord = findMatchingWord(inputConnection)
+        val expansion = if (matchedWord != null) shortcutCache[matchedWord.lowercase()] else null
+
+        return if (matchedWord != null && expansion != null) {
+            val cleanExpansion = formatExpansion(expansion)
+            // Hapus sejumlah karakter kata kunci trigger
+            inputConnection.deleteSurroundingText(matchedWord.length, 0)
+            // Masukkan teks ekspansi
+            inputConnection.commitText(cleanExpansion, 1)
+            resetBuffer()
+            true
+        } else {
+            resetBuffer()
+            false
+        }
+    }
+
+    /**
+     * Dipanggil ketika pengguna menyentuh langsung chip di Candidate Suggestion Bar.
      */
     fun applyCandidateExpansion(inputConnection: InputConnection?): Boolean {
         if (inputConnection == null) return false
 
-        val typedWord = currentWordBuffer.toString()
-        val key = typedWord.lowercase()
-        val expansion = shortcutCache[key]
+        val matchedWord = findMatchingWord(inputConnection)
+        val expansion = if (matchedWord != null) shortcutCache[matchedWord.lowercase()] else null
 
-        return if (expansion != null && typedWord.isNotEmpty()) {
-            inputConnection.deleteSurroundingText(typedWord.length, 0)
-            inputConnection.commitText("$expansion ", 1)
+        return if (matchedWord != null && expansion != null) {
+            val cleanExpansion = formatExpansion(expansion)
+            inputConnection.deleteSurroundingText(matchedWord.length, 0)
+            inputConnection.commitText("$cleanExpansion ", 1)
             resetBuffer()
             true
         } else {
             false
         }
+    }
+
+    /**
+     * Memastikan karakter newline \n dan tag enter terformat dengan benar saat di-commit.
+     */
+    private fun formatExpansion(raw: String): String {
+        return raw
+            .replace(Regex("(?i)<ent__>"), "\n")
+            .replace(Regex("(?i)<enter>"), "\n")
+            .replace(Regex("(?i)<br\\s*/?>"), "\n")
+            .replace(Regex("(?i)<tab__>"), "\t")
+            .replace("\r\n", "\n")
+            .replace("\r", "\n")
+            .replace("\\n", "\n")
+            .replace("\\t", "\t")
     }
 
     /**

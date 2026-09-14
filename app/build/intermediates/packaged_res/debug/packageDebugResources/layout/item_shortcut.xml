@@ -5,6 +5,9 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginVertical="5dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
     app:cardBackgroundColor="@color/surface_card"
     app:cardCornerRadius="10dp"
     app:cardElevation="2dp">
@@ -60,9 +63,18 @@
         </LinearLayout>
 
         <ImageButton
+            android:id="@+id/btn_edit"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Edit Shortcut"
+            android:src="@drawable/ic_edit" />
+
+        <ImageButton
             android:id="@+id/btn_delete"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_marginStart="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Hapus Shortcut"
             android:src="@drawable/ic_delete" />

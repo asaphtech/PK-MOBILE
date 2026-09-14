@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Dukung berkas ekspor Perfect Keyboard (.xml, .csv, .txt, .backup) atau tempel teks langsung."
+        android:text="Dukung berkas cadangan format JSON, XML Perfect Keyboard, CSV, TSV, maupun tempel teks langsung."
         android:textColor="@color/text_secondary"
         android:textSize="12sp" />
 
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:backgroundTint="@color/key_background_normal"
-        android:text="📁 Pilih File Backup Perfect Keyboard"
+        android:text="📁 Pilih File Backup (JSON / XML / CSV)"
         android:textColor="@color/text_primary"
         app:cornerRadius="8dp" />
 
@@ -42,6 +42,16 @@
         android:textColor="@color/candidate_text_highlight"
         android:textSize="12sp"
         android:visibility="gone" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_open_bulk_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/key_background_normal"
+        android:text="📋 Bulk Input (Tempel dari Notepad)"
+        android:textColor="@color/accent"
+        app:cornerRadius="8dp" />
 
     <!-- Pemisah -->
     <LinearLayout
@@ -99,5 +109,15 @@
         android:textColor="@color/accent"
         android:textSize="13sp"
         android:textStyle="bold" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cb_clear_before_import"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:checked="true"
+        android:text="Kosongkan database lama sebelum impor (Hapus data bertag lama)"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
 
 </LinearLayout>

@@ -163,9 +163,19 @@ class CustomKeyboardService : InputMethodService() {
         // Tombol backspace di mode simbol dengan repeat on hold
         attachRepeatBackspaceListener(root.findViewById(R.id.sym_key_backspace))
 
-        // Tombol enter di mode simbol
-        root.findViewById<ImageButton>(R.id.sym_enter)?.setOnClickListener {
+        // Tombol alinea baru di mode simbol (\n)
+        root.findViewById<Button>(R.id.sym_new_line)?.setOnClickListener {
+            handleNewLineKey()
+        }
+
+        // Tombol enter di mode simbol (Click untuk Aksi IME, Tahan untuk Alinea Baru)
+        val symEnterBtn = root.findViewById<ImageButton>(R.id.sym_enter)
+        symEnterBtn?.setOnClickListener {
             handleEnterKey()
+        }
+        symEnterBtn?.setOnLongClickListener {
+            handleNewLineKey()
+            true
         }
     }
 
@@ -187,9 +197,24 @@ class CustomKeyboardService : InputMethodService() {
             handleSpaceKey()
         }
 
-        // Tombol Enter / Kirim / Cari
-        root.findViewById<ImageButton>(R.id.key_enter)?.setOnClickListener {
+        // Tombol Alinea Baru (\n)
+        root.findViewById<Button>(R.id.key_new_line)?.setOnClickListener {
+            handleNewLineKey()
+        }
+
+        // Tombol Enter / Kirim / Cari (Click untuk Aksi IME, Tahan untuk Alinea Baru)
+        val keyEnterBtn = root.findViewById<ImageButton>(R.id.key_enter)
+        keyEnterBtn?.setOnClickListener {
             handleEnterKey()
+        }
+        keyEnterBtn?.setOnLongClickListener {
+            handleNewLineKey()
+            true
+        }
+
+        // Tombol Slash (/) untuk akses cepat shortcut
+        root.findViewById<Button>(R.id.key_slash)?.setOnClickListener {
+            commitCharacter("/")
         }
 
         // Tombol Tanda Koma dan Titik
@@ -216,7 +241,7 @@ class CustomKeyboardService : InputMethodService() {
         // Catat karakter ke buffer auto-text engine
         if (text.isNotEmpty()) {
             for (ch in text) {
-                autoTextEngine.appendChar(ch)
+                autoTextEngine.appendChar(ch, ic)
             }
         }
     }
@@ -235,30 +260,50 @@ class CustomKeyboardService : InputMethodService() {
      */
     private fun handleBackspaceKey() {
         val ic = currentInputConnection ?: return
-        autoTextEngine.handleBackspace()
         ic.deleteSurroundingText(1, 0)
+        autoTextEngine.handleBackspace(ic)
     }
 
     /**
-     * Menangani tombol Enter (menjalankan editor action atau menyisipkan baris baru).
+     * Menangani tombol khusus "Alinea Baru / Enter Line" (\n).
+     * Selalu mengeksekusi commitText("\n", 1) tanpa memicu aksi IME (Kirim/Cari).
+     */
+    private fun handleNewLineKey() {
+        val ic = currentInputConnection ?: return
+
+        // 1. Cek apakah ada shortcut sebelum kursor untuk diekspansi
+        val expanded = autoTextEngine.handleEnter(ic)
+        if (expanded) {
+            // Jika trigger cocok, sudah diekspansi ke teks pengganti, lalu tambahkan alinea baru
+            ic.commitText("\n", 1)
+        } else {
+            // Bukan trigger shortcut: langsung commit baris baru alinea (\n)
+            ic.commitText("\n", 1)
+            autoTextEngine.resetBuffer()
+        }
+    }
+
+    /**
+     * Menangani tombol "Action Enter / Kirim / Cari" (Key Code Standard Enter).
+     * 1. Cek apakah ada kata kunci shortcut untuk diekspansi.
+     * 2. Jika bukan shortcut, kirimkan aksi editor (sendDefaultEditorAction(true))
+     *    atau sendKeyChar('\n') sesuai imeOptions kolom teks.
      */
     private fun handleEnterKey() {
         val ic = currentInputConnection ?: return
-        autoTextEngine.resetBuffer()
 
-        // Cek editor info apakah tombol aksi (Send, Search, Go, Next, Done)
-        val editorInfo = currentInputEditorInfo
-        if (editorInfo != null && editorInfo.imeOptions and EditorInfo.IME_MASK_ACTION != EditorInfo.IME_ACTION_NONE) {
-            val action = editorInfo.imeOptions and EditorInfo.IME_MASK_ACTION
-            if (action != EditorInfo.IME_ACTION_UNSPECIFIED) {
-                ic.performEditorAction(action)
-                return
-            }
+        // 1. Cek apakah ada kata kunci shortcut sebelum aksi dieksekusi
+        val expanded = autoTextEngine.handleEnter(ic)
+        if (expanded) {
+            // Shortcut berhasil diekspansi saat tombol Enter ditekan
+            return
         }
 
-        // Default enter: baris baru
-        ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
-        ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER))
+        // 2. Eksekusi aksi editor (Send, Search, Go, Next, Done) sesuai imeOptions
+        val actionHandled = sendDefaultEditorAction(true)
+        if (!actionHandled) {
+            sendKeyChar('\n')
+        }
     }
 
     /**
@@ -293,6 +338,14 @@ class CustomKeyboardService : InputMethodService() {
      * Memperbarui UI Suggestion Bar saat ada shortcut yang cocok.
      */
     private fun updateCandidateUI(shortcut: String?, expansion: String?) {
+        // Jamin eksekusi selalu berada di Main UI thread
+        if (android.os.Looper.myLooper() != android.os.Looper.getMainLooper()) {
+            android.os.Handler(android.os.Looper.getMainLooper()).post {
+                updateCandidateUI(shortcut, expansion)
+            }
+            return
+        }
+
         if (shortcut != null && expansion != null) {
             tvCandidatePrefix?.visibility = View.VISIBLE
             tvCandidateText?.text = "$shortcut ➔ $expansion"

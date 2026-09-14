@@ -17,23 +17,92 @@ class ShortcutRepository(private val shortcutDao: ShortcutDao) {
     }
 
     suspend fun insertShortcut(shortcut: String, expansion: String): Long {
+        val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(shortcut).lowercase()
         val entity = ShortcutEntity(
-            shortcut = shortcut.trim().lowercase(),
+            shortcut = cleanKey,
             expansion = expansion.trim()
         )
         return shortcutDao.insertOrUpdate(entity)
     }
 
-    suspend fun importShortcuts(pairs: List<Pair<String, String>>): Int {
+    suspend fun update(shortcut: ShortcutEntity): Int {
+        val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(shortcut.shortcut).lowercase()
+        val cleanExp = shortcut.expansion.trim()
+
+        // Jika trigger baru sudah dipakai oleh baris lain, hapus agar tidak melanggar indeks unik
+        val existing = shortcutDao.findByShortcut(cleanKey)
+        if (existing != null && existing.id != shortcut.id) {
+            shortcutDao.delete(existing)
+        }
+
+        val updated = shortcut.copy(
+            shortcut = cleanKey,
+            expansion = cleanExp
+        )
+        val rows = shortcutDao.update(updated)
+        if (rows == 0) {
+            shortcutDao.insertOrUpdate(updated)
+        }
+        return 1
+    }
+
+    suspend fun insertAll(entities: List<ShortcutEntity>) {
+        if (entities.isNotEmpty()) {
+            val cleanEntities = entities.mapNotNull { entity ->
+                val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(entity.shortcut).lowercase()
+                val cleanExp = entity.expansion.trim()
+                if (cleanKey.isNotBlank() && cleanExp.isNotBlank()) {
+                    ShortcutEntity(
+                        shortcut = cleanKey,
+                        expansion = cleanExp
+                    )
+                } else null
+            }
+            shortcutDao.insertAll(cleanEntities)
+        }
+    }
+
+    suspend fun importShortcuts(pairs: List<Pair<String, String>>, clearExisting: Boolean = false): Int {
+        if (clearExisting) {
+            shortcutDao.deleteAll()
+        }
         if (pairs.isEmpty()) return 0
-        val entities = pairs.map { (key, value) ->
-            ShortcutEntity(
-                shortcut = key.trim().lowercase(),
-                expansion = value.trim()
-            )
+        val entities = pairs.mapNotNull { (key, value) ->
+            val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(key).lowercase()
+            val cleanExp = value.trim()
+            if (cleanKey.isNotBlank() && cleanExp.isNotBlank()) {
+                ShortcutEntity(
+                    shortcut = cleanKey,
+                    expansion = cleanExp
+                )
+            } else null
         }
         shortcutDao.insertAll(entities)
         return entities.size
+    }
+
+    /**
+     * Memeriksa dan membersihkan database otomatis dari data lama yang masih memuat tag XML seperti <tscut>.
+     */
+    suspend fun sanitizeExistingDatabase(): Int {
+        val all = shortcutDao.getAllList()
+        var updatedCount = 0
+        for (item in all) {
+            val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(item.shortcut).lowercase()
+            val cleanExp = item.expansion.trim()
+            if (cleanKey != item.shortcut) {
+                shortcutDao.delete(item)
+                if (cleanKey.isNotBlank()) {
+                    shortcutDao.insertOrUpdate(ShortcutEntity(shortcut = cleanKey, expansion = cleanExp))
+                    updatedCount++
+                }
+            }
+        }
+        return updatedCount
+    }
+
+    suspend fun deleteAll() {
+        shortcutDao.deleteAll()
     }
 
     suspend fun deleteShortcut(shortcut: ShortcutEntity) {

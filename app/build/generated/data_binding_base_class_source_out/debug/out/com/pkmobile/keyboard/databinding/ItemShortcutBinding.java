@@ -24,15 +24,20 @@ public final class ItemShortcutBinding implements ViewBinding {
   public final ImageButton btnDelete;
 
   @NonNull
+  public final ImageButton btnEdit;
+
+  @NonNull
   public final TextView tvExpansion;
 
   @NonNull
   public final TextView tvShortcutBadge;
 
   private ItemShortcutBinding(@NonNull CardView rootView, @NonNull ImageButton btnDelete,
-      @NonNull TextView tvExpansion, @NonNull TextView tvShortcutBadge) {
+      @NonNull ImageButton btnEdit, @NonNull TextView tvExpansion,
+      @NonNull TextView tvShortcutBadge) {
     this.rootView = rootView;
     this.btnDelete = btnDelete;
+    this.btnEdit = btnEdit;
     this.tvExpansion = tvExpansion;
     this.tvShortcutBadge = tvShortcutBadge;
   }
@@ -70,6 +75,12 @@ public final class ItemShortcutBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btn_edit;
+      ImageButton btnEdit = ViewBindings.findChildViewById(rootView, id);
+      if (btnEdit == null) {
+        break missingId;
+      }
+
       id = R.id.tv_expansion;
       TextView tvExpansion = ViewBindings.findChildViewById(rootView, id);
       if (tvExpansion == null) {
@@ -82,7 +93,8 @@ public final class ItemShortcutBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ItemShortcutBinding((CardView) rootView, btnDelete, tvExpansion, tvShortcutBadge);
+      return new ItemShortcutBinding((CardView) rootView, btnDelete, btnEdit, tvExpansion,
+          tvShortcutBadge);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
