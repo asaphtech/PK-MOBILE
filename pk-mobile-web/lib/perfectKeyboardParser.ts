@@ -258,11 +258,30 @@ export function parseTxtExport(fileContent: string): Array<{
     let trigger = '';
     let expansion = '';
 
-    // Ekstrak trigger dari baris 'at1s:'
-    const triggerMatch = item.match(/^at1s:\s*(.+)$/m) || item.match(/^(?:at1|at2s|trigger|hotkey):\s*(.+)$/m);
-    if (triggerMatch) {
-      trigger = triggerMatch[1].trim();
+    // Regex pencarian trigger yang lebih fleksibel (at1s, at1sa, at2s, at2sa, trigger, hotkey)
+    const triggerMatches = Array.from(item.matchAll(/^(?:at1s?a?|at2s?a?|trigger|hotkey):\s*(.+)$/gmi));
+    const nameMatch = item.match(/^name:\s*(.+)$/mi);
+
+    let rawTrigger = '';
+    for (const tm of triggerMatches) {
+      const candidate = tm[1].trim();
+      if (candidate && candidate !== '0') {
+        rawTrigger = candidate;
+        break;
+      }
     }
+
+    // Handle kondisi jika trigger "0", kosong, atau hanya spasi -> gunakan nama macro sebagai fallback
+    if (!rawTrigger || rawTrigger === '0') {
+      if (nameMatch && nameMatch[1].trim()) {
+        const cleanName = nameMatch[1].trim().toLowerCase().replace(/^[\[{(<"'\s]+|[\]})>"'\s]+$/g, '').replace(/\s+/g, '_');
+        if (cleanName) {
+          rawTrigger = cleanName.startsWith('/') ? cleanName : `/${cleanName}`;
+        }
+      }
+    }
+
+    trigger = rawTrigger;
 
     // Ekstrak isi pesan dari 'm:'
     const messageIndex = item.indexOf('\nm: ');
@@ -393,11 +412,30 @@ function parseEndOfItemFormat(
     let trigger = '';
     let expansion = '';
 
-    // Ekstrak trigger dari baris 'at1s:'
-    const triggerMatch = item.match(/^at1s:\s*(.+)$/m) || item.match(/^(?:at1|at2s|trigger|hotkey|shortcut|name):\s*(.+)$/m);
-    if (triggerMatch) {
-      trigger = triggerMatch[1].trim();
+    // Regex pencarian trigger yang lebih fleksibel (at1s, at1sa, at2s, at2sa, trigger, hotkey)
+    const triggerMatches = Array.from(item.matchAll(/^(?:at1s?a?|at2s?a?|trigger|hotkey):\s*(.+)$/gmi));
+    const nameMatch = item.match(/^name:\s*(.+)$/mi);
+
+    let rawTrigger = '';
+    for (const tm of triggerMatches) {
+      const candidate = tm[1].trim();
+      if (candidate && candidate !== '0') {
+        rawTrigger = candidate;
+        break;
+      }
     }
+
+    // Handle kondisi jika trigger "0", kosong, atau hanya spasi -> gunakan nama macro sebagai fallback
+    if (!rawTrigger || rawTrigger === '0') {
+      if (nameMatch && nameMatch[1].trim()) {
+        const cleanName = nameMatch[1].trim().toLowerCase().replace(/^[\[{(<"'\s]+|[\]})>"'\s]+$/g, '').replace(/\s+/g, '_');
+        if (cleanName) {
+          rawTrigger = cleanName.startsWith('/') ? cleanName : `/${cleanName}`;
+        }
+      }
+    }
+
+    trigger = rawTrigger;
 
     // Ekstrak isi pesan dari 'm:'
     const messageIndex = item.indexOf('\nm: ');
@@ -459,11 +497,25 @@ function parseXmlFormat(
       expansion = cleanTextContent(macroTextMatch[1]);
     }
 
-    // 2. Tag alternatif: <hotkey>, <trigger>, <key>, <shortcut>, <name>
-    if (!trigger) {
-      const keyTagMatch = /<(?:hotkey|trigger|key|shortcut|name|keyword|code)\b[^>]*>([\s\S]*?)<\/(?:hotkey|trigger|key|shortcut|name|keyword|code)>/i.exec(block);
+    // 2. Tag alternatif: <hotkey>, <trigger>, <key>, <shortcut>, <at1s>, <at1sa>, <at2s>, <at2sa>
+    if (!trigger || trigger === '0') {
+      const keyTagMatch = /<(?:hotkey|trigger|key|shortcut|at1s|at1sa|at2s|at2sa)\b[^>]*>([\s\S]*?)<\/(?:hotkey|trigger|key|shortcut|at1s|at1sa|at2s|at2sa)>/i.exec(block);
       if (keyTagMatch) {
-        trigger = cleanTriggerString(keyTagMatch[1]);
+        const candidate = cleanTriggerString(keyTagMatch[1]);
+        if (candidate && candidate !== '0') {
+          trigger = candidate;
+        }
+      }
+    }
+
+    // Fallback nama macro <name> jika trigger masih kosong atau '0'
+    if (!trigger || trigger === '0') {
+      const nameTagMatch = /<name\b[^>]*>([\s\S]*?)<\/name>/i.exec(block);
+      if (nameTagMatch) {
+        const cleanName = cleanTriggerString(nameTagMatch[1]).toLowerCase().replace(/^[\[{(<"'\s]+|[\]})>"'\s]+$/g, '').replace(/\s+/g, '_');
+        if (cleanName) {
+          trigger = cleanName.startsWith('/') ? cleanName : `/${cleanName}`;
+        }
       }
     }
 
