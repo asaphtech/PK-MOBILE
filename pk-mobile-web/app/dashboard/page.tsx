@@ -75,6 +75,7 @@ export default function DashboardPage() {
 
   // Copy indicator state
   const [copiedId, setCopiedId] = useState<string | number | null>(null);
+  const [copiedExpansionIdx, setCopiedExpansionIdx] = useState<number | null>(null);
 
   // Notification Toast
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -263,6 +264,14 @@ export default function DashboardPage() {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 1500);
+  };
+
+  const handleCopyExpansion = (text: string, idx: number) => {
+    if (!text || text === '(Teks Kosong)') return;
+    navigator.clipboard.writeText(text);
+    setCopiedExpansionIdx(idx);
+    showToast('success', 'Isi pesan berhasil disalin ke clipboard!');
+    setTimeout(() => setCopiedExpansionIdx(null), 1500);
   };
 
   // CSV Import handler
@@ -1015,7 +1024,7 @@ export default function DashboardPage() {
       {/* MODAL: Import File Perfect Keyboard (.4pk, .kps, .txt) */}
       {isPkModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-4xl max-h-[92vh] flex flex-col bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-5 sm:p-7 relative">
+          <div className="w-full max-w-5xl max-h-[92vh] flex flex-col bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-5 sm:p-7 relative">
             {/* Tombol Tutup */}
             <button
               onClick={resetPkModal}
@@ -1177,33 +1186,59 @@ export default function DashboardPage() {
                             </span>
                           </div>
                         </div>
-                        <div className="max-h-64 overflow-y-auto">
-                          <table className="w-full text-left border-collapse text-xs">
-                            <thead>
-                              <tr className="border-b border-amber-500/20 bg-amber-950/40 text-[11px] font-bold text-amber-400 uppercase tracking-wider sticky top-0 backdrop-blur">
-                                <th className="py-2.5 px-3 w-16">Baris</th>
-                                <th className="py-2.5 px-3 w-36">Trigger Asli (.4pk)</th>
-                                <th className="py-2.5 px-3 min-w-[200px]">Alasan Tidak Diproses</th>
-                                <th className="py-2.5 px-3 min-w-[240px]">Saran Tindakan</th>
+                        <div className="max-h-72 overflow-y-auto border border-amber-900/40 rounded-lg">
+                          <table className="w-full text-sm text-left border-collapse">
+                            <thead className="bg-amber-950/60 text-amber-300 uppercase text-xs sticky top-0 backdrop-blur z-10">
+                              <tr>
+                                <th className="p-2.5 border-b border-amber-900/40 w-16">BARIS</th>
+                                <th className="p-2.5 border-b border-amber-900/40 w-36">TRIGGER ASLI (.4PK)</th>
+                                <th className="p-2.5 border-b border-amber-900/40 min-w-[220px]">ISI PESAN (EXPANSION)</th>
+                                <th className="p-2.5 border-b border-amber-900/40 min-w-[180px]">ALASAN TIDAK DIPROSES</th>
+                                <th className="p-2.5 border-b border-amber-900/40 min-w-[200px]">SARAN TINDAKAN</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-amber-500/10">
-                              {pkParseResult.failedShortcuts.map((item, idx) => (
-                                <tr key={idx} className="hover:bg-amber-500/5 transition-colors">
-                                  <td className="py-2.5 px-3 font-mono text-slate-400">#{item.lineNum}</td>
-                                  <td className="py-2.5 px-3">
-                                    <span className="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-500/30 text-amber-300 font-mono font-bold text-xs">
-                                      {item.rawTrigger}
-                                    </span>
-                                  </td>
-                                  <td className="py-2.5 px-3 text-amber-200/90 leading-relaxed">
-                                    {item.reason}
-                                  </td>
-                                  <td className="py-2.5 px-3 text-emerald-300/95 leading-relaxed font-medium">
-                                    {item.suggestion}
-                                  </td>
-                                </tr>
-                              ))}
+                            <tbody className="divide-y divide-amber-900/20 bg-slate-950/40 text-xs">
+                              {pkParseResult.failedShortcuts.map((item, idx) => {
+                                const expansionText = item.expansion || item.rawExpansion || item.rawMessage || '';
+                                return (
+                                  <tr key={idx} className="hover:bg-amber-950/20 transition-colors">
+                                    <td className="p-2.5 font-mono text-slate-400 align-top">#{item.lineNum}</td>
+                                    <td className="p-2.5 align-top">
+                                      <span className="inline-block px-2 py-1 bg-amber-950 text-amber-400 border border-amber-800/60 rounded font-mono text-xs font-bold">
+                                        {item.rawTrigger || '(Kosong)'}
+                                      </span>
+                                    </td>
+                                    {/* Kolom Baru: Isi Pesan */}
+                                    <td className="p-2.5 max-w-xs align-top">
+                                      <div className="relative group bg-slate-900 p-2 rounded text-xs text-slate-300 whitespace-pre-wrap max-h-20 overflow-y-auto border border-slate-800 font-sans shadow-inner">
+                                        <div className="pr-6 select-text">
+                                          {expansionText || '(Teks Kosong)'}
+                                        </div>
+                                        {expansionText && (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleCopyExpansion(expansionText, idx)}
+                                            className="absolute top-1.5 right-1.5 p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-amber-300 transition-colors border border-slate-700/60"
+                                            title="Salin isi pesan"
+                                          >
+                                            {copiedExpansionIdx === idx ? (
+                                              <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                            ) : (
+                                              <Copy className="w-3.5 h-3.5" />
+                                            )}
+                                          </button>
+                                        )}
+                                      </div>
+                                    </td>
+                                    <td className="p-2.5 text-amber-200/90 font-medium leading-relaxed align-top">
+                                      {item.reason}
+                                    </td>
+                                    <td className="p-2.5 text-emerald-400 font-medium leading-relaxed align-top">
+                                      {item.suggestion}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
                             </tbody>
                           </table>
                         </div>

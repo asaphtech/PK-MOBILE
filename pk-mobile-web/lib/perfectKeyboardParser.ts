@@ -14,6 +14,8 @@ export interface FailedShortcut {
   lineNum: number;
   rawTrigger: string;
   rawExpansion: string;
+  expansion: string;
+  rawMessage?: string;
   reason: string;
   suggestion: string;
 }
@@ -121,6 +123,8 @@ function validateTrigger(
         lineNum,
         rawTrigger: rawTrigger || '(Kosong)',
         rawExpansion: expansion,
+        expansion: expansion,
+        rawMessage: expansion,
         reason: 'Kode trigger kosong atau tidak ditemukan.',
         suggestion: 'Tentukan kode trigger teks yang valid sebelum mengimpor.'
       }
@@ -135,6 +139,8 @@ function validateTrigger(
         lineNum,
         rawTrigger: trigger,
         rawExpansion: '(Kosong)',
+        expansion: '',
+        rawMessage: '',
         reason: 'Isi teks balasan (expansion text) kosong.',
         suggestion: 'Lengkapi isi teks pesan template balasan sebelum diimpor.'
       }
@@ -154,6 +160,8 @@ function validateTrigger(
         lineNum,
         rawTrigger: trigger,
         rawExpansion: expansion,
+        expansion: expansion,
+        rawMessage: expansion,
         reason: `Menggunakan tombol fisik PC Function Key (${trigger}) yang tidak ada pada keyboard HP.`,
         suggestion: generateSuggestion(trigger)
       }
@@ -168,6 +176,8 @@ function validateTrigger(
         lineNum,
         rawTrigger: trigger,
         rawExpansion: expansion,
+        expansion: expansion,
+        rawMessage: expansion,
         reason: `Menggunakan tombol fisik PC "${trigger}" yang tidak tersedia pada keyboard smartphone.`,
         suggestion: generateSuggestion(trigger)
       }
@@ -184,6 +194,8 @@ function validateTrigger(
         lineNum,
         rawTrigger: trigger,
         rawExpansion: expansion,
+        expansion: expansion,
+        rawMessage: expansion,
         reason: `Menggunakan kombinasi tombol pintas PC (${trigger}) yang tidak didukung pada layar sentuh Android.`,
         suggestion: generateSuggestion(trigger)
       }
@@ -199,6 +211,8 @@ function validateTrigger(
         lineNum,
         rawTrigger: trigger,
         rawExpansion: expansion,
+        expansion: expansion,
+        rawMessage: expansion,
         reason: 'Trigger mengandung karakter spasi (tidak dapat dipicu otomatis saat mengetik di HP).',
         suggestion: `Hapus spasi atau sambungkan dengan garis bawah (misal: "${withoutSpace}").`
       }
