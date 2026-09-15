@@ -488,26 +488,58 @@ export default function DashboardPage() {
     }
   };
 
-  // Fetch Session, Presets, & Shortcuts
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const client = getSupabaseClient();
-        const { data: { session } } = await client.auth.getSession();
-        if (!session) {
-          router.replace('/login');
-          return;
-        }
-        setUser(session.user);
-        const activeId = await fetchPresets();
-        await fetchShortcuts(activeId);
-      } catch (err) {
-        console.error('Init error:', err);
-        router.replace('/login');
+  // Fetch Shortcuts untuk preset tertentu
+  const fetchShortcuts = async (presetIdToUse?: string) => {
+    setLoading(true);
+    try {
+      const client = getSupabaseClient();
+      const { data: { user: currentUser } } = await client.auth.getUser();
+      if (!currentUser) {
+        setLoading(false);
+        return;
       }
-    };
-    init();
-  }, [router]);
+      setUser(currentUser);
+
+      const targetPresetId = presetIdToUse !== undefined ? presetIdToUse : selectedPresetId;
+
+      let query = client
+        .from('shortcuts')
+        .select('*')
+        .eq('user_id', currentUser.id);
+
+      if (targetPresetId) {
+        query = query.eq('preset_id', targetPresetId);
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
+
+      if (error) {
+        showToast('error', `Gagal memuat data: ${error.message}`);
+        console.error('Gagal mengambil data:', error);
+      } else {
+        const formatted: ShortcutItem[] = (data || []).map((item: any) => ({
+          id: item.id,
+          preset_id: item.preset_id,
+          shortcut: item.shortcut || item.trigger_code || '',
+          trigger_code: item.trigger_code || item.shortcut || '',
+          expansion: item.expansion || item.expansion_text || '',
+          expansion_text: item.expansion_text || item.expansion || '',
+          category: item.category || 'Umum',
+          expansion_mode: item.expansion_mode === 'INSTANT' ? 'INSTANT' : 'SPACE',
+          user_id: item.user_id,
+          created_at: item.created_at
+        }));
+        setShortcuts(formatted);
+        const now = new Date();
+        setLastSyncTime(now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }));
+      }
+    } catch (err: any) {
+      showToast('error', `Kesalahan koneksi: ${err.message}`);
+      console.error('Kesalahan koneksi:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchPresets = async (preferredPresetId?: string): Promise<string> => {
     setIsPresetLoading(true);
@@ -562,12 +594,27 @@ export default function DashboardPage() {
 
       setPresets(enriched);
 
-      let targetId = preferredPresetId;
-      if (!targetId || !enriched.some(p => p.id === targetId)) {
+      // Cek apakah localStorage.getItem('active_preset_id') cocok dengan salah satu id preset di Supabase
+      const savedPresetId = (typeof window !== 'undefined' ? localStorage.getItem('active_preset_id') : null) || preferredPresetId;
+
+      let targetId = '';
+      if (savedPresetId && enriched.some(p => p.id === savedPresetId)) {
+        targetId = savedPresetId;
+      } else {
+        // Jika tidak ada di localStorage atau id tidak valid, ambil preset yang is_active = true
         const activeOne = enriched.find(p => p.is_active);
         targetId = activeOne?.id || enriched[0]?.id || 'default_preset';
       }
+
+      // Terapkan targetId ke selectedPresetId dan update localStorage
       setSelectedPresetId(targetId);
+      if (typeof window !== 'undefined' && targetId) {
+        localStorage.setItem('active_preset_id', targetId);
+      }
+
+      // LANGSUNG panggil fetchShortcuts(targetId) di dalam fetchPresets() untuk mencegah race condition
+      await fetchShortcuts(targetId);
+
       return targetId;
     } catch (err) {
       console.error('fetchPresets error:', err);
@@ -577,60 +624,34 @@ export default function DashboardPage() {
     }
   };
 
-  const fetchShortcuts = async (presetIdToUse?: string) => {
-    setLoading(true);
-    try {
-      const client = getSupabaseClient();
-      const { data: { user: currentUser } } = await client.auth.getUser();
-      if (!currentUser) {
-        setLoading(false);
-        return;
+  // Fetch Session, Presets, & Shortcuts
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const client = getSupabaseClient();
+        const { data: { session } } = await client.auth.getSession();
+        if (!session) {
+          router.replace('/login');
+          return;
+        }
+        setUser(session.user);
+
+        // Langsung panggil fetchPresets() yang secara atomik mencocokkan localStorage
+        // dan langsung memanggil fetchShortcuts(targetId)
+        await fetchPresets();
+      } catch (err) {
+        console.error('Init error:', err);
+        router.replace('/login');
       }
-      setUser(currentUser);
-
-      const targetPresetId = presetIdToUse !== undefined ? presetIdToUse : selectedPresetId;
-
-      let query = client
-        .from('shortcuts')
-        .select('*')
-        .eq('user_id', currentUser.id);
-
-      if (targetPresetId) {
-        query = query.eq('preset_id', targetPresetId);
-      }
-
-      const { data, error } = await query.order('created_at', { ascending: false });
-
-      if (error) {
-        showToast('error', `Gagal memuat data: ${error.message}`);
-        console.error('Gagal mengambil data:', error);
-      } else {
-        const formatted: ShortcutItem[] = (data || []).map((item: any) => ({
-          id: item.id,
-          preset_id: item.preset_id,
-          shortcut: item.shortcut || item.trigger_code || '',
-          trigger_code: item.trigger_code || item.shortcut || '',
-          expansion: item.expansion || item.expansion_text || '',
-          expansion_text: item.expansion_text || item.expansion || '',
-          category: item.category || 'Umum',
-          expansion_mode: item.expansion_mode === 'INSTANT' ? 'INSTANT' : 'SPACE',
-          user_id: item.user_id,
-          created_at: item.created_at
-        }));
-        setShortcuts(formatted);
-        const now = new Date();
-        setLastSyncTime(now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }));
-      }
-    } catch (err: any) {
-      showToast('error', `Kesalahan koneksi: ${err.message}`);
-      console.error('Kesalahan koneksi:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    init();
+  }, [router]);
 
   const handleSelectPreset = async (presetId: string) => {
     setSelectedPresetId(presetId);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('active_preset_id', presetId);
+    }
     await fetchShortcuts(presetId);
   };
 
@@ -654,6 +675,9 @@ export default function DashboardPage() {
       if (error) throw error;
 
       showToast('success', 'Preset berhasil diaktifkan! Keyboard HP Android CS akan menyedot preset ini saat sinkronisasi.');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('active_preset_id', presetId);
+      }
       await fetchPresets(presetId);
     } catch (err: any) {
       showToast('error', `Gagal mengaktifkan preset: ${err.message}`);
@@ -685,8 +709,10 @@ export default function DashboardPage() {
       showToast('success', `Preset "${newPreset.name}" berhasil dibuat!`);
       setIsNewPresetModalOpen(false);
       setNewPresetName('');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('active_preset_id', newId);
+      }
       await fetchPresets(newId);
-      await fetchShortcuts(newId);
     } catch (err: any) {
       showToast('error', `Gagal membuat preset: ${err.message}`);
     } finally {
@@ -709,6 +735,9 @@ export default function DashboardPage() {
 
       showToast('success', `Nama preset diubah menjadi "${renamePresetName.trim()}"!`);
       setIsRenameModalOpen(false);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('active_preset_id', selectedPresetId);
+      }
       await fetchPresets(selectedPresetId);
     } catch (err: any) {
       showToast('error', `Gagal mengubah nama preset: ${err.message}`);
@@ -736,10 +765,14 @@ export default function DashboardPage() {
 
       const remaining = presets.filter(p => p.id !== selectedPresetId);
       const nextId = remaining[0]?.id;
-      await fetchPresets(nextId);
-      if (nextId) {
-        await fetchShortcuts(nextId);
+      if (typeof window !== 'undefined') {
+        if (nextId) {
+          localStorage.setItem('active_preset_id', nextId);
+        } else {
+          localStorage.removeItem('active_preset_id');
+        }
       }
+      await fetchPresets(nextId);
     } catch (err: any) {
       showToast('error', `Gagal menghapus preset: ${err.message}`);
     } finally {
@@ -848,7 +881,9 @@ export default function DashboardPage() {
       showToast('success', `Shortcut "${cleanTrigger}" berhasil disimpan ke preset!`);
 
       setIsModalOpen(false);
-      await fetchShortcuts(targetPreset);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('active_preset_id', targetPreset);
+      }
       await fetchPresets(targetPreset);
     } catch (err: any) {
       setFormError(err.message || 'Gagal menyimpan shortcut ke Supabase.');
@@ -1011,8 +1046,10 @@ export default function DashboardPage() {
       setCsvPreview([]);
       setCsvFileName('');
       setImportPresetName('');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('active_preset_id', targetPresetId);
+      }
       await fetchPresets(targetPresetId);
-      await fetchShortcuts(targetPresetId);
     } catch (err: any) {
       setImportStatus({ error: `Gagal impor massal: ${err.message}` });
     } finally {
@@ -1126,8 +1163,10 @@ export default function DashboardPage() {
       setPkStatus({
         success: `Berhasil mengimpor ${pkParseResult.validShortcuts.length} shortcut ke Supabase Cloud (Preset terisolasi). Seluruh shortcut ini siap disinkronkan ke HP Android CS!`
       });
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('active_preset_id', targetPresetId);
+      }
       await fetchPresets(targetPresetId);
-      await fetchShortcuts(targetPresetId);
     } catch (err: any) {
       setPkStatus({ error: `Gagal menyimpan ke Supabase: ${err.message}` });
     } finally {
