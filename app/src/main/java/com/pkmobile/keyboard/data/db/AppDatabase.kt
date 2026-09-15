@@ -54,7 +54,7 @@ abstract class AppDatabase : RoomDatabase() {
                 super.onCreate(db)
                 INSTANCE?.let { database ->
                     CoroutineScope(Dispatchers.IO).launch {
-                        populateDefaultData(database.presetDao(), database.shortcutDao())
+                        ensureDefaultPreset(database.presetDao())
                     }
                 }
             }
@@ -66,7 +66,7 @@ abstract class AppDatabase : RoomDatabase() {
                         // Pastikan selalu ada minimal 1 preset aktif jika database kosong
                         val allPresets = database.presetDao().getAllPresets()
                         if (allPresets.isEmpty()) {
-                            populateDefaultData(database.presetDao(), database.shortcutDao())
+                            ensureDefaultPreset(database.presetDao())
                         } else if (allPresets.none { it.isActive }) {
                             database.presetDao().setActivePreset(allPresets.first().id)
                         }
@@ -74,26 +74,16 @@ abstract class AppDatabase : RoomDatabase() {
                 }
             }
 
-            private suspend fun populateDefaultData(presetDao: PresetDao, shortcutDao: ShortcutDao) {
+            private suspend fun ensureDefaultPreset(presetDao: PresetDao) {
                 val defaultPreset = PresetEntity(
                     id = "default_preset",
-                    name = "Paket Utama (Bawaan)",
+                    name = "Paket Utama",
                     sourceType = "LOCAL",
                     isActive = true,
-                    shortcutCount = 6,
+                    shortcutCount = 0,
                     createdAt = System.currentTimeMillis()
                 )
                 presetDao.insertOrUpdate(defaultPreset)
-
-                val defaultShortcuts = listOf(
-                    ShortcutEntity(shortcut = "omw", expansion = "On my way!", presetId = "default_preset"),
-                    ShortcutEntity(shortcut = "brb", expansion = "Be right back", presetId = "default_preset"),
-                    ShortcutEntity(shortcut = "thx", expansion = "Thank you so much!", presetId = "default_preset"),
-                    ShortcutEntity(shortcut = "btw", expansion = "By the way", presetId = "default_preset"),
-                    ShortcutEntity(shortcut = "otw", expansion = "On the way", presetId = "default_preset"),
-                    ShortcutEntity(shortcut = "info", expansion = "Informasi lebih lanjut dapat menghubungi layanan kami.", presetId = "default_preset")
-                )
-                defaultShortcuts.forEach { shortcutDao.insertOrUpdate(it) }
             }
         }
     }

@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="@color/surface_dark"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:paddingHorizontal="14dp"
+    android:paddingVertical="16dp">
 
     <!-- Header Dialog -->
     <LinearLayout

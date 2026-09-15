@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SupabaseShortcutDto(
     @SerialName("id")
-    val id: Long? = null,
+    val id: String? = null,
 
     @SerialName("preset_id")
     val presetId: String? = null,

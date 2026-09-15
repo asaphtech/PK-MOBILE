@@ -229,6 +229,26 @@ class ShortcutRepository(
         return updatedCount
     }
 
+    /**
+     * Membersihkan shortcut bawaan/contoh (omw, brb, thx, btw, otw, info) dari database
+     * jika masih tersisa dari instalasi versi sebelumnya.
+     */
+    suspend fun removeLegacySeedShortcuts(): Int {
+        val legacyTriggers = setOf("omw", "brb", "thx", "btw", "otw", "info")
+        val shortcuts = shortcutDao.getShortcutsByPresetList("default_preset")
+        var removedCount = 0
+        for (sc in shortcuts) {
+            if (sc.triggerCode.lowercase() in legacyTriggers) {
+                shortcutDao.delete(sc)
+                removedCount++
+            }
+        }
+        if (removedCount > 0) {
+            presetDao?.updateShortcutCount("default_preset", shortcutDao.countByPreset("default_preset"))
+        }
+        return removedCount
+    }
+
     suspend fun deleteAll() {
         shortcutDao.deleteAll()
         presetDao?.deleteAll()

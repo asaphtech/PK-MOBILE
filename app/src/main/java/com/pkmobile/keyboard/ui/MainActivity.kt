@@ -98,8 +98,9 @@ class MainActivity : AppCompatActivity() {
         setupSearchBar()
         observeShortcuts()
 
-        // Pembersihan otomatis database dari tag XML lama (seperti <tscut>)
+        // Pembersihan otomatis database dari tag XML lama (seperti <tscut>) dan shortcut bawaan lama
         lifecycleScope.launch(Dispatchers.IO) {
+            repository.removeLegacySeedShortcuts()
             val cleaned = repository.sanitizeExistingDatabase()
             if (cleaned > 0) {
                 withContext(Dispatchers.Main) {
