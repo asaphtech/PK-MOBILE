@@ -226,7 +226,7 @@ export function ApkDownloadSection() {
             )}
 
             {/* Footer Modal */}
-            <div className="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between">
+            <div className="mt-6 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-[11px] text-slate-400 font-mono">
                 <span className="text-emerald-400 font-semibold">v1.0 (Build 1)</span>
                 <span>•</span>
@@ -234,13 +234,23 @@ export function ApkDownloadSection() {
                 <span>•</span>
                 <span>9.7 MB</span>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowGuide(false)}
-                className="bg-slate-800 hover:bg-slate-700 text-white text-xs px-4 py-2 rounded-xl font-medium transition border border-slate-700"
-              >
-                Tutup Panduan
-              </button>
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <a
+                  href="/jfn-typemaster.apk"
+                  download="JFN_Type_Master.apk"
+                  className="inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs px-3.5 py-2 rounded-xl font-semibold transition-all shadow-md shadow-emerald-950/40 border border-emerald-400/30"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download APK Sekarang</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setShowGuide(false)}
+                  className="bg-slate-800 hover:bg-slate-700 text-white text-xs px-3.5 py-2 rounded-xl font-medium transition border border-slate-700"
+                >
+                  Tutup Panduan
+                </button>
+              </div>
             </div>
           </div>
         </div>

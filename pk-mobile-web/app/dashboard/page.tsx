@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import {
   parsePerfectKeyboardFile,
+  cleanMacroText,
   PerfectKeyboardParseResult,
   ValidShortcut,
   FailedShortcut
@@ -97,7 +98,7 @@ function WarningRow({
     onResolve(item, formatted);
   };
 
-  const expansionText = item.expansion || item.rawExpansion || item.rawMessage || '';
+  const expansionText = cleanMacroText(item.expansion || item.rawExpansion || item.rawMessage || '');
   const suggestionCandidate = item.suggestedTrigger || `/m_${item.lineNum}`;
 
   return (
@@ -413,7 +414,7 @@ export default function DashboardPage() {
       }
 
       const cleanTrigger = formTrigger.trim().toLowerCase();
-      const cleanExpansion = formExpansion.trim();
+      const cleanExpansion = cleanMacroText(formExpansion.trim());
 
       const payload = {
         trigger_code: cleanTrigger,
@@ -512,7 +513,7 @@ export default function DashboardPage() {
         const parts = line.split(/[;,]/).map(p => p.trim().replace(/^["']|["']$/g, ''));
         if (parts.length >= 2 && parts[0] && parts[1]) {
           const trigger = parts[0];
-          const expansion = parts[1];
+          const expansion = cleanMacroText(parts[1]);
           const cat = parts[2] || 'Umum';
           const modeRaw = (parts[3] || 'INSTANT').toUpperCase();
           const mode = modeRaw === 'SPACE' ? 'SPACE' : 'INSTANT';
@@ -552,7 +553,7 @@ export default function DashboardPage() {
 
       const payload = csvPreview.map(item => ({
         trigger_code: (item.trigger_code || item.shortcut || '').trim().toLowerCase(),
-        expansion_text: (item.expansion_text || item.expansion || '').trim(),
+        expansion_text: cleanMacroText((item.expansion_text || item.expansion || '').trim()),
         category: item.category || 'Umum',
         expansion_mode: item.expansion_mode || 'INSTANT',
         user_id: activeUserId, // <--- ID user yang sedang aktif
@@ -631,7 +632,7 @@ export default function DashboardPage() {
 
       const payload = pkParseResult.validShortcuts.map(item => ({
         trigger_code: item.trigger.trim().toLowerCase(),
-        expansion_text: item.expansion.trim(),
+        expansion_text: cleanMacroText(item.expansion.trim()),
         category: pkCategory || 'Perfect Keyboard',
         expansion_mode: pkMode,
         user_id: activeUserId, // <--- ID user yang sedang aktif
@@ -709,8 +710,8 @@ export default function DashboardPage() {
       )}
 
       {/* Top Navbar */}
-      <header className="sticky top-0 z-30 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-2 flex items-center justify-between">
+      <header className="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 py-3 sm:py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[64px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-emerald-400 p-0.5 shadow-md shadow-indigo-600/20">
               <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-emerald-400 font-bold text-xs">
@@ -912,7 +913,7 @@ export default function DashboardPage() {
                 ) : (
                   filteredShortcuts.map((item) => {
                     const trigger = item.shortcut || item.trigger_code || '';
-                    const expansion = item.expansion || item.expansion_text || '';
+                    const expansion = cleanMacroText(item.expansion || item.expansion_text || '');
                     const isInstant = item.expansion_mode === 'INSTANT';
 
                     return (

@@ -31,9 +31,11 @@ data class SupabaseShortcutDto(
     val createdAt: String? = null
 ) {
     fun toEntity(): ShortcutEntity {
+        val cleanTrigger = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(triggerCode ?: "").lowercase()
+        val cleanExp = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTextFormatting(expansionText ?: "")
         return ShortcutEntity(
-            triggerCode = (triggerCode ?: "").trim().lowercase(),
-            expansionText = (expansionText ?: "").trim(),
+            triggerCode = cleanTrigger,
+            expansionText = cleanExp,
             category = category?.ifBlank { "General" } ?: "General",
             expansionMode = expansionMode?.ifBlank { "INSTANT" } ?: "INSTANT",
             packageName = category?.ifBlank { "General" } ?: "General",

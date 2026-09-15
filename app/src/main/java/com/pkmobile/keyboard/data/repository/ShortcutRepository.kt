@@ -139,10 +139,10 @@ class ShortcutRepository(private val shortcutDao: ShortcutDao) {
         var updatedCount = 0
         for (item in all) {
             val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(item.triggerCode).lowercase()
-            val cleanExp = item.expansionText.trim()
-            if (cleanKey != item.triggerCode) {
+            val cleanExp = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTextFormatting(item.expansionText)
+            if (cleanKey != item.triggerCode || cleanExp != item.expansionText) {
                 shortcutDao.delete(item)
-                if (cleanKey.isNotBlank()) {
+                if (cleanKey.isNotBlank() && cleanExp.isNotBlank()) {
                     shortcutDao.insertOrUpdate(
                         item.copy(triggerCode = cleanKey, expansionText = cleanExp)
                     )

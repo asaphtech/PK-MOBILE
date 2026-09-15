@@ -39,40 +39,80 @@ const PC_SPECIAL_KEYS = [
 ];
 
 /**
- * Pembersih karakter XML, CDATA, tag format Perfect Keyboard
+ * Membersihkan format Perfect Keyboard "Text Macro" yang diawali dengan text#macro:
+ * atau memuat format dokumen HTML.
+ * Mengambil hanya isi teks murni (plain text) di dalam tag <body>...</body>,
+ * menghapus seluruh tag HTML pembungkus, dan menjaga baris baru (line breaks).
  */
-export function cleanTextContent(text: string): string {
+export function cleanMacroText(text: string): string {
   if (!text) return '';
-  let s = text.trim();
 
-  // 1. CDATA
-  s = s.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1');
+  let cleaned = text;
 
-  // 2. Format enter & tab khas Perfect Keyboard
-  s = s.replace(/<ent__>/gi, '\n')
-       .replace(/<enter>/gi, '\n')
-       .replace(/<br\s*\/?>/gi, '\n')
-       .replace(/<tab__>/gi, '\t');
+  // 1. Hapus prefix 'text#macro:' jika ada (case-insensitive)
+  if (/^text#macro:\s*/i.test(cleaned)) {
+    cleaned = cleaned.replace(/^text#macro:\s*/i, '');
+  }
 
-  // 3. Entitas XML
-  s = s.replace(/&amp;/g, '&')
-       .replace(/&lt;/g, '<')
-       .replace(/&gt;/g, '>')
-       .replace(/&quot;/g, '"')
-       .replace(/&apos;/g, "'");
+  // 2. CDATA jika ada
+  cleaned = cleaned.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1');
 
-  // 4. Entitas numerik &#...; dan &#x...;
-  s = s.replace(/&#(\d+);/g, (_, dec) => {
+  // 3. Konversi format enter & tab khas Perfect Keyboard sebelum memproses HTML
+  cleaned = cleaned
+    .replace(/<ent__>/gi, '\n')
+    .replace(/<enter>/gi, '\n')
+    .replace(/<tab__>/gi, '\t');
+
+  // 4. Jika memuat HTML atau tag <body>, ambil isi teks di dalam tag <body>...</body>
+  const bodyMatch = cleaned.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  if (bodyMatch && bodyMatch[1]) {
+    cleaned = bodyMatch[1];
+  }
+
+  // 5. Preservasi baris baru dari tag HTML pemisah blok
+  cleaned = cleaned
+    .replace(/<br\s*[\/]?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n')
+    .replace(/<\/div>/gi, '\n')
+    .replace(/<\/tr>/gi, '\n')
+    .replace(/<\/li>/gi, '\n');
+
+  // 6. Hapus blok style atau script jika ada
+  cleaned = cleaned.replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gi, '');
+  cleaned = cleaned.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, '');
+
+  // 7. Strip semua sisa tag HTML lainnya (<HTML>, <HEAD>, <META>, <span>, dll.)
+  cleaned = cleaned.replace(/<[^>]+>/g, '');
+
+  // 8. Decode HTML Entities umum
+  cleaned = cleaned
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'");
+
+  // 9. Decode entitas numerik (&#123; dan &#x7B;)
+  cleaned = cleaned.replace(/&#(\d+);/g, (_, dec) => {
     try { return String.fromCharCode(parseInt(dec, 10)); } catch { return ''; }
   });
-  s = s.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => {
+  cleaned = cleaned.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => {
     try { return String.fromCharCode(parseInt(hex, 16)); } catch { return ''; }
   });
 
-  // 5. Normalisasi baris baru
-  s = s.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  // 10. Normalisasi baris baru (\r\n -> \n)
+  cleaned = cleaned.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-  return s.trim();
+  return cleaned.trim();
+}
+
+/**
+ * Pembersih karakter XML, CDATA, tag format Perfect Keyboard & HTML
+ */
+export function cleanTextContent(text: string): string {
+  if (!text) return '';
+  return cleanMacroText(text);
 }
 
 /**
@@ -377,15 +417,7 @@ export function parseTxtExport(fileContent: string): Array<{
     }
 
     if (rawMessage) {
-      // Potong jika ada properti berikutnya di luar 'm:' (jika ada)
-      // Ganti tag <ent__> menjadi baris baru (\n)
-      expansion = rawMessage
-        .replace(/<ent__>/gi, '\n')
-        .replace(/<enter>/gi, '\n')
-        .replace(/<br\s*\/?>/gi, '\n')
-        .replace(/\r\n/g, '\n')
-        .replace(/\r/g, '\n')
-        .trim();
+      expansion = cleanMacroText(rawMessage);
     }
 
     // Jika trigger dan expansion valid, masukkan ke array dengan auto-rename duplikat
@@ -552,13 +584,7 @@ function parseEndOfItemFormat(
     }
 
     if (rawMessage) {
-      expansion = rawMessage
-        .replace(/<ent__>/gi, '\n')
-        .replace(/<enter>/gi, '\n')
-        .replace(/<br\s*\/?>/gi, '\n')
-        .replace(/\r\n/g, '\n')
-        .replace(/\r/g, '\n')
-        .trim();
+      expansion = cleanMacroText(rawMessage);
     }
 
     if (trigger || expansion) {

@@ -537,15 +537,51 @@ object ShortcutImporter {
     }
 
     /**
-     * Normalisasi baris baru dan karakter tab.
-     * Mengonversi semua variasi tag enter (<ent__>, <enter>, <br>) menjadi karakter newline nyata \n.
+     * Normalisasi baris baru, karakter tab, serta pembersihan format text#macro: dan HTML.
+     * Mengonversi semua variasi tag enter (<ent__>, <enter>, <br>) menjadi karakter newline nyata \n
+     * serta mengekstrak isi teks murni dari tag <body> jika berformat HTML.
      */
     fun cleanTextFormatting(text: String): String {
-        return text
+        var s = text
+
+        // 1. Bersihkan prefix text#macro: jika ada
+        if (s.startsWith("text#macro:", ignoreCase = true)) {
+            s = s.replace(Regex("(?i)^text#macro:\\s*"), "")
+        }
+
+        // 2. Ekstrak konten di dalam tag <body> jika berformat HTML
+        val bodyMatch = Regex("(?i)<body[^>]*>([\\s\\S]*?)</body>").find(s)
+        if (bodyMatch != null && bodyMatch.groupValues.size > 1) {
+            s = bodyMatch.groupValues[1]
+        }
+
+        // 3. Konversi tag enter & pemisah blok HTML menjadi newline
+        s = s
             .replace(Regex("(?i)<ent__>"), "\n")
             .replace(Regex("(?i)<enter>"), "\n")
             .replace(Regex("(?i)<br\\s*/?>"), "\n")
+            .replace(Regex("(?i)</p>"), "\n")
+            .replace(Regex("(?i)</div>"), "\n")
+            .replace(Regex("(?i)</tr>"), "\n")
+            .replace(Regex("(?i)</li>"), "\n")
             .replace(Regex("(?i)<tab__>"), "\t")
+
+        // 4. Hapus blok style / script dan seluruh sisa tag HTML
+        s = s.replace(Regex("(?i)<style\\b[^>]*>[\\s\\S]*?</style>"), "")
+        s = s.replace(Regex("(?i)<script\\b[^>]*>[\\s\\S]*?</script>"), "")
+        s = s.replace(Regex("<[^>]+>"), "")
+
+        // 5. Decode HTML & XML Entities umum
+        s = s
+            .replace("&nbsp;", " ")
+            .replace("&amp;", "&")
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&quot;", "\"")
+            .replace("&apos;", "'")
+            .replace("&#39;", "'")
+
+        return s
             .replace("\r\n", "\n")
             .replace("\r", "\n")
             .replace("\\n", "\n")
