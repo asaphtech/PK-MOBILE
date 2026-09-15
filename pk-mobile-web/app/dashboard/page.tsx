@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useMemo, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { getSupabaseClient, ShortcutItem } from '@/lib/supabase';
+import { getSupabaseClient, ShortcutItem, PresetItem } from '@/lib/supabase';
 import {
   Search, Plus, Upload, LogOut, Edit2, Trash2, Zap, Space,
   FileSpreadsheet, AlertCircle, CheckCircle2, RefreshCw, X,
   Tag, MessageSquare, Copy, Check, ChevronDown, Filter,
-  Layers, Smartphone, ExternalLink, AlertTriangle, FolderOpen, FileText
+  Layers, Smartphone, ExternalLink, AlertTriangle, FolderOpen, FileText,
+  FolderPlus, Star, CheckCircle
 } from 'lucide-react';
 import {
   parsePerfectKeyboardFile,
@@ -199,13 +200,30 @@ export default function DashboardPage() {
   const [categoryFilter, setCategoryFilter] = useState('Semua Kategori');
   const [modeFilter, setModeFilter] = useState('ALL');
 
+  // Preset State (Multi-Preset & Isolasi Berkas)
+  const [presets, setPresets] = useState<PresetItem[]>([]);
+  const [selectedPresetId, setSelectedPresetId] = useState<string>('');
+  const [isPresetLoading, setIsPresetLoading] = useState(true);
+
+  // Preset Modals
+  const [isNewPresetModalOpen, setIsNewPresetModalOpen] = useState(false);
+  const [newPresetName, setNewPresetName] = useState('');
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+  const [renamePresetName, setRenamePresetName] = useState('');
+  const [isDeletePresetModalOpen, setIsDeletePresetModalOpen] = useState(false);
+
+  // Import Destination State (untuk isolasi impor CSV & PK)
+  const [importDestination, setImportDestination] = useState<'new_preset' | 'current_preset'>('new_preset');
+  const [importPresetName, setImportPresetName] = useState('');
+  const [importSetAsActive, setImportSetAsActive] = useState(true);
+
   // Modal Add / Edit
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ShortcutItem | null>(null);
   const [formTrigger, setFormTrigger] = useState('');
   const [formExpansion, setFormExpansion] = useState('');
   const [formCategory, setFormCategory] = useState('Umum');
-  const [formMode, setFormMode] = useState<'INSTANT' | 'SPACE'>('INSTANT');
+  const [formMode, setFormMode] = useState<'INSTANT' | 'SPACE'>('SPACE'); // Default: Non-Instant / Space
   const [formError, setFormError] = useState('');
 
   // Modal CSV Import
@@ -221,7 +239,7 @@ export default function DashboardPage() {
   const [pkActiveTab, setPkActiveTab] = useState<'failed' | 'valid'>('failed');
   const [pkSearchQuery, setPkSearchQuery] = useState('');
   const [pkCategory, setPkCategory] = useState('Perfect Keyboard');
-  const [pkMode, setPkMode] = useState<'INSTANT' | 'SPACE'>('INSTANT');
+  const [pkMode, setPkMode] = useState<'INSTANT' | 'SPACE'>('SPACE'); // Default: Non-Instant / Space
   const [pkStatus, setPkStatus] = useState<{ success?: string; error?: string }>({});
   const [isPkProcessing, setIsPkProcessing] = useState(false);
 
@@ -235,12 +253,20 @@ export default function DashboardPage() {
   // Notification Toast
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // Preset saat ini yang sedang dipilih
+  const currentPreset = useMemo(() => {
+    return presets.find(p => p.id === selectedPresetId) || presets[0] || null;
+  }, [presets, selectedPresetId]);
+
   // Anti-duplikat lookup: gabungan trigger di Supabase DB + trigger yang sudah ada di Valid Shortcuts
   const existingTriggers = useMemo(() => {
-    const dbList = shortcuts.map(s => (s.shortcut || s.trigger_code || '').trim().toLowerCase()).filter(Boolean);
+    const dbList = shortcuts
+      .filter(s => !selectedPresetId || s.preset_id === selectedPresetId)
+      .map(s => (s.shortcut || s.trigger_code || '').trim().toLowerCase())
+      .filter(Boolean);
     const validList = (pkParseResult?.validShortcuts || []).map(s => s.trigger.trim().toLowerCase()).filter(Boolean);
     return Array.from(new Set([...dbList, ...validList]));
-  }, [shortcuts, pkParseResult?.validShortcuts]);
+  }, [shortcuts, selectedPresetId, pkParseResult?.validShortcuts]);
 
   // Filter pencarian real-time untuk daftar tidak didukung (failedShortcuts)
   const filteredFailedList = useMemo(() => {
@@ -297,7 +323,7 @@ export default function DashboardPage() {
     setTimeout(() => setToast(null), 3500);
   };
 
-  // Fetch Session & Shortcuts
+  // Fetch Session, Presets, & Shortcuts
   useEffect(() => {
     const init = async () => {
       try {
@@ -308,7 +334,8 @@ export default function DashboardPage() {
           return;
         }
         setUser(session.user);
-        await fetchShortcuts();
+        const activeId = await fetchPresets();
+        await fetchShortcuts(activeId);
       } catch (err) {
         console.error('Init error:', err);
         router.replace('/login');
@@ -317,12 +344,78 @@ export default function DashboardPage() {
     init();
   }, [router]);
 
-  const fetchShortcuts = async () => {
+  const fetchPresets = async (preferredPresetId?: string): Promise<string> => {
+    setIsPresetLoading(true);
+    try {
+      const client = getSupabaseClient();
+      const { data: { user: currentUser } } = await client.auth.getUser();
+      if (!currentUser) return 'default_preset';
+
+      let { data: presetData, error: presetError } = await client
+        .from('presets')
+        .select('*')
+        .or(`user_id.eq.${currentUser.id},user_id.is.null`)
+        .order('created_at', { ascending: true });
+
+      // Jika tabel belum dibuat / kosong, siapkan preset default
+      if (presetError || !presetData || presetData.length === 0) {
+        const defaultId = `preset_default_${currentUser.id.slice(0, 8)}`;
+        const defaultPreset: PresetItem = {
+          id: defaultId,
+          name: 'Paket Utama (Bawaan)',
+          is_active: true,
+          user_id: currentUser.id
+        };
+        try {
+          await client.from('presets').insert(defaultPreset);
+          presetData = [defaultPreset];
+        } catch (e) {
+          presetData = [defaultPreset];
+        }
+      }
+
+      // Hitung jumlah shortcut per preset
+      const { data: allShortcuts } = await client
+        .from('shortcuts')
+        .select('preset_id')
+        .eq('user_id', currentUser.id);
+
+      const countMap: Record<string, number> = {};
+      (allShortcuts || []).forEach((row: any) => {
+        const pId = row.preset_id || 'default_preset';
+        countMap[pId] = (countMap[pId] || 0) + 1;
+      });
+
+      const enriched: PresetItem[] = (presetData || []).map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        is_active: Boolean(p.is_active),
+        user_id: p.user_id,
+        created_at: p.created_at,
+        shortcut_count: countMap[p.id] || 0
+      }));
+
+      setPresets(enriched);
+
+      let targetId = preferredPresetId;
+      if (!targetId || !enriched.some(p => p.id === targetId)) {
+        const activeOne = enriched.find(p => p.is_active);
+        targetId = activeOne?.id || enriched[0]?.id || 'default_preset';
+      }
+      setSelectedPresetId(targetId);
+      return targetId;
+    } catch (err) {
+      console.error('fetchPresets error:', err);
+      return 'default_preset';
+    } finally {
+      setIsPresetLoading(false);
+    }
+  };
+
+  const fetchShortcuts = async (presetIdToUse?: string) => {
     setLoading(true);
     try {
       const client = getSupabaseClient();
-
-      // 1. Dapatkan user yang sedang aktif
       const { data: { user: currentUser } } = await client.auth.getUser();
       if (!currentUser) {
         setLoading(false);
@@ -330,12 +423,18 @@ export default function DashboardPage() {
       }
       setUser(currentUser);
 
-      // 2. Tambahkan filter .eq("user_id", currentUser.id)
-      const { data, error } = await client
+      const targetPresetId = presetIdToUse !== undefined ? presetIdToUse : selectedPresetId;
+
+      let query = client
         .from('shortcuts')
         .select('*')
-        .eq('user_id', currentUser.id)
-        .order('created_at', { ascending: false });
+        .eq('user_id', currentUser.id);
+
+      if (targetPresetId) {
+        query = query.eq('preset_id', targetPresetId);
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) {
         showToast('error', `Gagal memuat data: ${error.message}`);
@@ -343,12 +442,13 @@ export default function DashboardPage() {
       } else {
         const formatted: ShortcutItem[] = (data || []).map((item: any) => ({
           id: item.id,
+          preset_id: item.preset_id,
           shortcut: item.shortcut || item.trigger_code || '',
           trigger_code: item.trigger_code || item.shortcut || '',
           expansion: item.expansion || item.expansion_text || '',
           expansion_text: item.expansion_text || item.expansion || '',
           category: item.category || 'Umum',
-          expansion_mode: item.expansion_mode === 'SPACE' ? 'SPACE' : 'INSTANT',
+          expansion_mode: item.expansion_mode === 'INSTANT' ? 'INSTANT' : 'SPACE',
           user_id: item.user_id,
           created_at: item.created_at
         }));
@@ -359,6 +459,124 @@ export default function DashboardPage() {
       console.error('Kesalahan koneksi:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSelectPreset = async (presetId: string) => {
+    setSelectedPresetId(presetId);
+    await fetchShortcuts(presetId);
+  };
+
+  const handleSetActivePreset = async (presetId: string) => {
+    setActionLoading(true);
+    try {
+      const client = getSupabaseClient();
+      const { data: { user: currentUser } } = await client.auth.getUser();
+      if (!currentUser) throw new Error('Sesi login tidak valid.');
+
+      await client
+        .from('presets')
+        .update({ is_active: false })
+        .eq('user_id', currentUser.id);
+
+      const { error } = await client
+        .from('presets')
+        .update({ is_active: true })
+        .eq('id', presetId);
+
+      if (error) throw error;
+
+      showToast('success', 'Preset berhasil diaktifkan! Keyboard HP Android CS akan menyedot preset ini saat sinkronisasi.');
+      await fetchPresets(presetId);
+    } catch (err: any) {
+      showToast('error', `Gagal mengaktifkan preset: ${err.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleCreatePreset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPresetName.trim()) return;
+    setActionLoading(true);
+    try {
+      const client = getSupabaseClient();
+      const { data: { user: currentUser } } = await client.auth.getUser();
+      if (!currentUser) throw new Error('Sesi login tidak valid.');
+
+      const newId = `preset_${Date.now()}`;
+      const newPreset: PresetItem = {
+        id: newId,
+        name: newPresetName.trim(),
+        is_active: false,
+        user_id: currentUser.id
+      };
+
+      const { error } = await client.from('presets').insert(newPreset);
+      if (error) throw error;
+
+      showToast('success', `Preset "${newPreset.name}" berhasil dibuat!`);
+      setIsNewPresetModalOpen(false);
+      setNewPresetName('');
+      await fetchPresets(newId);
+      await fetchShortcuts(newId);
+    } catch (err: any) {
+      showToast('error', `Gagal membuat preset: ${err.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRenamePreset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!renamePresetName.trim() || !selectedPresetId) return;
+    setActionLoading(true);
+    try {
+      const client = getSupabaseClient();
+      const { error } = await client
+        .from('presets')
+        .update({ name: renamePresetName.trim() })
+        .eq('id', selectedPresetId);
+
+      if (error) throw error;
+
+      showToast('success', `Nama preset diubah menjadi "${renamePresetName.trim()}"!`);
+      setIsRenameModalOpen(false);
+      await fetchPresets(selectedPresetId);
+    } catch (err: any) {
+      showToast('error', `Gagal mengubah nama preset: ${err.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeletePreset = async () => {
+    if (!selectedPresetId) return;
+    if (presets.length <= 1) {
+      showToast('error', 'Tidak dapat menghapus satu-satunya preset yang tersisa.');
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const client = getSupabaseClient();
+
+      await client.from('shortcuts').delete().eq('preset_id', selectedPresetId);
+      const { error } = await client.from('presets').delete().eq('id', selectedPresetId);
+      if (error) throw error;
+
+      showToast('success', 'Preset beserta shortcut di dalamnya berhasil dihapus.');
+      setIsDeletePresetModalOpen(false);
+
+      const remaining = presets.filter(p => p.id !== selectedPresetId);
+      const nextId = remaining[0]?.id;
+      await fetchPresets(nextId);
+      if (nextId) {
+        await fetchShortcuts(nextId);
+      }
+    } catch (err: any) {
+      showToast('error', `Gagal menghapus preset: ${err.message}`);
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -378,7 +596,7 @@ export default function DashboardPage() {
     setFormTrigger('');
     setFormExpansion('');
     setFormCategory('Umum');
-    setFormMode('INSTANT');
+    setFormMode('SPACE'); // Default: NON-INSTANT / Space
     setFormError('');
     setIsModalOpen(true);
   };
@@ -413,15 +631,17 @@ export default function DashboardPage() {
         throw new Error('Sesi login tidak valid atau telah kedaluwarsa. Silakan login kembali.');
       }
 
+      const targetPreset = selectedPresetId || 'default_preset';
       const cleanTrigger = formTrigger.trim().toLowerCase();
       const cleanExpansion = cleanMacroText(formExpansion.trim());
 
       const payload = {
+        preset_id: targetPreset,
         trigger_code: cleanTrigger,
         expansion_text: cleanExpansion,
         category: formCategory,
         expansion_mode: formMode,
-        user_id: activeUserId, // <--- ID user yang sedang aktif
+        user_id: activeUserId,
       };
 
       const prevTrigger = (editingItem?.trigger_code || editingItem?.shortcut || '').trim().toLowerCase();
@@ -430,17 +650,24 @@ export default function DashboardPage() {
         await (client as any).from('shortcuts').delete().eq('id', editingItem.id);
       }
 
-      // Upsert dengan strategi onConflict: user_id, trigger_code
+      // Upsert dengan strategi onConflict: user_id, preset_id, trigger_code
       const { error } = await (client as any)
         .from('shortcuts')
-        .upsert(payload, { onConflict: 'user_id, trigger_code' });
+        .upsert(payload, { onConflict: 'user_id, preset_id, trigger_code' });
 
-      if (error) throw error;
+      if (error) {
+        // Fallback jika constraint belum di-alter di Supabase
+        const { error: fallbackError } = await (client as any)
+          .from('shortcuts')
+          .upsert(payload, { onConflict: 'user_id, trigger_code' });
+        if (fallbackError) throw fallbackError;
+      }
 
-      showToast('success', `Shortcut "${cleanTrigger}" berhasil disimpan!`);
+      showToast('success', `Shortcut "${cleanTrigger}" berhasil disimpan ke preset!`);
 
       setIsModalOpen(false);
-      await fetchShortcuts();
+      await fetchShortcuts(targetPreset);
+      await fetchPresets(targetPreset);
     } catch (err: any) {
       setFormError(err.message || 'Gagal menyimpan shortcut ke Supabase.');
     } finally {
@@ -515,8 +742,8 @@ export default function DashboardPage() {
           const trigger = parts[0];
           const expansion = cleanMacroText(parts[1]);
           const cat = parts[2] || 'Umum';
-          const modeRaw = (parts[3] || 'INSTANT').toUpperCase();
-          const mode = modeRaw === 'SPACE' ? 'SPACE' : 'INSTANT';
+          const modeRaw = (parts[3] || 'SPACE').toUpperCase();
+          const mode = modeRaw === 'INSTANT' ? 'INSTANT' : 'SPACE';
 
           parsed.push({
             shortcut: trigger.toLowerCase(),
@@ -528,6 +755,8 @@ export default function DashboardPage() {
       });
 
       setCsvPreview(parsed);
+      setImportPresetName(file.name.replace(/\.[^/.]+$/, ''));
+      setImportDestination('new_preset');
       if (parsed.length === 0) {
         setImportStatus({ error: 'Tidak ada baris shortcut yang valid terdeteksi pada file CSV ini.' });
       }
@@ -551,25 +780,57 @@ export default function DashboardPage() {
         throw new Error('Sesi login tidak valid atau telah kedaluwarsa. Silakan login kembali.');
       }
 
+      let targetPresetId = selectedPresetId || 'default_preset';
+
+      // Jika opsi Buat Preset Baru dipilih (Isolasi)
+      if (importDestination === 'new_preset') {
+        const newId = `preset_${Date.now()}`;
+        const cleanName = (importPresetName.trim() || csvFileName || 'Impor CSV')
+          .replace(/\.[^/.]+$/, '')
+          .trim();
+
+        if (importSetAsActive) {
+          await client.from('presets').update({ is_active: false }).eq('user_id', activeUserId);
+        }
+
+        const newPreset: PresetItem = {
+          id: newId,
+          name: cleanName,
+          is_active: importSetAsActive,
+          user_id: activeUserId
+        };
+
+        await client.from('presets').insert(newPreset);
+        targetPresetId = newId;
+      }
+
       const payload = csvPreview.map(item => ({
+        preset_id: targetPresetId,
         trigger_code: (item.trigger_code || item.shortcut || '').trim().toLowerCase(),
         expansion_text: cleanMacroText((item.expansion_text || item.expansion || '').trim()),
         category: item.category || 'Umum',
-        expansion_mode: item.expansion_mode || 'INSTANT',
-        user_id: activeUserId, // <--- ID user yang sedang aktif
+        expansion_mode: item.expansion_mode || 'SPACE',
+        user_id: activeUserId,
       }));
 
       const { error } = await (client as any)
         .from('shortcuts')
-        .upsert(payload, { onConflict: 'user_id, trigger_code' });
+        .upsert(payload, { onConflict: 'user_id, preset_id, trigger_code' });
 
-      if (error) throw error;
+      if (error) {
+        const { error: fallbackError } = await (client as any)
+          .from('shortcuts')
+          .upsert(payload, { onConflict: 'user_id, trigger_code' });
+        if (fallbackError) throw fallbackError;
+      }
 
-      showToast('success', `Berhasil mengimpor ${csvPreview.length} shortcut dari CSV!`);
+      showToast('success', `Berhasil mengimpor ${csvPreview.length} shortcut dari CSV ke Preset!`);
       setIsImportModalOpen(false);
       setCsvPreview([]);
       setCsvFileName('');
-      await fetchShortcuts();
+      setImportPresetName('');
+      await fetchPresets(targetPresetId);
+      await fetchShortcuts(targetPresetId);
     } catch (err: any) {
       setImportStatus({ error: `Gagal impor massal: ${err.message}` });
     } finally {
@@ -585,6 +846,8 @@ export default function DashboardPage() {
     if (!file) return;
 
     setPkFileName(file.name);
+    setImportPresetName(file.name.replace(/\.[^/.]+$/, ''));
+    setImportDestination('new_preset');
     setIsPkProcessing(true);
     setPkStatus({});
     setPkParseResult(null);
@@ -630,28 +893,59 @@ export default function DashboardPage() {
         throw new Error('Sesi login tidak valid atau telah kedaluwarsa. Silakan login kembali.');
       }
 
+      let targetPresetId = selectedPresetId || 'default_preset';
+
+      // Jika opsi Buat Preset Baru dipilih (Isolasi)
+      if (importDestination === 'new_preset') {
+        const newId = `preset_${Date.now()}`;
+        const cleanName = (importPresetName.trim() || pkFileName || 'Perfect Keyboard')
+          .replace(/\.[^/.]+$/, '')
+          .trim();
+
+        if (importSetAsActive) {
+          await client.from('presets').update({ is_active: false }).eq('user_id', activeUserId);
+        }
+
+        const newPreset: PresetItem = {
+          id: newId,
+          name: cleanName,
+          is_active: importSetAsActive,
+          user_id: activeUserId
+        };
+
+        await client.from('presets').insert(newPreset);
+        targetPresetId = newId;
+      }
+
       const payload = pkParseResult.validShortcuts.map(item => ({
+        preset_id: targetPresetId,
         trigger_code: item.trigger.trim().toLowerCase(),
         expansion_text: cleanMacroText(item.expansion.trim()),
         category: pkCategory || 'Perfect Keyboard',
-        expansion_mode: pkMode,
-        user_id: activeUserId, // <--- ID user yang sedang aktif
+        expansion_mode: pkMode, // default 'SPACE'
+        user_id: activeUserId,
       }));
 
       const { error } = await (client as any)
         .from('shortcuts')
-        .upsert(payload, { onConflict: 'user_id, trigger_code' });
+        .upsert(payload, { onConflict: 'user_id, preset_id, trigger_code' });
 
-      if (error) throw error;
+      if (error) {
+        const { error: fallbackError } = await (client as any)
+          .from('shortcuts')
+          .upsert(payload, { onConflict: 'user_id, trigger_code' });
+        if (fallbackError) throw fallbackError;
+      }
 
       showToast(
         'success',
-        `Berhasil mengimpor ${pkParseResult.validShortcuts.length} shortcut Perfect Keyboard ke database!`
+        `Berhasil mengimpor ${pkParseResult.validShortcuts.length} shortcut Perfect Keyboard ke Preset!`
       );
       setPkStatus({
-        success: `Berhasil mengimpor ${pkParseResult.validShortcuts.length} shortcut ke Supabase Cloud. Seluruh shortcut ini siap disinkronkan ke HP Android CS!`
+        success: `Berhasil mengimpor ${pkParseResult.validShortcuts.length} shortcut ke Supabase Cloud (Preset terisolasi). Seluruh shortcut ini siap disinkronkan ke HP Android CS!`
       });
-      await fetchShortcuts();
+      await fetchPresets(targetPresetId);
+      await fetchShortcuts(targetPresetId);
     } catch (err: any) {
       setPkStatus({ error: `Gagal menyimpan ke Supabase: ${err.message}` });
     } finally {
@@ -794,6 +1088,94 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Preset Switcher & Management Card */}
+        <div className="bg-slate-900/90 border border-slate-800 p-4 sm:p-5 rounded-2xl shadow-xl backdrop-blur flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
+          <div className="flex items-center gap-3.5 flex-1 min-w-0">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-600/30 to-emerald-500/30 border border-indigo-500/30 flex items-center justify-center shrink-0 text-indigo-400 shadow-inner">
+              <FolderOpen className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  📂 Berkas / Preset Shortcut:
+                </span>
+                {currentPreset?.is_active ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                    <CheckCircle className="w-3.5 h-3.5" />
+                    Aktif di Keyboard HP
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => selectedPresetId && handleSetActivePreset(selectedPresetId)}
+                    disabled={actionLoading || !selectedPresetId}
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/40 transition-colors cursor-pointer disabled:opacity-50"
+                    title="Klik untuk memasang preset ini sebagai shortcut aktif di keyboard HP"
+                  >
+                    <Star className="w-3 h-3 fill-amber-300/30" />
+                    Pasang untuk Keyboard HP
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <select
+                  value={selectedPresetId}
+                  onChange={(e) => handleSelectPreset(e.target.value)}
+                  disabled={isPresetLoading}
+                  className="bg-slate-950 border border-slate-700/80 hover:border-indigo-500/60 rounded-xl px-3.5 py-2 text-sm font-semibold text-white focus:outline-none focus:border-indigo-500 transition-all cursor-pointer min-w-[260px] max-w-md truncate"
+                >
+                  {presets.map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.shortcut_count || 0} shortcut){p.is_active ? ' — ⭐ [Aktif di HP]' : ''}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-xs text-slate-500">
+                  {shortcuts.length} shortcut di preset ini
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Preset Actions Buttons */}
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            <button
+              onClick={() => {
+                setNewPresetName('');
+                setIsNewPresetModalOpen(true);
+              }}
+              className="px-3.5 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
+              title="Buat Preset Baru Kosong"
+            >
+              <FolderPlus className="w-4 h-4" />
+              <span>Preset Baru</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setRenamePresetName(currentPreset?.name || '');
+                setIsRenameModalOpen(true);
+              }}
+              className="px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              title="Ganti Nama Preset Ini"
+            >
+              <Edit2 className="w-3.5 h-3.5" />
+              <span>Ganti Nama</span>
+            </button>
+
+            {presets.length > 1 && (
+              <button
+                onClick={() => setIsDeletePresetModalOpen(true)}
+                className="px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-slate-700 hover:border-rose-500/30 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                title="Hapus Preset Ini"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Hapus</span>
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Action Controls & Filters */}
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
           {/* Search Box */}
@@ -833,7 +1215,7 @@ export default function DashboardPage() {
 
             {/* Tombol Refresh */}
             <button
-              onClick={fetchShortcuts}
+              onClick={() => fetchShortcuts()}
               disabled={loading}
               className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors disabled:opacity-50"
               title="Perbarui Data"
@@ -1024,6 +1406,15 @@ export default function DashboardPage() {
             )}
 
             <form onSubmit={handleSaveShortcut} className="space-y-4">
+              {/* Target Preset Indicator */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                <span className="text-slate-400">Target Preset Penyimpanan:</span>
+                <span className="font-semibold text-indigo-300 flex items-center gap-1.5">
+                  <FolderOpen className="w-3.5 h-3.5" />
+                  {currentPreset?.name || 'Paket Utama'}
+                </span>
+              </div>
+
               {/* Trigger Code */}
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
@@ -1076,9 +1467,26 @@ export default function DashboardPage() {
               {/* Mode Ekspansi Radio Group */}
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-2">
-                  Mode Ekspansi
+                  Mode Ekspansi (Bawaan: SPACE / Non-Instant)
                 </label>
                 <div className="grid grid-cols-2 gap-3">
+                  <label
+                    onClick={() => setFormMode('SPACE')}
+                    className={`p-3 rounded-xl border flex flex-col cursor-pointer transition-all ${
+                      formMode === 'SPACE'
+                        ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300 shadow-sm shadow-indigo-500/10'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 font-bold text-xs">
+                      <Space className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>SPACE (Spasi/Enter)</span>
+                    </div>
+                    <span className="text-[11px] text-slate-500 mt-1">
+                      Menunggu Spasi/Enter (Direkomendasikan)
+                    </span>
+                  </label>
+
                   <label
                     onClick={() => setFormMode('INSTANT')}
                     className={`p-3 rounded-xl border flex flex-col cursor-pointer transition-all ${
@@ -1092,24 +1500,7 @@ export default function DashboardPage() {
                       <span>INSTANT (Instan)</span>
                     </div>
                     <span className="text-[11px] text-slate-500 mt-1">
-                      Langsung ekspansi tanpa spasi
-                    </span>
-                  </label>
-
-                  <label
-                    onClick={() => setFormMode('SPACE')}
-                    className={`p-3 rounded-xl border flex flex-col cursor-pointer transition-all ${
-                      formMode === 'SPACE'
-                        ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300 shadow-sm shadow-indigo-500/10'
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 font-bold text-xs">
-                      <Space className="w-3.5 h-3.5 text-indigo-400" />
-                      <span>SPACE (Spasi)</span>
-                    </div>
-                    <span className="text-[11px] text-slate-500 mt-1">
-                      Tunggu tombol Spasi / Enter
+                      Otomatis ekspansi saat trigger cocok
                     </span>
                   </label>
                 </div>
@@ -1208,6 +1599,64 @@ export default function DashboardPage() {
                       + {csvPreview.length - 10} baris lainnya...
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* Target Preset Destination */}
+            {csvPreview.length > 0 && (
+              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2.5 mb-4 text-left">
+                <span className="text-xs font-semibold text-slate-300 block">Penyimpanan Preset:</span>
+                <div className="space-y-2.5">
+                  <label className="flex items-start gap-2.5 text-xs text-slate-200 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="csvImportDest"
+                      checked={importDestination === 'new_preset'}
+                      onChange={() => setImportDestination('new_preset')}
+                      className="mt-0.5 text-indigo-500"
+                    />
+                    <div>
+                      <span className="font-semibold text-indigo-300">📦 Buat Preset Baru (Terisolasi - Aman)</span>
+                      <p className="text-[11px] text-slate-400">Tidak menimpa atau mencampur shortcut berkas lain.</p>
+                    </div>
+                  </label>
+                  {importDestination === 'new_preset' && (
+                    <div className="pl-6 space-y-2">
+                      <input
+                        type="text"
+                        value={importPresetName}
+                        onChange={(e) => setImportPresetName(e.target.value)}
+                        placeholder="Nama Preset Baru (misal: Paket CS CSV)"
+                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                      />
+                      <label className="flex items-center gap-2 text-[11px] text-slate-300 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={importSetAsActive}
+                          onChange={(e) => setImportSetAsActive(e.target.checked)}
+                          className="rounded text-indigo-500"
+                        />
+                        <span>Langsung pasang sebagai preset aktif untuk Keyboard HP CS</span>
+                      </label>
+                    </div>
+                  )}
+
+                  <label className="flex items-start gap-2.5 text-xs text-slate-200 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="csvImportDest"
+                      checked={importDestination === 'current_preset'}
+                      onChange={() => setImportDestination('current_preset')}
+                      className="mt-0.5 text-indigo-500"
+                    />
+                    <div>
+                      <span className="font-semibold text-slate-300">📥 Gabungkan ke Preset yang Sedang Dipilih</span>
+                      <p className="text-[11px] text-slate-400">
+                        Dimasukkan ke: <strong className="text-white">{currentPreset?.name || 'Preset Saat Ini'}</strong>
+                      </p>
+                    </div>
+                  </label>
                 </div>
               </div>
             )}
@@ -1509,9 +1958,65 @@ export default function DashboardPage() {
                               onChange={(e) => setPkMode(e.target.value as any)}
                               className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500"
                             >
+                              <option value="SPACE">SPACE (Ditahan hingga tombol Spasi/Enter ditekan - Bawaan)</option>
                               <option value="INSTANT">INSTANT (Langsung ekspansi saat diketik)</option>
-                              <option value="SPACE">SPACE (Ditahan hingga tombol Spasi/Enter ditekan)</option>
                             </select>
+                          </div>
+                        </div>
+
+                        {/* Target Preset Destination */}
+                        <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2.5 text-left text-xs">
+                          <span className="font-semibold text-slate-300 block">Penyimpanan Preset:</span>
+                          <div className="space-y-2.5">
+                            <label className="flex items-start gap-2.5 text-slate-200 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="pkImportDest"
+                                checked={importDestination === 'new_preset'}
+                                onChange={() => setImportDestination('new_preset')}
+                                className="mt-0.5 text-indigo-500"
+                              />
+                              <div>
+                                <span className="font-semibold text-indigo-300">📦 Buat Preset Baru (Terisolasi - Aman)</span>
+                                <p className="text-[11px] text-slate-400">Tidak menimpa atau mencampur shortcut berkas lain.</p>
+                              </div>
+                            </label>
+                            {importDestination === 'new_preset' && (
+                              <div className="pl-6 space-y-2">
+                                <input
+                                  type="text"
+                                  value={importPresetName}
+                                  onChange={(e) => setImportPresetName(e.target.value)}
+                                  placeholder="Nama Preset Baru (misal: Paket Perfect Keyboard CS)"
+                                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                                />
+                                <label className="flex items-center gap-2 text-[11px] text-slate-300 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={importSetAsActive}
+                                    onChange={(e) => setImportSetAsActive(e.target.checked)}
+                                    className="rounded text-indigo-500"
+                                  />
+                                  <span>Langsung pasang sebagai preset aktif untuk Keyboard HP CS</span>
+                                </label>
+                              </div>
+                            )}
+
+                            <label className="flex items-start gap-2.5 text-slate-200 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="pkImportDest"
+                                checked={importDestination === 'current_preset'}
+                                onChange={() => setImportDestination('current_preset')}
+                                className="mt-0.5 text-indigo-500"
+                              />
+                              <div>
+                                <span className="font-semibold text-slate-300">📥 Gabungkan ke Preset yang Sedang Dipilih</span>
+                                <p className="text-[11px] text-slate-400">
+                                  Dimasukkan ke: <strong className="text-white">{currentPreset?.name || 'Preset Saat Ini'}</strong>
+                                </p>
+                              </div>
+                            </label>
                           </div>
                         </div>
 
@@ -1600,6 +2105,146 @@ export default function DashboardPage() {
                 className="py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-lg shadow-rose-600/30 transition-all disabled:opacity-50"
               >
                 {actionLoading ? 'Menghapus...' : 'Ya, Hapus'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* MODAL: Buat Preset Baru */}
+      {isNewPresetModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 relative">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+              <div className="flex items-center gap-2.5 text-white font-bold text-base">
+                <FolderPlus className="w-5 h-5 text-indigo-400" />
+                <span>Buat Preset Baru</span>
+              </div>
+              <button
+                onClick={() => setIsNewPresetModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreatePreset} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Nama Preset
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newPresetName}
+                  onChange={(e) => setNewPresetName(e.target.value)}
+                  placeholder="Contoh: CS Shift Malam, CS Promo 2026..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                />
+                <span className="text-[11px] text-slate-500 mt-1 block">
+                  Preset baru akan dibuat secara terisolasi tanpa shortcut bawaan.
+                </span>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsNewPresetModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={actionLoading || !newPresetName.trim()}
+                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all disabled:opacity-50"
+                >
+                  {actionLoading ? 'Menyimpan...' : 'Buat Preset'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Ganti Nama Preset */}
+      {isRenameModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 relative">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+              <div className="flex items-center gap-2.5 text-white font-bold text-base">
+                <Edit2 className="w-5 h-5 text-indigo-400" />
+                <span>Ganti Nama Preset</span>
+              </div>
+              <button
+                onClick={() => setIsRenameModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRenamePreset} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Nama Preset Baru
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={renamePresetName}
+                  onChange={(e) => setRenamePresetName(e.target.value)}
+                  placeholder="Masukkan nama preset baru..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsRenameModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={actionLoading || !renamePresetName.trim()}
+                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all disabled:opacity-50"
+                >
+                  {actionLoading ? 'Menyimpan...' : 'Simpan Nama'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Konfirmasi Hapus Preset */}
+      {isDeletePresetModalOpen && currentPreset && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 relative text-center">
+            <div className="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 mx-auto mb-3">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-white mb-1">Hapus Preset?</h3>
+            <p className="text-xs text-slate-400 mb-6">
+              Yakin ingin menghapus preset <strong className="text-rose-300">&quot;{currentPreset.name}&quot;</strong> beserta seluruh shortcut di dalamnya? Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setIsDeletePresetModalOpen(false)}
+                className="py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={actionLoading}
+                onClick={handleDeletePreset}
+                className="py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-lg shadow-rose-600/30 transition-all disabled:opacity-50"
+              >
+                {actionLoading ? 'Menghapus...' : 'Ya, Hapus Preset'}
               </button>
             </div>
           </div>

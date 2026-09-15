@@ -441,7 +441,7 @@ export function parseTxtExport(fileContent: string): Array<{
         trigger_code: finalTrigger,
         expansion_text: expansion,
         category: 'Perfect Keyboard',
-        expansion_mode: 'INSTANT'
+        expansion_mode: 'SPACE'
       });
     }
   }

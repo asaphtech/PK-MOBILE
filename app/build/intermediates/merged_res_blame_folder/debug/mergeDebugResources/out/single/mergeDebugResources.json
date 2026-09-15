@@ -4,6 +4,10 @@
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\drawable\\ic_arrow_back.xml"
     },
     {
+        "merged": "com.pkmobile.keyboard.app-debug-38:/layout_dialog_add_shortcut.xml.flat",
+        "source": "com.pkmobile.keyboard.app-main-40:/layout/dialog_add_shortcut.xml"
+    },
+    {
         "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\layout_dialog_bulk_input.xml.flat",
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\dialog_bulk_input.xml"
     },
@@ -20,20 +24,20 @@
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\dialog_add_shortcut.xml"
     },
     {
-        "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\drawable_ic_keyboard.xml.flat",
-        "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\drawable\\ic_keyboard.xml"
-    },
-    {
         "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\layout_item_package.xml.flat",
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\item_package.xml"
     },
     {
-        "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\layout_item_shortcut.xml.flat",
-        "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\item_shortcut.xml"
+        "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\drawable_ic_keyboard.xml.flat",
+        "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\drawable\\ic_keyboard.xml"
     },
     {
         "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\drawable_ic_caps_lock.xml.flat",
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\drawable\\ic_caps_lock.xml"
+    },
+    {
+        "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\layout_item_shortcut.xml.flat",
+        "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\item_shortcut.xml"
     },
     {
         "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\drawable_bg_key_action.xml.flat",
@@ -64,28 +68,24 @@
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\dialog_edit_shortcut.xml"
     },
     {
-        "merged": "com.pkmobile.keyboard.app-debug-38:/layout_item_preset_dialog.xml.flat",
-        "source": "com.pkmobile.keyboard.app-main-40:/layout/item_preset_dialog.xml"
-    },
-    {
         "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\drawable_ic_xml.xml.flat",
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\drawable\\ic_xml.xml"
     },
     {
-        "merged": "com.pkmobile.keyboard.app-debug-38:/layout_dialog_preset_manager.xml.flat",
-        "source": "com.pkmobile.keyboard.app-main-40:/layout/dialog_preset_manager.xml"
+        "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\layout_item_preset_dialog.xml.flat",
+        "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\item_preset_dialog.xml"
     },
     {
         "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\drawable_ic_settings.xml.flat",
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\drawable\\ic_settings.xml"
     },
     {
-        "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\drawable_bg_key.xml.flat",
-        "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\drawable\\bg_key.xml"
+        "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\layout_dialog_preset_manager.xml.flat",
+        "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\dialog_preset_manager.xml"
     },
     {
-        "merged": "com.pkmobile.keyboard.app-debug-38:/layout_activity_main.xml.flat",
-        "source": "com.pkmobile.keyboard.app-main-40:/layout/activity_main.xml"
+        "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\drawable_bg_key.xml.flat",
+        "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\drawable\\bg_key.xml"
     },
     {
         "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-debug-38:\\drawable_ic_keyboard_return.xml.flat",

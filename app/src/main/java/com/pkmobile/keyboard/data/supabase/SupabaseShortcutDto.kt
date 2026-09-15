@@ -12,6 +12,9 @@ data class SupabaseShortcutDto(
     @SerialName("id")
     val id: Long? = null,
 
+    @SerialName("preset_id")
+    val presetId: String? = null,
+
     @SerialName("trigger_code")
     val triggerCode: String? = "",
 
@@ -22,7 +25,7 @@ data class SupabaseShortcutDto(
     val category: String? = "General",
 
     @SerialName("expansion_mode")
-    val expansionMode: String? = "INSTANT",
+    val expansionMode: String? = "SPACE",
 
     @SerialName("user_id")
     val userId: String? = null,
@@ -34,10 +37,11 @@ data class SupabaseShortcutDto(
         val cleanTrigger = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(triggerCode ?: "").lowercase()
         val cleanExp = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTextFormatting(expansionText ?: "")
         return ShortcutEntity(
+            presetId = presetId?.ifBlank { "default_preset" } ?: "default_preset",
             triggerCode = cleanTrigger,
             expansionText = cleanExp,
             category = category?.ifBlank { "General" } ?: "General",
-            expansionMode = expansionMode?.ifBlank { "INSTANT" } ?: "INSTANT",
+            expansionMode = expansionMode?.ifBlank { "SPACE" } ?: "SPACE",
             packageName = category?.ifBlank { "General" } ?: "General",
             isActive = true
         )
@@ -46,10 +50,11 @@ data class SupabaseShortcutDto(
     companion object {
         fun fromEntity(entity: ShortcutEntity, userId: String? = null): SupabaseShortcutDto {
             return SupabaseShortcutDto(
+                presetId = entity.presetId,
                 triggerCode = entity.triggerCode,
                 expansionText = entity.expansionText,
                 category = entity.category?.ifBlank { "General" } ?: "General",
-                expansionMode = entity.expansionMode.ifBlank { "INSTANT" },
+                expansionMode = entity.expansionMode.ifBlank { "SPACE" },
                 userId = userId
             )
         }

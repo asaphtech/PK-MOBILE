@@ -32,7 +32,7 @@ data class ShortcutEntity(
     val category: String? = "General",
 
     @ColumnInfo(name = "expansion_mode")
-    val expansionMode: String = "INSTANT",
+    val expansionMode: String = "SPACE",
 
     @ColumnInfo(name = "package_name")
     val packageName: String = "Paket Utama",
@@ -55,7 +55,7 @@ data class ShortcutEntity(
     constructor(
         shortcut: String,
         expansion: String,
-        expansionMode: String = "INSTANT",
+        expansionMode: String = "SPACE",
         packageName: String = "Paket Utama",
         isActive: Boolean = true,
         category: String? = "General",

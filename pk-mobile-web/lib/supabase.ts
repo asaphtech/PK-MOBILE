@@ -14,8 +14,18 @@ export const getSupabaseClient = () => {
   return supabase;
 };
 
+export interface PresetItem {
+  id: string;
+  name: string;
+  is_active: boolean;
+  user_id?: string;
+  created_at?: string;
+  shortcut_count?: number;
+}
+
 export interface ShortcutItem {
   id?: number | string;
+  preset_id?: string;
   shortcut?: string;
   trigger_code?: string;
   expansion?: string;

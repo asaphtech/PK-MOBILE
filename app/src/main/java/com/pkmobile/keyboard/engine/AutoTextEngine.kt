@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 data class CachedShortcut(
     val expansion: String,
-    val expansionMode: String = "INSTANT"
+    val expansionMode: String = "SPACE"
 )
 
 /**

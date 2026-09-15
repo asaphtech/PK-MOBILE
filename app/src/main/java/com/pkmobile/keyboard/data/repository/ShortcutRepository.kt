@@ -65,7 +65,7 @@ class ShortcutRepository(
     suspend fun insertShortcut(
         shortcut: String,
         expansion: String,
-        expansionMode: String = "INSTANT",
+        expansionMode: String = "SPACE",
         packageName: String = "Manual",
         isActive: Boolean = true,
         targetPresetId: String? = null
@@ -145,7 +145,7 @@ class ShortcutRepository(
         }
     }
 
-    suspend fun importShortcuts(pairs: List<Pair<String, String>>, clearExisting: Boolean = false, defaultMode: String = "INSTANT"): Int {
+    suspend fun importShortcuts(pairs: List<Pair<String, String>>, clearExisting: Boolean = false, defaultMode: String = "SPACE"): Int {
         return importXmlShortcuts(pairs, fileName = "Imported", clearExisting = clearExisting, defaultMode = defaultMode)
     }
 
@@ -157,7 +157,7 @@ class ShortcutRepository(
         pairs: List<Pair<String, String>>,
         fileName: String,
         clearExisting: Boolean = false,
-        defaultMode: String = "INSTANT"
+        defaultMode: String = "SPACE"
     ): Int {
         if (pairs.isEmpty()) return 0
 
