@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getSupabaseClient, getActiveAnonKey } from '@/lib/supabase';
-import { KeyRound, Mail, Lock, ShieldCheck, ArrowRight, Settings, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { getSupabaseClient } from '@/lib/supabase';
+import { Mail, Lock, ShieldCheck, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,10 +14,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-
-  // Key override config toggle
-  const [showConfig, setShowConfig] = useState(false);
-  const [customKey, setCustomKey] = useState(getActiveAnonKey());
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,14 +63,6 @@ export default function LoginPage() {
       setErrorMessage(err.message || 'Terjadi kesalahan saat memproses permintaan.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleSaveKey = () => {
-    if (customKey.trim().length > 0) {
-      localStorage.setItem('pk_custom_supabase_key', customKey.trim());
-      setSuccessMessage('Supabase Anon Key berhasil disimpan di browser!');
-      setShowConfig(false);
     }
   };
 
@@ -161,9 +150,19 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                Kata Sandi
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  Kata Sandi
+                </label>
+                {!isRegister && (
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                  >
+                    Lupa Password?
+                  </Link>
+                )}
+              </div>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
@@ -197,41 +196,6 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-
-          {/* Quick Config Button */}
-          <div className="mt-6 pt-5 border-t border-slate-800/80 flex flex-col items-center">
-            <button
-              type="button"
-              onClick={() => setShowConfig(!showConfig)}
-              className="text-xs text-slate-400 hover:text-indigo-400 flex items-center gap-1.5 transition-colors"
-            >
-              <Settings className="w-3.5 h-3.5" />
-              <span>{showConfig ? 'Tutup Pengaturan Kunci' : 'Atur Supabase Anon Key'}</span>
-            </button>
-
-            {showConfig && (
-              <div className="w-full mt-3 p-3.5 bg-slate-950/90 border border-slate-800 rounded-xl text-left space-y-2">
-                <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
-                  <KeyRound className="w-3.5 h-3.5" />
-                  <span>Supabase Anon Key Proyek</span>
-                </div>
-                <textarea
-                  rows={2}
-                  value={customKey}
-                  onChange={(e) => setCustomKey(e.target.value)}
-                  placeholder="Tempelkan Supabase Anon Key di sini..."
-                  className="w-full bg-slate-900 border border-slate-700/80 rounded-lg p-2 text-xs font-mono text-slate-300 focus:outline-none focus:border-indigo-500"
-                />
-                <button
-                  type="button"
-                  onClick={handleSaveKey}
-                  className="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-medium text-white rounded-lg transition-colors"
-                >
-                  Simpan Kunci ke Browser
-                </button>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Footer info */}
