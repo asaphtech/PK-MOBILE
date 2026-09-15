@@ -5,6 +5,7 @@ import com.pkmobile.keyboard.data.repository.ShortcutRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
@@ -41,24 +42,39 @@ class AutoTextEngine(
         // Sinkronisasi data Room Database ke cache memori secara reaktif (hanya shortcut aktif/terpasang)
         scope.launch(Dispatchers.IO) {
             repository.activeShortcutsFlow.collectLatest { list ->
-                val newCache = HashMap<String, CachedShortcut>()
-                for (item in list) {
-                    if (!item.isActive) continue
-                    val key = item.shortcut.trim().lowercase()
-                    if (key.isNotEmpty()) {
-                        newCache[key] = CachedShortcut(item.expansion, item.expansionMode)
-                    }
-                }
-                shortcutCache.clear()
-                shortcutCache.putAll(newCache)
-
-                // Pastikan callback listener dieksekusi di Main UI Thread
-                withContext(Dispatchers.Main) {
-                    checkCandidateMatch(null)
-                }
+                updateCacheFromList(list)
             }
         }
     }
+
+    private suspend fun updateCacheFromList(list: List<com.pkmobile.keyboard.data.db.ShortcutEntity>) {
+        val newCache = HashMap<String, CachedShortcut>()
+        for (item in list) {
+            if (!item.isActive) continue
+            val key = item.shortcut.trim().lowercase()
+            if (key.isNotEmpty()) {
+                newCache[key] = CachedShortcut(item.expansion, item.expansionMode)
+            }
+        }
+        shortcutCache.clear()
+        shortcutCache.putAll(newCache)
+
+        // Pastikan callback listener dieksekusi di Main UI Thread
+        withContext(Dispatchers.Main) {
+            checkCandidateMatch(null)
+        }
+    }
+
+    /**
+     * Memaksa penyegaran cache shortcut secara real-time dari database Room.
+     */
+    suspend fun reloadCache() {
+        withContext(Dispatchers.IO) {
+            val list = repository.activeShortcutsFlow.firstOrNull() ?: emptyList()
+            updateCacheFromList(list)
+        }
+    }
+
 
     /**
      * Memeriksa apakah karakter diizinkan masuk ke dalam kata trigger shortcut.

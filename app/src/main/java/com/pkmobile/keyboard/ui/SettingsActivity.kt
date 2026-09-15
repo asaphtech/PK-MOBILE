@@ -46,7 +46,7 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val database = AppDatabase.getInstance(this)
-        val shortcutRepository = ShortcutRepository(database.shortcutDao())
+        val shortcutRepository = ShortcutRepository(database.shortcutDao(), database.presetDao())
         authService = AuthService(this)
         syncRepository = SyncRepository(this, shortcutRepository, authService)
 

@@ -138,7 +138,7 @@
             </HorizontalScrollView>
         </LinearLayout>
 
-        <!-- Manajemen Paket & Berkas Shortcut (Pasang / Lepas) -->
+        <!-- Manajemen Berkas / Preset Shortcut Interaktif -->
         <LinearLayout
             android:id="@+id/layout_package_section"
             android:layout_width="match_parent"
@@ -159,13 +159,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="📦 Berkas / Paket Shortcut (Pasang / Lepas):"
+                    android:text="📦 Berkas / Paket Shortcut:"
                     android:textColor="@color/candidate_text_highlight"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_import_xml_package"
+                    android:id="@+id/btn_open_preset_picker"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -173,18 +173,81 @@
                     android:minWidth="0dp"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="4dp"
-                    android:text="+ Impor File XML"
+                    android:text="Kelola Preset ➔"
                     android:textSize="11sp"
                     android:textColor="@color/accent" />
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_packages"
+            <!-- Kartu Interaktif "📂 Open File / Pilih Preset" -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_open_file_preset"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="never" />
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/surface_card"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/accent"
+                app:strokeWidth="1.5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="10dp">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_folder"
+                        app:tint="@color/accent" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_preset_card_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📂 Open File / Pilih Preset"
+                            android:textColor="@color/text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_active_preset_subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Memuat preset aktif..."
+                            android:textColor="@color/accent"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_card_select_preset"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/primary"
+                        android:minHeight="0dp"
+                        android:minWidth="0dp"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="6dp"
+                        android:text="Pilih"
+                        android:textSize="11sp"
+                        android:textColor="@color/text_primary"
+                        app:cornerRadius="8dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
         <!-- Search Bar (Pencarian Dinamis Real-Time) -->

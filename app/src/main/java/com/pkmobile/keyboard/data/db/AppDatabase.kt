@@ -8,13 +8,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
 import androidx.room.migration.Migration
 
-@Database(entities = [ShortcutEntity::class], version = 4, exportSchema = false)
+@Database(entities = [PresetEntity::class, ShortcutEntity::class], version = 5, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun shortcutDao(): ShortcutDao
+    abstract fun presetDao(): PresetDao
 
     companion object {
         @Volatile
@@ -54,22 +54,48 @@ abstract class AppDatabase : RoomDatabase() {
                 super.onCreate(db)
                 INSTANCE?.let { database ->
                     CoroutineScope(Dispatchers.IO).launch {
-                        populateDefaultShortcuts(database.shortcutDao())
+                        populateDefaultData(database.presetDao(), database.shortcutDao())
                     }
                 }
             }
 
-            private suspend fun populateDefaultShortcuts(dao: ShortcutDao) {
-                val defaultShortcuts = listOf(
-                    ShortcutEntity(shortcut = "omw", expansion = "On my way!"),
-                    ShortcutEntity(shortcut = "brb", expansion = "Be right back"),
-                    ShortcutEntity(shortcut = "thx", expansion = "Thank you so much!"),
-                    ShortcutEntity(shortcut = "btw", expansion = "By the way"),
-                    ShortcutEntity(shortcut = "otw", expansion = "On the way"),
-                    ShortcutEntity(shortcut = "info", expansion = "Informasi lebih lanjut dapat menghubungi layanan kami.")
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
+                INSTANCE?.let { database ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        // Pastikan selalu ada minimal 1 preset aktif jika database kosong
+                        val allPresets = database.presetDao().getAllPresets()
+                        if (allPresets.isEmpty()) {
+                            populateDefaultData(database.presetDao(), database.shortcutDao())
+                        } else if (allPresets.none { it.isActive }) {
+                            database.presetDao().setActivePreset(allPresets.first().id)
+                        }
+                    }
+                }
+            }
+
+            private suspend fun populateDefaultData(presetDao: PresetDao, shortcutDao: ShortcutDao) {
+                val defaultPreset = PresetEntity(
+                    id = "default_preset",
+                    name = "Paket Utama (Bawaan)",
+                    sourceType = "LOCAL",
+                    isActive = true,
+                    shortcutCount = 6,
+                    createdAt = System.currentTimeMillis()
                 )
-                defaultShortcuts.forEach { dao.insertOrUpdate(it) }
+                presetDao.insertOrUpdate(defaultPreset)
+
+                val defaultShortcuts = listOf(
+                    ShortcutEntity(shortcut = "omw", expansion = "On my way!", presetId = "default_preset"),
+                    ShortcutEntity(shortcut = "brb", expansion = "Be right back", presetId = "default_preset"),
+                    ShortcutEntity(shortcut = "thx", expansion = "Thank you so much!", presetId = "default_preset"),
+                    ShortcutEntity(shortcut = "btw", expansion = "By the way", presetId = "default_preset"),
+                    ShortcutEntity(shortcut = "otw", expansion = "On the way", presetId = "default_preset"),
+                    ShortcutEntity(shortcut = "info", expansion = "Informasi lebih lanjut dapat menghubungi layanan kami.", presetId = "default_preset")
+                )
+                defaultShortcuts.forEach { shortcutDao.insertOrUpdate(it) }
             }
         }
     }
 }
+

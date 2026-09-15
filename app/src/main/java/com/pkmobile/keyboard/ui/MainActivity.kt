@@ -9,6 +9,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
@@ -17,18 +18,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.pkmobile.keyboard.R
 import com.pkmobile.keyboard.data.db.AppDatabase
+import com.pkmobile.keyboard.data.db.PresetEntity
 import com.pkmobile.keyboard.data.db.ShortcutEntity
 import com.pkmobile.keyboard.data.importer.ShortcutImporter
 import com.pkmobile.keyboard.data.repository.ShortcutRepository
 import com.pkmobile.keyboard.data.supabase.AuthService
 import com.pkmobile.keyboard.data.supabase.SyncRepository
 import com.pkmobile.keyboard.databinding.ActivityMainBinding
+import com.pkmobile.keyboard.service.CustomKeyboardService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -36,14 +40,16 @@ import kotlinx.coroutines.withContext
 
 /**
  * Halaman Utama Aplikasi Keyboard PK MOBILE (JFN Type Master).
- * Mendukung 3 Metode Resmi Pengelolaan Shortcut:
- * 1. Synchronize Cloud (Supabase / JFN Type Master Server)
- * 2. Import File XML (Paket Berkas Shortcut XML)
+ * Mendukung Manajemen Berkas / Preset Shortcut:
+ * 1. Synchronize Cloud (Supabase / JFN Type Master Server) -> Preset Cloud
+ * 2. Import File XML / .4pk -> Preset Baru Terisolasi (tidak menimpa berkas lain)
  * 3. Input Manual Satuan (Form Tambah/Edit Shortcut)
  *
  * Serta fitur:
  * - Search Bar dinamis real-time (mencari trigger_code & expansion_text)
- * - Manajemen Pasang/Lepas Paket Berkas Shortcut (Switch On/Off)
+ * - Dialog Pemilih & Pengelola Preset Berkas HP (Open File / Pilih Preset)
+ * - Sinkronisasi 2 arah real-time dengan Web Dashboard
+ * - Penyegaran Cache Keyboard seketika tanpa perlu restart HP
  */
 class MainActivity : AppCompatActivity() {
 
@@ -53,7 +59,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var authService: AuthService
 
     private lateinit var shortcutAdapter: ShortcutAdapter
-    private lateinit var packageAdapter: PackageAdapter
 
     // Cache daftar lengkap seluruh shortcut untuk pencarian real-time
     private var fullShortcutList: List<ShortcutEntity> = emptyList()
@@ -84,12 +89,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val database = AppDatabase.getInstance(this)
-        repository = ShortcutRepository(database.shortcutDao())
+        repository = ShortcutRepository(database.shortcutDao(), database.presetDao())
         authService = AuthService(this)
         syncRepository = SyncRepository(this, repository, authService)
 
         setupViews()
-        setupPackageRecyclerView()
         setupShortcutRecyclerView()
         setupSearchBar()
         observeShortcuts()
@@ -121,9 +125,15 @@ class MainActivity : AppCompatActivity() {
             openXmlFilePicker()
         }
 
-        // Tombol Impor File XML pada Header Manajemen Paket
-        binding.btnImportXmlPackage.setOnClickListener {
-            openXmlFilePicker()
+        // Kartu Interaktif "📂 Open File / Pilih Preset"
+        binding.cardOpenFilePreset.setOnClickListener {
+            showPresetManagerDialog()
+        }
+        binding.btnOpenPresetPicker.setOnClickListener {
+            showPresetManagerDialog()
+        }
+        binding.btnCardSelectPreset.setOnClickListener {
+            showPresetManagerDialog()
         }
 
         // Metode 3: Input Manual Satuan
@@ -144,23 +154,77 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Inisialisasi RecyclerView untuk Paket/Berkas Shortcut (Daftar Horizontal).
+     * Menampilkan Dialog Modal Pemilih & Pengelola Preset Berkas Shortcut HP.
      */
-    private fun setupPackageRecyclerView() {
-        packageAdapter = PackageAdapter(
-            onToggleActive = { pkg, isChecked ->
+    private fun showPresetManagerDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_preset_manager, null)
+        val rvPresets = dialogView.findViewById<RecyclerView>(R.id.rv_dialog_presets)
+        val tvEmptyPresets = dialogView.findViewById<TextView>(R.id.tv_empty_presets)
+        val btnImportNew = dialogView.findViewById<MaterialButton>(R.id.btn_dialog_import_new)
+        val btnClose = dialogView.findViewById<MaterialButton>(R.id.btn_dialog_close)
+        val btnCloseX = dialogView.findViewById<ImageButton>(R.id.btn_dialog_close_x)
+
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(dialogView)
+            .create()
+
+        val presetAdapter = PresetAdapter(
+            onSelectActive = { preset ->
                 lifecycleScope.launch(Dispatchers.IO) {
-                    repository.setPackageActive(pkg.name, isChecked)
+                    repository.setActivePreset(preset.id)
+                    CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
                     withContext(Dispatchers.Main) {
-                        val status = if (isChecked) "dipasang (Aktif)" else "dilepas (Nonaktif)"
-                        Toast.makeText(this@MainActivity, "Paket '${pkg.name}' $status.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, "Preset '${preset.name}' sekarang aktif di keyboard!", Toast.LENGTH_SHORT).show()
                     }
                 }
+            },
+            onDelete = { preset ->
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Hapus Preset?")
+                    .setMessage("Hapus berkas preset '${preset.name}' beserta seluruh ${preset.shortcutCount} shortcut miliknya?")
+                    .setPositiveButton("Hapus") { _, _ ->
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            repository.deletePreset(preset.id)
+                            CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(this@MainActivity, "Preset '${preset.name}' dihapus.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                    .setNegativeButton(R.string.btn_cancel, null)
+                    .show()
             }
         )
 
-        binding.rvPackages.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvPackages.adapter = packageAdapter
+        rvPresets.layoutManager = LinearLayoutManager(this)
+        rvPresets.adapter = presetAdapter
+
+        val presetJob = lifecycleScope.launch {
+            repository.allPresetsFlow.collectLatest { presets ->
+                presetAdapter.submitList(presets)
+                if (presets.isEmpty()) {
+                    tvEmptyPresets.visibility = View.VISIBLE
+                    rvPresets.visibility = View.GONE
+                } else {
+                    tvEmptyPresets.visibility = View.GONE
+                    rvPresets.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        dialog.setOnDismissListener {
+            presetJob.cancel()
+        }
+
+        btnImportNew.setOnClickListener {
+            dialog.dismiss()
+            openXmlFilePicker()
+        }
+
+        btnClose.setOnClickListener { dialog.dismiss() }
+        btnCloseX.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
     }
 
     /**
@@ -174,6 +238,13 @@ class MainActivity : AppCompatActivity() {
             onDeleteClick = { shortcutEntity ->
                 lifecycleScope.launch(Dispatchers.IO) {
                     repository.deleteShortcut(shortcutEntity)
+                    CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
+
+                    // Sinkronisasi 2 arah ke Supabase jika preset cloud atau user terhubung
+                    if (shortcutEntity.presetId == SyncRepository.CLOUD_PRESET_ID || authService.isLoggedIn()) {
+                        syncRepository.deleteCloudShortcut(shortcutEntity.triggerCode)
+                    }
+
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@MainActivity, R.string.toast_deleted, Toast.LENGTH_SHORT).show()
                     }
@@ -181,7 +252,8 @@ class MainActivity : AppCompatActivity() {
             },
             onToggleActive = { shortcutEntity, isChecked ->
                 lifecycleScope.launch(Dispatchers.IO) {
-                    repository.setShortcutActive(shortcutEntity.triggerCode, isChecked)
+                    repository.setShortcutActiveInPreset(shortcutEntity.presetId, shortcutEntity.triggerCode, isChecked)
+                    CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
                     withContext(Dispatchers.Main) {
                         val status = if (isChecked) "diaktifkan" else "dinonaktifkan"
                         Toast.makeText(this@MainActivity, "Shortcut '${shortcutEntity.shortcut}' $status.", Toast.LENGTH_SHORT).show()
@@ -213,55 +285,37 @@ class MainActivity : AppCompatActivity() {
      * Mengamati perubahan data Room Database secara reaktif.
      */
     private fun observeShortcuts() {
+        // Amati preset aktif untuk memperbarui kartu UI Berkas/Preset
         lifecycleScope.launch {
-            repository.allShortcutsFlow.collectLatest { list ->
+            repository.activePresetFlow.collectLatest { activePreset ->
+                if (activePreset != null) {
+                    binding.tvActivePresetSubtitle.text = "Aktif: ${activePreset.name} (${activePreset.shortcutCount} shortcut)"
+                } else {
+                    binding.tvActivePresetSubtitle.text = "Belum ada preset aktif dipilih"
+                }
+            }
+        }
+
+        // Amati shortcut milik preset aktif untuk ditampilkan di RecyclerView
+        lifecycleScope.launch {
+            repository.shortcutsByActivePresetFlow.collectLatest { list ->
                 fullShortcutList = list
-
-                // Update daftar paket / berkas
-                updatePackageList(list)
-
-                // Terapkan filter pencarian aktif
                 applyFilter()
             }
         }
     }
 
     /**
-     * Mengelompokkan shortcut berdasarkan nama paket/berkas untuk sakelar Pasang/Lepas.
-     */
-    private fun updatePackageList(list: List<ShortcutEntity>) {
-        if (list.isEmpty()) {
-            packageAdapter.submitList(emptyList())
-            binding.layoutPackageSection.visibility = View.VISIBLE
-            return
-        }
-
-        val packages = list.groupBy { it.packageName.ifBlank { "Paket Utama" } }.map { (pkgName, items) ->
-            val hasActive = items.any { it.isActive }
-            PackageModel(
-                name = pkgName,
-                totalCount = items.size,
-                isActive = hasActive
-            )
-        }.sortedBy { it.name }
-
-        packageAdapter.submitList(packages)
-        binding.layoutPackageSection.visibility = View.VISIBLE
-    }
-
-    /**
      * Memfilter daftar shortcut berdasarkan query pencarian (trigger_code dan expansion_text).
-     * Shortcut yang paketnya nonaktif (isActive == false) disembunyikan sepenuhnya dari daftar.
      */
     private fun applyFilter() {
         val query = currentSearchQuery.lowercase()
-        // Sembunyikan seluruh item shortcut milik paket yang nonaktif (isActive == false)
         val activeShortcuts = fullShortcutList.filter { it.isActive }
 
         val filtered = if (query.isEmpty()) {
-            activeShortcuts
+            fullShortcutList
         } else {
-            activeShortcuts.filter { item ->
+            fullShortcutList.filter { item ->
                 item.shortcut.lowercase().contains(query) ||
                 item.expansion.lowercase().contains(query) ||
                 item.packageName.lowercase().contains(query)
@@ -276,7 +330,7 @@ class MainActivity : AppCompatActivity() {
             if (currentSearchQuery.isNotEmpty()) {
                 binding.tvEmptyShortcuts.text = "Tidak ditemukan shortcut yang cocok dengan '$currentSearchQuery'"
             } else if (fullShortcutList.isNotEmpty() && activeShortcuts.isEmpty()) {
-                binding.tvEmptyShortcuts.text = "Seluruh paket shortcut sedang nonaktif (dilepas).\nAktifkan salah satu paket di atas untuk menampilkan shortcut."
+                binding.tvEmptyShortcuts.text = "Seluruh shortcut dalam preset ini sedang nonaktif.\nNyalakan switch untuk mengaktifkan shortcut."
             } else {
                 binding.tvEmptyShortcuts.setText(R.string.shortcut_empty)
             }
@@ -287,7 +341,7 @@ class MainActivity : AppCompatActivity() {
 
         // Header status count
         if (currentSearchQuery.isNotEmpty()) {
-            binding.tvShortcutHeader.text = "Hasil Pencarian (${filtered.size}/${activeShortcuts.size})"
+            binding.tvShortcutHeader.text = "Hasil Pencarian (${filtered.size}/${fullShortcutList.size})"
         } else {
             binding.tvShortcutHeader.text = "${getString(R.string.section_shortcuts)} (${activeShortcuts.size} Aktif / ${fullShortcutList.size} Total)"
         }
@@ -302,6 +356,7 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             val result = syncRepository.sync()
+            CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
             withContext(Dispatchers.Main) {
                 binding.btnSyncCloud.isEnabled = true
                 Toast.makeText(
@@ -388,6 +443,7 @@ class MainActivity : AppCompatActivity() {
                             fileName = detectedFileName,
                             clearExisting = shouldClear
                         )
+                        CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
                         withContext(Dispatchers.Main) {
                             val msg = if (shouldClear) {
                                 "Database diperbarui! Berhasil memasang $count shortcut dari '$detectedFileName'."
@@ -469,6 +525,7 @@ class MainActivity : AppCompatActivity() {
                     fileName = packageName,
                     clearExisting = false
                 )
+                CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
 
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
@@ -556,13 +613,32 @@ class MainActivity : AppCompatActivity() {
 
                 if (shortcutText.isNotEmpty() && expansionText.isNotEmpty()) {
                     lifecycleScope.launch(Dispatchers.IO) {
+                        val activePreset = repository.getActivePreset()
+                        val presetId = activePreset?.id ?: "default_preset"
                         repository.insertShortcut(
                             shortcut = shortcutText,
                             expansion = expansionText,
                             expansionMode = selectedMode,
-                            packageName = "Manual",
-                            isActive = true
+                            packageName = activePreset?.name ?: "Manual",
+                            isActive = true,
+                            targetPresetId = presetId
                         )
+                        CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
+
+                        // 2-Way Sync: Dorong juga ke Cloud jika pengguna login atau sedang di preset cloud
+                        if (presetId == SyncRepository.CLOUD_PRESET_ID || authService.isLoggedIn()) {
+                            val cleanKey = ShortcutImporter.cleanTrigger(shortcutText).lowercase()
+                            val entity = ShortcutEntity(
+                                presetId = presetId,
+                                triggerCode = cleanKey,
+                                expansionText = expansionText.trim(),
+                                expansionMode = selectedMode,
+                                packageName = activePreset?.name ?: "Manual",
+                                isActive = true
+                            )
+                            syncRepository.pushShortcut(entity)
+                        }
+
                         withContext(Dispatchers.Main) {
                             Toast.makeText(this@MainActivity, R.string.toast_saved, Toast.LENGTH_SHORT).show()
                         }
@@ -629,6 +705,15 @@ class MainActivity : AppCompatActivity() {
                         expansionMode = selectedMode
                     )
                     repository.update(shortcut.triggerCode, updatedEntity)
+                    CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
+
+                    // 2-Way Sync ke Supabase Cloud
+                    if (shortcut.presetId == SyncRepository.CLOUD_PRESET_ID || authService.isLoggedIn()) {
+                        if (shortcut.triggerCode.lowercase() != cleanKey.lowercase()) {
+                            syncRepository.deleteCloudShortcut(shortcut.triggerCode)
+                        }
+                        syncRepository.pushShortcut(updatedEntity)
+                    }
 
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@MainActivity, "Shortcut berhasil diperbarui!", Toast.LENGTH_SHORT).show()

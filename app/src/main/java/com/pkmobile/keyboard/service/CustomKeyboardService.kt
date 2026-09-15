@@ -28,6 +28,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 /**
  * Service Utama Input Method Editor (IME) untuk Custom Keyboard PK MOBILE.
@@ -75,10 +76,33 @@ class CustomKeyboardService : InputMethodService() {
     // Daftar tombol alfabet untuk refresh uppercase/lowercase
     private val alphaButtons = mutableListOf<Button>()
 
+    companion object {
+        @Volatile
+        private var instance: CustomKeyboardService? = null
+
+        /**
+         * Memberitahu service keyboard agar memperbarui cache shortcut memori secara instan.
+         */
+        @Suppress("UNUSED_PARAMETER")
+        fun notifyShortcutsChanged(context: Context) {
+            instance?.reloadShortcuts()
+        }
+    }
+
+    /**
+     * Memuat ulang cache shortcut engine di thread coroutine service.
+     */
+    fun reloadShortcuts() {
+        serviceScope.launch {
+            autoTextEngine.reloadCache()
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
+        instance = this
         val database = AppDatabase.getInstance(this)
-        repository = ShortcutRepository(database.shortcutDao())
+        repository = ShortcutRepository(database.shortcutDao(), database.presetDao())
         autoTextEngine = AutoTextEngine(repository, serviceScope)
 
         // Callback saat engine mendeteksi kecocokan shortcut
@@ -687,6 +711,9 @@ class CustomKeyboardService : InputMethodService() {
     }
 
     override fun onDestroy() {
+        if (instance == this) {
+            instance = null
+        }
         super.onDestroy()
         dismissFnPopup()
         isBackspaceRepeating = false

@@ -44,6 +44,12 @@ public final class ShortcutDao_Impl implements ShortcutDao {
 
   private final SharedSQLiteStatement __preparedStmtOfSetShortcutActive;
 
+  private final SharedSQLiteStatement __preparedStmtOfSetShortcutActiveInPreset;
+
+  private final SharedSQLiteStatement __preparedStmtOfDeleteByPreset;
+
+  private final SharedSQLiteStatement __preparedStmtOfDeleteByPresetAndTrigger;
+
   private final SharedSQLiteStatement __preparedStmtOfDeleteByPackage;
 
   private final SharedSQLiteStatement __preparedStmtOfDeleteByTriggerCode;
@@ -56,62 +62,66 @@ public final class ShortcutDao_Impl implements ShortcutDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR REPLACE INTO `shortcuts` (`trigger_code`,`expansion_text`,`category`,`expansion_mode`,`package_name`,`is_active`,`created_at`) VALUES (?,?,?,?,?,?,?)";
+        return "INSERT OR REPLACE INTO `shortcuts` (`preset_id`,`trigger_code`,`expansion_text`,`category`,`expansion_mode`,`package_name`,`is_active`,`created_at`) VALUES (?,?,?,?,?,?,?,?)";
       }
 
       @Override
       protected void bind(@NonNull final SupportSQLiteStatement statement,
           @NonNull final ShortcutEntity entity) {
-        statement.bindString(1, entity.getTriggerCode());
-        statement.bindString(2, entity.getExpansionText());
+        statement.bindString(1, entity.getPresetId());
+        statement.bindString(2, entity.getTriggerCode());
+        statement.bindString(3, entity.getExpansionText());
         if (entity.getCategory() == null) {
-          statement.bindNull(3);
+          statement.bindNull(4);
         } else {
-          statement.bindString(3, entity.getCategory());
+          statement.bindString(4, entity.getCategory());
         }
-        statement.bindString(4, entity.getExpansionMode());
-        statement.bindString(5, entity.getPackageName());
+        statement.bindString(5, entity.getExpansionMode());
+        statement.bindString(6, entity.getPackageName());
         final int _tmp = entity.isActive() ? 1 : 0;
-        statement.bindLong(6, _tmp);
-        statement.bindLong(7, entity.getCreatedAt());
+        statement.bindLong(7, _tmp);
+        statement.bindLong(8, entity.getCreatedAt());
       }
     };
     this.__deletionAdapterOfShortcutEntity = new EntityDeletionOrUpdateAdapter<ShortcutEntity>(__db) {
       @Override
       @NonNull
       protected String createQuery() {
-        return "DELETE FROM `shortcuts` WHERE `trigger_code` = ?";
+        return "DELETE FROM `shortcuts` WHERE `preset_id` = ? AND `trigger_code` = ?";
       }
 
       @Override
       protected void bind(@NonNull final SupportSQLiteStatement statement,
           @NonNull final ShortcutEntity entity) {
-        statement.bindString(1, entity.getTriggerCode());
+        statement.bindString(1, entity.getPresetId());
+        statement.bindString(2, entity.getTriggerCode());
       }
     };
     this.__updateAdapterOfShortcutEntity = new EntityDeletionOrUpdateAdapter<ShortcutEntity>(__db) {
       @Override
       @NonNull
       protected String createQuery() {
-        return "UPDATE OR ABORT `shortcuts` SET `trigger_code` = ?,`expansion_text` = ?,`category` = ?,`expansion_mode` = ?,`package_name` = ?,`is_active` = ?,`created_at` = ? WHERE `trigger_code` = ?";
+        return "UPDATE OR ABORT `shortcuts` SET `preset_id` = ?,`trigger_code` = ?,`expansion_text` = ?,`category` = ?,`expansion_mode` = ?,`package_name` = ?,`is_active` = ?,`created_at` = ? WHERE `preset_id` = ? AND `trigger_code` = ?";
       }
 
       @Override
       protected void bind(@NonNull final SupportSQLiteStatement statement,
           @NonNull final ShortcutEntity entity) {
-        statement.bindString(1, entity.getTriggerCode());
-        statement.bindString(2, entity.getExpansionText());
+        statement.bindString(1, entity.getPresetId());
+        statement.bindString(2, entity.getTriggerCode());
+        statement.bindString(3, entity.getExpansionText());
         if (entity.getCategory() == null) {
-          statement.bindNull(3);
+          statement.bindNull(4);
         } else {
-          statement.bindString(3, entity.getCategory());
+          statement.bindString(4, entity.getCategory());
         }
-        statement.bindString(4, entity.getExpansionMode());
-        statement.bindString(5, entity.getPackageName());
+        statement.bindString(5, entity.getExpansionMode());
+        statement.bindString(6, entity.getPackageName());
         final int _tmp = entity.isActive() ? 1 : 0;
-        statement.bindLong(6, _tmp);
-        statement.bindLong(7, entity.getCreatedAt());
-        statement.bindString(8, entity.getTriggerCode());
+        statement.bindLong(7, _tmp);
+        statement.bindLong(8, entity.getCreatedAt());
+        statement.bindString(9, entity.getPresetId());
+        statement.bindString(10, entity.getTriggerCode());
       }
     };
     this.__preparedStmtOfSetPackageActive = new SharedSQLiteStatement(__db) {
@@ -127,6 +137,30 @@ public final class ShortcutDao_Impl implements ShortcutDao {
       @NonNull
       public String createQuery() {
         final String _query = "UPDATE shortcuts SET is_active = ? WHERE trigger_code = ?";
+        return _query;
+      }
+    };
+    this.__preparedStmtOfSetShortcutActiveInPreset = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "UPDATE shortcuts SET is_active = ? WHERE preset_id = ? AND trigger_code = ?";
+        return _query;
+      }
+    };
+    this.__preparedStmtOfDeleteByPreset = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM shortcuts WHERE preset_id = ?";
+        return _query;
+      }
+    };
+    this.__preparedStmtOfDeleteByPresetAndTrigger = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM shortcuts WHERE preset_id = ? AND trigger_code = ?";
         return _query;
       }
     };
@@ -292,6 +326,91 @@ public final class ShortcutDao_Impl implements ShortcutDao {
   }
 
   @Override
+  public Object setShortcutActiveInPreset(final String presetId, final String triggerCode,
+      final boolean isActive, final Continuation<? super Integer> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Integer>() {
+      @Override
+      @NonNull
+      public Integer call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfSetShortcutActiveInPreset.acquire();
+        int _argIndex = 1;
+        final int _tmp = isActive ? 1 : 0;
+        _stmt.bindLong(_argIndex, _tmp);
+        _argIndex = 2;
+        _stmt.bindString(_argIndex, presetId);
+        _argIndex = 3;
+        _stmt.bindString(_argIndex, triggerCode);
+        try {
+          __db.beginTransaction();
+          try {
+            final Integer _result = _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return _result;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfSetShortcutActiveInPreset.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object deleteByPreset(final String presetId,
+      final Continuation<? super Integer> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Integer>() {
+      @Override
+      @NonNull
+      public Integer call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfDeleteByPreset.acquire();
+        int _argIndex = 1;
+        _stmt.bindString(_argIndex, presetId);
+        try {
+          __db.beginTransaction();
+          try {
+            final Integer _result = _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return _result;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfDeleteByPreset.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object deleteByPresetAndTrigger(final String presetId, final String triggerCode,
+      final Continuation<? super Integer> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Integer>() {
+      @Override
+      @NonNull
+      public Integer call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfDeleteByPresetAndTrigger.acquire();
+        int _argIndex = 1;
+        _stmt.bindString(_argIndex, presetId);
+        _argIndex = 2;
+        _stmt.bindString(_argIndex, triggerCode);
+        try {
+          __db.beginTransaction();
+          try {
+            final Integer _result = _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return _result;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfDeleteByPresetAndTrigger.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
   public Object deleteByPackage(final String packageName,
       final Continuation<? super Integer> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Integer>() {
@@ -422,6 +541,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
       public List<ShortcutEntity> call() throws Exception {
         final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
         try {
+          final int _cursorIndexOfPresetId = CursorUtil.getColumnIndexOrThrow(_cursor, "preset_id");
           final int _cursorIndexOfTriggerCode = CursorUtil.getColumnIndexOrThrow(_cursor, "trigger_code");
           final int _cursorIndexOfExpansionText = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_text");
           final int _cursorIndexOfCategory = CursorUtil.getColumnIndexOrThrow(_cursor, "category");
@@ -432,6 +552,8 @@ public final class ShortcutDao_Impl implements ShortcutDao {
           final List<ShortcutEntity> _result = new ArrayList<ShortcutEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final ShortcutEntity _item;
+            final String _tmpPresetId;
+            _tmpPresetId = _cursor.getString(_cursorIndexOfPresetId);
             final String _tmpTriggerCode;
             _tmpTriggerCode = _cursor.getString(_cursorIndexOfTriggerCode);
             final String _tmpExpansionText;
@@ -452,7 +574,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
             _tmpIsActive = _tmp != 0;
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
-            _item = new ShortcutEntity(_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
+            _item = new ShortcutEntity(_tmpPresetId,_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
             _result.add(_item);
           }
           return _result;
@@ -479,6 +601,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
       public List<ShortcutEntity> call() throws Exception {
         final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
         try {
+          final int _cursorIndexOfPresetId = CursorUtil.getColumnIndexOrThrow(_cursor, "preset_id");
           final int _cursorIndexOfTriggerCode = CursorUtil.getColumnIndexOrThrow(_cursor, "trigger_code");
           final int _cursorIndexOfExpansionText = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_text");
           final int _cursorIndexOfCategory = CursorUtil.getColumnIndexOrThrow(_cursor, "category");
@@ -489,6 +612,8 @@ public final class ShortcutDao_Impl implements ShortcutDao {
           final List<ShortcutEntity> _result = new ArrayList<ShortcutEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final ShortcutEntity _item;
+            final String _tmpPresetId;
+            _tmpPresetId = _cursor.getString(_cursorIndexOfPresetId);
             final String _tmpTriggerCode;
             _tmpTriggerCode = _cursor.getString(_cursorIndexOfTriggerCode);
             final String _tmpExpansionText;
@@ -509,7 +634,258 @@ public final class ShortcutDao_Impl implements ShortcutDao {
             _tmpIsActive = _tmp != 0;
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
-            _item = new ShortcutEntity(_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
+            _item = new ShortcutEntity(_tmpPresetId,_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+          _statement.release();
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Flow<List<ShortcutEntity>> getActiveFlow() {
+    final String _sql = "\n"
+            + "        SELECT s.* FROM shortcuts s \n"
+            + "        LEFT JOIN presets p ON s.preset_id = p.id \n"
+            + "        WHERE (p.is_active = 1 OR NOT EXISTS (SELECT 1 FROM presets WHERE is_active = 1)) \n"
+            + "          AND s.is_active = 1 \n"
+            + "        ORDER BY s.trigger_code ASC\n"
+            + "    ";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"shortcuts",
+        "presets"}, new Callable<List<ShortcutEntity>>() {
+      @Override
+      @NonNull
+      public List<ShortcutEntity> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfPresetId = CursorUtil.getColumnIndexOrThrow(_cursor, "preset_id");
+          final int _cursorIndexOfTriggerCode = CursorUtil.getColumnIndexOrThrow(_cursor, "trigger_code");
+          final int _cursorIndexOfExpansionText = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_text");
+          final int _cursorIndexOfCategory = CursorUtil.getColumnIndexOrThrow(_cursor, "category");
+          final int _cursorIndexOfExpansionMode = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_mode");
+          final int _cursorIndexOfPackageName = CursorUtil.getColumnIndexOrThrow(_cursor, "package_name");
+          final int _cursorIndexOfIsActive = CursorUtil.getColumnIndexOrThrow(_cursor, "is_active");
+          final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "created_at");
+          final List<ShortcutEntity> _result = new ArrayList<ShortcutEntity>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final ShortcutEntity _item;
+            final String _tmpPresetId;
+            _tmpPresetId = _cursor.getString(_cursorIndexOfPresetId);
+            final String _tmpTriggerCode;
+            _tmpTriggerCode = _cursor.getString(_cursorIndexOfTriggerCode);
+            final String _tmpExpansionText;
+            _tmpExpansionText = _cursor.getString(_cursorIndexOfExpansionText);
+            final String _tmpCategory;
+            if (_cursor.isNull(_cursorIndexOfCategory)) {
+              _tmpCategory = null;
+            } else {
+              _tmpCategory = _cursor.getString(_cursorIndexOfCategory);
+            }
+            final String _tmpExpansionMode;
+            _tmpExpansionMode = _cursor.getString(_cursorIndexOfExpansionMode);
+            final String _tmpPackageName;
+            _tmpPackageName = _cursor.getString(_cursorIndexOfPackageName);
+            final boolean _tmpIsActive;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsActive);
+            _tmpIsActive = _tmp != 0;
+            final long _tmpCreatedAt;
+            _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            _item = new ShortcutEntity(_tmpPresetId,_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
+  public Flow<List<ShortcutEntity>> getShortcutsByActivePresetFlow() {
+    final String _sql = "\n"
+            + "        SELECT s.* FROM shortcuts s \n"
+            + "        LEFT JOIN presets p ON s.preset_id = p.id \n"
+            + "        WHERE (p.is_active = 1 OR NOT EXISTS (SELECT 1 FROM presets WHERE is_active = 1)) \n"
+            + "        ORDER BY s.trigger_code ASC\n"
+            + "    ";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"shortcuts",
+        "presets"}, new Callable<List<ShortcutEntity>>() {
+      @Override
+      @NonNull
+      public List<ShortcutEntity> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfPresetId = CursorUtil.getColumnIndexOrThrow(_cursor, "preset_id");
+          final int _cursorIndexOfTriggerCode = CursorUtil.getColumnIndexOrThrow(_cursor, "trigger_code");
+          final int _cursorIndexOfExpansionText = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_text");
+          final int _cursorIndexOfCategory = CursorUtil.getColumnIndexOrThrow(_cursor, "category");
+          final int _cursorIndexOfExpansionMode = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_mode");
+          final int _cursorIndexOfPackageName = CursorUtil.getColumnIndexOrThrow(_cursor, "package_name");
+          final int _cursorIndexOfIsActive = CursorUtil.getColumnIndexOrThrow(_cursor, "is_active");
+          final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "created_at");
+          final List<ShortcutEntity> _result = new ArrayList<ShortcutEntity>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final ShortcutEntity _item;
+            final String _tmpPresetId;
+            _tmpPresetId = _cursor.getString(_cursorIndexOfPresetId);
+            final String _tmpTriggerCode;
+            _tmpTriggerCode = _cursor.getString(_cursorIndexOfTriggerCode);
+            final String _tmpExpansionText;
+            _tmpExpansionText = _cursor.getString(_cursorIndexOfExpansionText);
+            final String _tmpCategory;
+            if (_cursor.isNull(_cursorIndexOfCategory)) {
+              _tmpCategory = null;
+            } else {
+              _tmpCategory = _cursor.getString(_cursorIndexOfCategory);
+            }
+            final String _tmpExpansionMode;
+            _tmpExpansionMode = _cursor.getString(_cursorIndexOfExpansionMode);
+            final String _tmpPackageName;
+            _tmpPackageName = _cursor.getString(_cursorIndexOfPackageName);
+            final boolean _tmpIsActive;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsActive);
+            _tmpIsActive = _tmp != 0;
+            final long _tmpCreatedAt;
+            _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            _item = new ShortcutEntity(_tmpPresetId,_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
+  public Flow<List<ShortcutEntity>> getShortcutsByPresetFlow(final String presetId) {
+    final String _sql = "SELECT * FROM shortcuts WHERE preset_id = ? ORDER BY trigger_code ASC";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    _statement.bindString(_argIndex, presetId);
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"shortcuts"}, new Callable<List<ShortcutEntity>>() {
+      @Override
+      @NonNull
+      public List<ShortcutEntity> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfPresetId = CursorUtil.getColumnIndexOrThrow(_cursor, "preset_id");
+          final int _cursorIndexOfTriggerCode = CursorUtil.getColumnIndexOrThrow(_cursor, "trigger_code");
+          final int _cursorIndexOfExpansionText = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_text");
+          final int _cursorIndexOfCategory = CursorUtil.getColumnIndexOrThrow(_cursor, "category");
+          final int _cursorIndexOfExpansionMode = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_mode");
+          final int _cursorIndexOfPackageName = CursorUtil.getColumnIndexOrThrow(_cursor, "package_name");
+          final int _cursorIndexOfIsActive = CursorUtil.getColumnIndexOrThrow(_cursor, "is_active");
+          final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "created_at");
+          final List<ShortcutEntity> _result = new ArrayList<ShortcutEntity>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final ShortcutEntity _item;
+            final String _tmpPresetId;
+            _tmpPresetId = _cursor.getString(_cursorIndexOfPresetId);
+            final String _tmpTriggerCode;
+            _tmpTriggerCode = _cursor.getString(_cursorIndexOfTriggerCode);
+            final String _tmpExpansionText;
+            _tmpExpansionText = _cursor.getString(_cursorIndexOfExpansionText);
+            final String _tmpCategory;
+            if (_cursor.isNull(_cursorIndexOfCategory)) {
+              _tmpCategory = null;
+            } else {
+              _tmpCategory = _cursor.getString(_cursorIndexOfCategory);
+            }
+            final String _tmpExpansionMode;
+            _tmpExpansionMode = _cursor.getString(_cursorIndexOfExpansionMode);
+            final String _tmpPackageName;
+            _tmpPackageName = _cursor.getString(_cursorIndexOfPackageName);
+            final boolean _tmpIsActive;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsActive);
+            _tmpIsActive = _tmp != 0;
+            final long _tmpCreatedAt;
+            _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            _item = new ShortcutEntity(_tmpPresetId,_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
+  public Object getShortcutsByPresetList(final String presetId,
+      final Continuation<? super List<ShortcutEntity>> $completion) {
+    final String _sql = "SELECT * FROM shortcuts WHERE preset_id = ? ORDER BY trigger_code ASC";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    _statement.bindString(_argIndex, presetId);
+    final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
+    return CoroutinesRoom.execute(__db, false, _cancellationSignal, new Callable<List<ShortcutEntity>>() {
+      @Override
+      @NonNull
+      public List<ShortcutEntity> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfPresetId = CursorUtil.getColumnIndexOrThrow(_cursor, "preset_id");
+          final int _cursorIndexOfTriggerCode = CursorUtil.getColumnIndexOrThrow(_cursor, "trigger_code");
+          final int _cursorIndexOfExpansionText = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_text");
+          final int _cursorIndexOfCategory = CursorUtil.getColumnIndexOrThrow(_cursor, "category");
+          final int _cursorIndexOfExpansionMode = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_mode");
+          final int _cursorIndexOfPackageName = CursorUtil.getColumnIndexOrThrow(_cursor, "package_name");
+          final int _cursorIndexOfIsActive = CursorUtil.getColumnIndexOrThrow(_cursor, "is_active");
+          final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "created_at");
+          final List<ShortcutEntity> _result = new ArrayList<ShortcutEntity>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final ShortcutEntity _item;
+            final String _tmpPresetId;
+            _tmpPresetId = _cursor.getString(_cursorIndexOfPresetId);
+            final String _tmpTriggerCode;
+            _tmpTriggerCode = _cursor.getString(_cursorIndexOfTriggerCode);
+            final String _tmpExpansionText;
+            _tmpExpansionText = _cursor.getString(_cursorIndexOfExpansionText);
+            final String _tmpCategory;
+            if (_cursor.isNull(_cursorIndexOfCategory)) {
+              _tmpCategory = null;
+            } else {
+              _tmpCategory = _cursor.getString(_cursorIndexOfCategory);
+            }
+            final String _tmpExpansionMode;
+            _tmpExpansionMode = _cursor.getString(_cursorIndexOfExpansionMode);
+            final String _tmpPackageName;
+            _tmpPackageName = _cursor.getString(_cursorIndexOfPackageName);
+            final boolean _tmpIsActive;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsActive);
+            _tmpIsActive = _tmp != 0;
+            final long _tmpCreatedAt;
+            _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            _item = new ShortcutEntity(_tmpPresetId,_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
             _result.add(_item);
           }
           return _result;
@@ -535,6 +911,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
       public ShortcutEntity call() throws Exception {
         final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
         try {
+          final int _cursorIndexOfPresetId = CursorUtil.getColumnIndexOrThrow(_cursor, "preset_id");
           final int _cursorIndexOfTriggerCode = CursorUtil.getColumnIndexOrThrow(_cursor, "trigger_code");
           final int _cursorIndexOfExpansionText = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_text");
           final int _cursorIndexOfCategory = CursorUtil.getColumnIndexOrThrow(_cursor, "category");
@@ -544,6 +921,8 @@ public final class ShortcutDao_Impl implements ShortcutDao {
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "created_at");
           final ShortcutEntity _result;
           if (_cursor.moveToFirst()) {
+            final String _tmpPresetId;
+            _tmpPresetId = _cursor.getString(_cursorIndexOfPresetId);
             final String _tmpTriggerCode;
             _tmpTriggerCode = _cursor.getString(_cursorIndexOfTriggerCode);
             final String _tmpExpansionText;
@@ -564,7 +943,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
             _tmpIsActive = _tmp != 0;
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
-            _result = new ShortcutEntity(_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
+            _result = new ShortcutEntity(_tmpPresetId,_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
           } else {
             _result = null;
           }
@@ -580,7 +959,14 @@ public final class ShortcutDao_Impl implements ShortcutDao {
   @Override
   public Object findActiveByShortcut(final String key,
       final Continuation<? super ShortcutEntity> $completion) {
-    final String _sql = "SELECT * FROM shortcuts WHERE LOWER(trigger_code) = LOWER(?) AND is_active = 1 LIMIT 1";
+    final String _sql = "\n"
+            + "        SELECT s.* FROM shortcuts s \n"
+            + "        LEFT JOIN presets p ON s.preset_id = p.id \n"
+            + "        WHERE (p.is_active = 1 OR NOT EXISTS (SELECT 1 FROM presets WHERE is_active = 1)) \n"
+            + "          AND s.is_active = 1 \n"
+            + "          AND LOWER(s.trigger_code) = LOWER(?) \n"
+            + "        LIMIT 1\n"
+            + "    ";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
     int _argIndex = 1;
     _statement.bindString(_argIndex, key);
@@ -591,6 +977,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
       public ShortcutEntity call() throws Exception {
         final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
         try {
+          final int _cursorIndexOfPresetId = CursorUtil.getColumnIndexOrThrow(_cursor, "preset_id");
           final int _cursorIndexOfTriggerCode = CursorUtil.getColumnIndexOrThrow(_cursor, "trigger_code");
           final int _cursorIndexOfExpansionText = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_text");
           final int _cursorIndexOfCategory = CursorUtil.getColumnIndexOrThrow(_cursor, "category");
@@ -600,6 +987,8 @@ public final class ShortcutDao_Impl implements ShortcutDao {
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "created_at");
           final ShortcutEntity _result;
           if (_cursor.moveToFirst()) {
+            final String _tmpPresetId;
+            _tmpPresetId = _cursor.getString(_cursorIndexOfPresetId);
             final String _tmpTriggerCode;
             _tmpTriggerCode = _cursor.getString(_cursorIndexOfTriggerCode);
             final String _tmpExpansionText;
@@ -620,7 +1009,7 @@ public final class ShortcutDao_Impl implements ShortcutDao {
             _tmpIsActive = _tmp != 0;
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
-            _result = new ShortcutEntity(_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
+            _result = new ShortcutEntity(_tmpPresetId,_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
           } else {
             _result = null;
           }
@@ -631,62 +1020,6 @@ public final class ShortcutDao_Impl implements ShortcutDao {
         }
       }
     }, $completion);
-  }
-
-  @Override
-  public Flow<List<ShortcutEntity>> getActiveFlow() {
-    final String _sql = "SELECT * FROM shortcuts WHERE is_active = 1 ORDER BY trigger_code ASC";
-    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
-    return CoroutinesRoom.createFlow(__db, false, new String[] {"shortcuts"}, new Callable<List<ShortcutEntity>>() {
-      @Override
-      @NonNull
-      public List<ShortcutEntity> call() throws Exception {
-        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
-        try {
-          final int _cursorIndexOfTriggerCode = CursorUtil.getColumnIndexOrThrow(_cursor, "trigger_code");
-          final int _cursorIndexOfExpansionText = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_text");
-          final int _cursorIndexOfCategory = CursorUtil.getColumnIndexOrThrow(_cursor, "category");
-          final int _cursorIndexOfExpansionMode = CursorUtil.getColumnIndexOrThrow(_cursor, "expansion_mode");
-          final int _cursorIndexOfPackageName = CursorUtil.getColumnIndexOrThrow(_cursor, "package_name");
-          final int _cursorIndexOfIsActive = CursorUtil.getColumnIndexOrThrow(_cursor, "is_active");
-          final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "created_at");
-          final List<ShortcutEntity> _result = new ArrayList<ShortcutEntity>(_cursor.getCount());
-          while (_cursor.moveToNext()) {
-            final ShortcutEntity _item;
-            final String _tmpTriggerCode;
-            _tmpTriggerCode = _cursor.getString(_cursorIndexOfTriggerCode);
-            final String _tmpExpansionText;
-            _tmpExpansionText = _cursor.getString(_cursorIndexOfExpansionText);
-            final String _tmpCategory;
-            if (_cursor.isNull(_cursorIndexOfCategory)) {
-              _tmpCategory = null;
-            } else {
-              _tmpCategory = _cursor.getString(_cursorIndexOfCategory);
-            }
-            final String _tmpExpansionMode;
-            _tmpExpansionMode = _cursor.getString(_cursorIndexOfExpansionMode);
-            final String _tmpPackageName;
-            _tmpPackageName = _cursor.getString(_cursorIndexOfPackageName);
-            final boolean _tmpIsActive;
-            final int _tmp;
-            _tmp = _cursor.getInt(_cursorIndexOfIsActive);
-            _tmpIsActive = _tmp != 0;
-            final long _tmpCreatedAt;
-            _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
-            _item = new ShortcutEntity(_tmpTriggerCode,_tmpExpansionText,_tmpCategory,_tmpExpansionMode,_tmpPackageName,_tmpIsActive,_tmpCreatedAt);
-            _result.add(_item);
-          }
-          return _result;
-        } finally {
-          _cursor.close();
-        }
-      }
-
-      @Override
-      protected void finalize() {
-        _statement.release();
-      }
-    });
   }
 
   @Override
@@ -716,6 +1049,37 @@ public final class ShortcutDao_Impl implements ShortcutDao {
         _statement.release();
       }
     });
+  }
+
+  @Override
+  public Object countByPreset(final String presetId,
+      final Continuation<? super Integer> $completion) {
+    final String _sql = "SELECT COUNT(*) FROM shortcuts WHERE preset_id = ?";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    _statement.bindString(_argIndex, presetId);
+    final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
+    return CoroutinesRoom.execute(__db, false, _cancellationSignal, new Callable<Integer>() {
+      @Override
+      @NonNull
+      public Integer call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final Integer _result;
+          if (_cursor.moveToFirst()) {
+            final int _tmp;
+            _tmp = _cursor.getInt(0);
+            _result = _tmp;
+          } else {
+            _result = 0;
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+          _statement.release();
+        }
+      }
+    }, $completion);
   }
 
   @NonNull

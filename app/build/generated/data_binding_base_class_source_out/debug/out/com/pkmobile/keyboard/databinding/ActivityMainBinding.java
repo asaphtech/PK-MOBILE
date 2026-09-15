@@ -29,6 +29,9 @@ public final class ActivityMainBinding implements ViewBinding {
   public final MaterialButton btnAddShortcut;
 
   @NonNull
+  public final MaterialButton btnCardSelectPreset;
+
+  @NonNull
   public final ImageButton btnClearSearch;
 
   @NonNull
@@ -38,13 +41,16 @@ public final class ActivityMainBinding implements ViewBinding {
   public final MaterialButton btnImportXml;
 
   @NonNull
-  public final MaterialButton btnImportXmlPackage;
+  public final MaterialButton btnOpenPresetPicker;
 
   @NonNull
   public final ImageButton btnSettings;
 
   @NonNull
   public final MaterialButton btnSyncCloud;
+
+  @NonNull
+  public final MaterialCardView cardOpenFilePreset;
 
   @NonNull
   public final MaterialCardView cardSearch;
@@ -59,10 +65,10 @@ public final class ActivityMainBinding implements ViewBinding {
   public final LinearLayout layoutPackageSection;
 
   @NonNull
-  public final RecyclerView rvPackages;
+  public final RecyclerView rvShortcuts;
 
   @NonNull
-  public final RecyclerView rvShortcuts;
+  public final TextView tvActivePresetSubtitle;
 
   @NonNull
   public final TextView tvEmptyShortcuts;
@@ -71,33 +77,41 @@ public final class ActivityMainBinding implements ViewBinding {
   public final TextView tvPackagesTitle;
 
   @NonNull
+  public final TextView tvPresetCardTitle;
+
+  @NonNull
   public final TextView tvShortcutHeader;
 
   private ActivityMainBinding(@NonNull CoordinatorLayout rootView,
-      @NonNull MaterialButton btnAddShortcut, @NonNull ImageButton btnClearSearch,
-      @NonNull MaterialButton btnExportShortcut, @NonNull MaterialButton btnImportXml,
-      @NonNull MaterialButton btnImportXmlPackage, @NonNull ImageButton btnSettings,
-      @NonNull MaterialButton btnSyncCloud, @NonNull MaterialCardView cardSearch,
+      @NonNull MaterialButton btnAddShortcut, @NonNull MaterialButton btnCardSelectPreset,
+      @NonNull ImageButton btnClearSearch, @NonNull MaterialButton btnExportShortcut,
+      @NonNull MaterialButton btnImportXml, @NonNull MaterialButton btnOpenPresetPicker,
+      @NonNull ImageButton btnSettings, @NonNull MaterialButton btnSyncCloud,
+      @NonNull MaterialCardView cardOpenFilePreset, @NonNull MaterialCardView cardSearch,
       @NonNull EditText etSearchShortcut, @NonNull EditText etTestInput,
-      @NonNull LinearLayout layoutPackageSection, @NonNull RecyclerView rvPackages,
-      @NonNull RecyclerView rvShortcuts, @NonNull TextView tvEmptyShortcuts,
-      @NonNull TextView tvPackagesTitle, @NonNull TextView tvShortcutHeader) {
+      @NonNull LinearLayout layoutPackageSection, @NonNull RecyclerView rvShortcuts,
+      @NonNull TextView tvActivePresetSubtitle, @NonNull TextView tvEmptyShortcuts,
+      @NonNull TextView tvPackagesTitle, @NonNull TextView tvPresetCardTitle,
+      @NonNull TextView tvShortcutHeader) {
     this.rootView = rootView;
     this.btnAddShortcut = btnAddShortcut;
+    this.btnCardSelectPreset = btnCardSelectPreset;
     this.btnClearSearch = btnClearSearch;
     this.btnExportShortcut = btnExportShortcut;
     this.btnImportXml = btnImportXml;
-    this.btnImportXmlPackage = btnImportXmlPackage;
+    this.btnOpenPresetPicker = btnOpenPresetPicker;
     this.btnSettings = btnSettings;
     this.btnSyncCloud = btnSyncCloud;
+    this.cardOpenFilePreset = cardOpenFilePreset;
     this.cardSearch = cardSearch;
     this.etSearchShortcut = etSearchShortcut;
     this.etTestInput = etTestInput;
     this.layoutPackageSection = layoutPackageSection;
-    this.rvPackages = rvPackages;
     this.rvShortcuts = rvShortcuts;
+    this.tvActivePresetSubtitle = tvActivePresetSubtitle;
     this.tvEmptyShortcuts = tvEmptyShortcuts;
     this.tvPackagesTitle = tvPackagesTitle;
+    this.tvPresetCardTitle = tvPresetCardTitle;
     this.tvShortcutHeader = tvShortcutHeader;
   }
 
@@ -134,6 +148,12 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btn_card_select_preset;
+      MaterialButton btnCardSelectPreset = ViewBindings.findChildViewById(rootView, id);
+      if (btnCardSelectPreset == null) {
+        break missingId;
+      }
+
       id = R.id.btn_clear_search;
       ImageButton btnClearSearch = ViewBindings.findChildViewById(rootView, id);
       if (btnClearSearch == null) {
@@ -152,9 +172,9 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.btn_import_xml_package;
-      MaterialButton btnImportXmlPackage = ViewBindings.findChildViewById(rootView, id);
-      if (btnImportXmlPackage == null) {
+      id = R.id.btn_open_preset_picker;
+      MaterialButton btnOpenPresetPicker = ViewBindings.findChildViewById(rootView, id);
+      if (btnOpenPresetPicker == null) {
         break missingId;
       }
 
@@ -167,6 +187,12 @@ public final class ActivityMainBinding implements ViewBinding {
       id = R.id.btn_sync_cloud;
       MaterialButton btnSyncCloud = ViewBindings.findChildViewById(rootView, id);
       if (btnSyncCloud == null) {
+        break missingId;
+      }
+
+      id = R.id.card_open_file_preset;
+      MaterialCardView cardOpenFilePreset = ViewBindings.findChildViewById(rootView, id);
+      if (cardOpenFilePreset == null) {
         break missingId;
       }
 
@@ -194,15 +220,15 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.rv_packages;
-      RecyclerView rvPackages = ViewBindings.findChildViewById(rootView, id);
-      if (rvPackages == null) {
-        break missingId;
-      }
-
       id = R.id.rv_shortcuts;
       RecyclerView rvShortcuts = ViewBindings.findChildViewById(rootView, id);
       if (rvShortcuts == null) {
+        break missingId;
+      }
+
+      id = R.id.tv_active_preset_subtitle;
+      TextView tvActivePresetSubtitle = ViewBindings.findChildViewById(rootView, id);
+      if (tvActivePresetSubtitle == null) {
         break missingId;
       }
 
@@ -218,16 +244,23 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tv_preset_card_title;
+      TextView tvPresetCardTitle = ViewBindings.findChildViewById(rootView, id);
+      if (tvPresetCardTitle == null) {
+        break missingId;
+      }
+
       id = R.id.tv_shortcut_header;
       TextView tvShortcutHeader = ViewBindings.findChildViewById(rootView, id);
       if (tvShortcutHeader == null) {
         break missingId;
       }
 
-      return new ActivityMainBinding((CoordinatorLayout) rootView, btnAddShortcut, btnClearSearch,
-          btnExportShortcut, btnImportXml, btnImportXmlPackage, btnSettings, btnSyncCloud,
-          cardSearch, etSearchShortcut, etTestInput, layoutPackageSection, rvPackages, rvShortcuts,
-          tvEmptyShortcuts, tvPackagesTitle, tvShortcutHeader);
+      return new ActivityMainBinding((CoordinatorLayout) rootView, btnAddShortcut,
+          btnCardSelectPreset, btnClearSearch, btnExportShortcut, btnImportXml, btnOpenPresetPicker,
+          btnSettings, btnSyncCloud, cardOpenFilePreset, cardSearch, etSearchShortcut, etTestInput,
+          layoutPackageSection, rvShortcuts, tvActivePresetSubtitle, tvEmptyShortcuts,
+          tvPackagesTitle, tvPresetCardTitle, tvShortcutHeader);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

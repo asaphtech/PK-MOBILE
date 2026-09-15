@@ -20,6 +20,10 @@
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\dialog_import_shortcut.xml"
     },
     {
+        "merged": "com.pkmobile.keyboard.app-mergeDebugResources-37:/layout/item_preset_dialog.xml",
+        "source": "com.pkmobile.keyboard.app-main-40:/layout/item_preset_dialog.xml"
+    },
+    {
         "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-mergeDebugResources-37:\\layout\\dialog_add_shortcut.xml",
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\dialog_add_shortcut.xml"
     },
@@ -28,16 +32,16 @@
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\activity_main.xml"
     },
     {
-        "merged": "com.pkmobile.keyboard.app-mergeDebugResources-37:/layout/activity_settings.xml",
-        "source": "com.pkmobile.keyboard.app-main-40:/layout/activity_settings.xml"
-    },
-    {
         "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-mergeDebugResources-37:\\layout\\popup_slash_menu.xml",
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\popup_slash_menu.xml"
     },
     {
         "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-mergeDebugResources-37:\\layout\\item_shortcut.xml",
         "source": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-main-40:\\layout\\item_shortcut.xml"
+    },
+    {
+        "merged": "com.pkmobile.keyboard.app-mergeDebugResources-37:/layout/dialog_preset_manager.xml",
+        "source": "com.pkmobile.keyboard.app-main-40:/layout/dialog_preset_manager.xml"
     },
     {
         "merged": "C:\\Users\\CS14 LATOTO\\.gradle\\daemon\\8.5\\com.pkmobile.keyboard.app-mergeDebugResources-37:\\layout\\keyboard_view.xml",

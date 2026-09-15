@@ -3,15 +3,25 @@ package com.pkmobile.keyboard.data.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
-import androidx.room.PrimaryKey
+import androidx.room.Index
 
 /**
  * Entity yang merepresentasikan data Auto-Text / Shortcut.
- * Primary Key menggunakan trigger_code (bukan ID autoincrement) agar tidak pernah terduplikasi.
+ * Primary Key berupa compound key (preset_id, trigger_code) agar setiap berkas/preset
+ * dapat memiliki trigger tersendiri tanpa bentrok atau menimpa berkas lain.
  */
-@Entity(tableName = "shortcuts")
+@Entity(
+    tableName = "shortcuts",
+    primaryKeys = ["preset_id", "trigger_code"],
+    indices = [
+        Index(value = ["preset_id"]),
+        Index(value = ["trigger_code"])
+    ]
+)
 data class ShortcutEntity(
-    @PrimaryKey
+    @ColumnInfo(name = "preset_id")
+    val presetId: String = "default_preset",
+
     @ColumnInfo(name = "trigger_code")
     val triggerCode: String,
 
@@ -48,8 +58,10 @@ data class ShortcutEntity(
         expansionMode: String = "INSTANT",
         packageName: String = "Paket Utama",
         isActive: Boolean = true,
-        category: String? = "General"
+        category: String? = "General",
+        presetId: String = "default_preset"
     ) : this(
+        presetId = presetId,
         triggerCode = shortcut,
         expansionText = expansion,
         category = category ?: "General",
@@ -58,3 +70,4 @@ data class ShortcutEntity(
         isActive = isActive
     )
 }
+

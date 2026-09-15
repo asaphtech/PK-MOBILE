@@ -3,7 +3,10 @@ package com.pkmobile.keyboard.data.supabase
 import android.content.Context
 import androidx.room.withTransaction
 import com.pkmobile.keyboard.data.db.AppDatabase
+import com.pkmobile.keyboard.data.db.PresetEntity
+import com.pkmobile.keyboard.data.db.ShortcutEntity
 import com.pkmobile.keyboard.data.repository.ShortcutRepository
+import com.pkmobile.keyboard.service.CustomKeyboardService
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
@@ -18,49 +21,29 @@ data class SyncResult(
 )
 
 /**
- * Repository untuk sinkronisasi PULL ONLY dari Supabase Cloud Database (tabel 'shortcuts')
- * ke Room Database lokal di HP Android.
- * Menggantikan seluruh data lokal dengan data resmi dari Supabase secara atomik via Room Transaction.
- * Mencegah error duplikasi / conflict constraint karena tidak ada lagi push/insert dari HP ke Cloud.
+ * Repository untuk sinkronisasi 2 arah antara Supabase Cloud Database (tabel 'shortcuts')
+ * dan Room Database lokal di HP Android.
+ * Mengisolasi data Cloud ke dalam preset "preset_cloud" ("☁️ Cloud Sync (Supabase)")
+ * agar tidak pernah menimpa atau menghapus file preset XML lokal.
  */
 class SyncRepository(
     private val context: Context,
     private val shortcutRepository: ShortcutRepository,
     private val authService: AuthService
 ) {
+    companion object {
+        const val CLOUD_PRESET_ID = "preset_cloud"
+        const val CLOUD_PRESET_NAME = "☁️ Cloud Sync (Supabase)"
+    }
+
     private val database by lazy { AppDatabase.getInstance(context) }
     private val shortcutDao by lazy { database.shortcutDao() }
+    private val presetDao by lazy { database.presetDao() }
     private val client by lazy { SupabaseConfig.getClient(context) }
 
     /**
-     * Mengunduh data resmi dari Supabase Cloud dan menimpa database Room lokal secara atomik.
-     */
-    suspend fun syncFromCloud(): Result<Unit> = runCatching {
-        withContext(Dispatchers.IO) {
-            val userId = client.auth.currentUserOrNull()?.id ?: authService.getCurrentUserId()
-
-            // 1. Ambil data unik dari Supabase Cloud
-            val cloudShortcuts = client.from("shortcuts")
-                .select(columns = Columns.raw("trigger_code,expansion_text,category,expansion_mode,user_id")) {
-                    if (userId != null) filter { eq("user_id", userId) }
-                }
-                .decodeList<SupabaseShortcutDto>()
-
-            // 2. Timpa total database Room HP dengan data resmi Supabase
-            database.withTransaction {
-                shortcutDao.deleteAll()
-                val entities = cloudShortcuts
-                    .filter { !it.triggerCode.isNullOrBlank() && !it.expansionText.isNullOrBlank() }
-                    .distinctBy { (it.triggerCode ?: "").trim().lowercase() }
-                    .map { it.toEntity() }
-                shortcutDao.insertAll(entities)
-            }
-        }
-    }
-
-    /**
-     * Alur Sinkronisasi PULL ONLY untuk tombol "SINKRONKAN SEKARANG" dan UI.
-     * Tidak lagi melakukan push/insert data lokal ke Cloud.
+     * Mengunduh data resmi dari Supabase Cloud dan memperbarui preset "preset_cloud"
+     * secara terisolasi tanpa menyentuh file preset lain.
      */
     suspend fun sync(): SyncResult = withContext(Dispatchers.IO) {
         try {
@@ -82,22 +65,48 @@ class SyncRepository(
             val downloadedEntities = cloudShortcuts
                 .filter { !it.triggerCode.isNullOrBlank() && !it.expansionText.isNullOrBlank() }
                 .distinctBy { (it.triggerCode ?: "").trim().lowercase() }
-                .map { it.toEntity() }
+                .map {
+                    val entity = it.toEntity()
+                    entity.copy(presetId = CLOUD_PRESET_ID)
+                }
 
-            // 3. Timpa total database Room HP dengan data resmi Supabase (Atomic Room Transaction)
+            // 3. Simpan ke Preset Cloud khusus (Atomic Room Transaction)
             database.withTransaction {
-                shortcutDao.deleteAll()
+                // Hanya hapus shortcut lama milik preset_cloud (file lokal XML/JSON aman!)
+                shortcutDao.deleteByPreset(CLOUD_PRESET_ID)
+
                 val uniqueShortcuts = downloadedEntities.distinctBy { it.triggerCode }
                 shortcutDao.insertAll(uniqueShortcuts)
+
+                val existingPreset = presetDao.getPresetById(CLOUD_PRESET_ID)
+                val allPresets = presetDao.getAllPresets()
+                val shouldBeActive = existingPreset?.isActive ?: (allPresets.isEmpty() || allPresets.none { it.isActive })
+
+                val cloudPreset = PresetEntity(
+                    id = CLOUD_PRESET_ID,
+                    name = CLOUD_PRESET_NAME,
+                    sourceType = "CLOUD",
+                    isActive = shouldBeActive,
+                    shortcutCount = uniqueShortcuts.size,
+                    createdAt = existingPreset?.createdAt ?: System.currentTimeMillis()
+                )
+                presetDao.insertOrUpdate(cloudPreset)
+
+                if (shouldBeActive) {
+                    presetDao.setActivePreset(CLOUD_PRESET_ID)
+                }
             }
 
             val pulledCount = downloadedEntities.size
+
+            // Beritahu engine keyboard agar langsung memuat cache terbaru secara real-time
+            CustomKeyboardService.notifyShortcutsChanged(context)
 
             SyncResult(
                 success = true,
                 pushedCount = 0,
                 pulledCount = pulledCount,
-                message = "Sinkronisasi sukses: $pulledCount shortcut resmi berhasil diunduh dari Cloud."
+                message = "Sinkronisasi sukses: $pulledCount shortcut resmi berhasil diunduh ke Preset Cloud."
             )
         } catch (e: Exception) {
             SyncResult(
@@ -107,5 +116,41 @@ class SyncRepository(
         }
     }
 
+    /**
+     * Mendorong (Push) shortcut dari HP ke Supabase Cloud (HP ➔ Web).
+     */
+    suspend fun pushShortcut(shortcut: ShortcutEntity): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val userId = client.auth.currentUserOrNull()?.id ?: authService.getCurrentUserId()
+            val dto = SupabaseShortcutDto.fromEntity(shortcut, userId)
+            client.from("shortcuts").upsert(dto)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Menghapus shortcut dari Supabase Cloud (HP ➔ Web).
+     */
+    suspend fun deleteCloudShortcut(triggerCode: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val userId = client.auth.currentUserOrNull()?.id ?: authService.getCurrentUserId()
+            val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(triggerCode).lowercase()
+            client.from("shortcuts").delete {
+                filter {
+                    eq("trigger_code", cleanKey)
+                    if (userId != null) {
+                        eq("user_id", userId)
+                    }
+                }
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun pullOnly(): SyncResult = sync()
 }
+
