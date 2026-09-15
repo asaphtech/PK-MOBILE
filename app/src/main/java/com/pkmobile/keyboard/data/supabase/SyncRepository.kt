@@ -5,6 +5,7 @@ import androidx.room.withTransaction
 import com.pkmobile.keyboard.data.db.AppDatabase
 import com.pkmobile.keyboard.data.db.PresetEntity
 import com.pkmobile.keyboard.data.db.ShortcutEntity
+import com.pkmobile.keyboard.data.importer.ShortcutImporter
 import com.pkmobile.keyboard.data.repository.ShortcutRepository
 import com.pkmobile.keyboard.service.CustomKeyboardService
 import io.github.jan.supabase.gotrue.auth
@@ -21,10 +22,10 @@ data class SyncResult(
 )
 
 /**
- * Repository untuk sinkronisasi 2 arah antara Supabase Cloud Database (tabel 'shortcuts')
- * dan Room Database lokal di HP Android.
- * Mengisolasi data Cloud ke dalam preset "preset_cloud" ("☁️ Cloud Sync (Supabase)")
- * agar tidak pernah menimpa atau menghapus file preset XML lokal.
+ * Repository untuk sinkronisasi 2 arah antara Supabase Cloud Database
+ * (tabel 'presets' & 'shortcuts') dan Room Database lokal di HP Android.
+ * Mengelola multi-preset terisolasi sesuai ID dan nama dari Supabase Cloud
+ * tanpa menggabungkan seluruh shortcut ke dalam satu preset dummy.
  */
 class SyncRepository(
     private val context: Context,
@@ -42,100 +43,162 @@ class SyncRepository(
     private val client by lazy { SupabaseConfig.getClient(context) }
 
     /**
-     * Mengunduh data resmi dari Supabase Cloud dan memperbarui preset "preset_cloud"
-     * secara terisolasi tanpa menyentuh file preset lain.
-     * Hanya mengambil shortcut dari preset yang sedang aktif (is_active = true) di Supabase.
+     * Mengunduh daftar presets dan shortcuts dari Supabase Cloud,
+     * membuat/memperbarui setiap preset secara terisolasi di Room lokal,
+     * dan menetapkan preset yang berstatus is_active = true di Cloud sebagai preset aktif di HP.
      */
     suspend fun sync(): SyncResult = withContext(Dispatchers.IO) {
         try {
-            val userId = client.auth.currentUserOrNull()?.id ?: authService.getCurrentUserId()
-
-            // 1. Cari Preset yang sedang Aktif (is_active = true) di Supabase
-            val activePresets = try {
-                client.from("presets").select {
-                    filter {
-                        eq("is_active", true)
-                        if (userId != null) {
-                            eq("user_id", userId)
-                        }
-                    }
-                }.decodeList<SupabasePresetDto>()
+            // 1. Ambil daftar tabel 'presets' dari Supabase
+            val cloudPresets = try {
+                client.from("presets")
+                    .select()
+                    .decodeList<SupabasePresetDto>()
             } catch (e: Exception) {
+                android.util.Log.e("SyncRepository", "Gagal mengambil tabel presets dari Supabase: ${e.message}", e)
                 emptyList()
             }
 
-            val targetPreset = activePresets.firstOrNull()
-            val targetPresetId = targetPreset?.id
-            val cloudPresetDisplayName = if (targetPreset != null && targetPreset.name.isNotBlank()) {
-                "☁️ ${targetPreset.name}"
-            } else {
-                CLOUD_PRESET_NAME
+            // 2. Ambil daftar tabel 'shortcuts' dari Supabase
+            val cloudShortcuts = try {
+                client.from("shortcuts")
+                    .select(columns = Columns.raw("id,preset_id,trigger_code,expansion_text,category,expansion_mode,user_id"))
+                    .decodeList<SupabaseShortcutDto>()
+            } catch (e: Exception) {
+                // Fallback jika Columns.raw gagal
+                client.from("shortcuts")
+                    .select()
+                    .decodeList<SupabaseShortcutDto>()
             }
 
-            // 2. Ambil data unik dari Supabase Cloud (filter preset aktif jika tersedia)
-            val cloudShortcuts = client.from("shortcuts").select(
-                columns = Columns.raw("id,preset_id,trigger_code,expansion_text,category,expansion_mode,user_id")
-            ) {
-                filter {
-                    if (targetPresetId != null) {
-                        eq("preset_id", targetPresetId)
-                    }
-                    if (userId != null) {
-                        eq("user_id", userId)
-                    }
-                }
-            }
-            .decodeList<SupabaseShortcutDto>()
-
-            // 3. Bersihkan & deduplikasi data yang diunduh dari cloud
-            val downloadedEntities = cloudShortcuts
-                .filter { !it.triggerCode.isNullOrBlank() && !it.expansionText.isNullOrBlank() }
-                .distinctBy { (it.triggerCode ?: "").trim().lowercase() }
-                .map {
-                    val entity = it.toEntity()
-                    entity.copy(presetId = CLOUD_PRESET_ID)
-                }
-
-            // 4. Simpan ke Preset Cloud khusus (Atomic Room Transaction)
-            database.withTransaction {
-                // Hanya hapus shortcut lama milik preset_cloud (file lokal XML/JSON aman!)
-                shortcutDao.deleteByPreset(CLOUD_PRESET_ID)
-
-                val uniqueShortcuts = downloadedEntities.distinctBy { it.triggerCode }
-                shortcutDao.insertAll(uniqueShortcuts)
-
-                val existingPreset = presetDao.getPresetById(CLOUD_PRESET_ID)
-                val allPresets = presetDao.getAllPresets()
-                val shouldBeActive = existingPreset?.isActive ?: (allPresets.isEmpty() || allPresets.none { it.isActive })
-
-                val cloudPreset = PresetEntity(
-                    id = CLOUD_PRESET_ID,
-                    name = cloudPresetDisplayName,
-                    sourceType = "CLOUD",
-                    isActive = shouldBeActive,
-                    shortcutCount = uniqueShortcuts.size,
-                    createdAt = existingPreset?.createdAt ?: System.currentTimeMillis()
+            if (cloudPresets.isEmpty() && cloudShortcuts.isEmpty()) {
+                return@withContext SyncResult(
+                    success = false,
+                    message = "Tidak ada data preset maupun shortcut ditemukan di Supabase Cloud."
                 )
-                presetDao.insertOrUpdate(cloudPreset)
+            }
 
-                if (shouldBeActive) {
-                    presetDao.setActivePreset(CLOUD_PRESET_ID)
+            // Filter shortcut yang valid (memiliki trigger dan expansion)
+            val validShortcuts = cloudShortcuts.filter {
+                !it.triggerCode.isNullOrBlank() && !it.expansionText.isNullOrBlank()
+            }
+
+            // Kumpulkan pemetaan preset ID -> Nama Preset
+            val presetMap = mutableMapOf<String, String>()
+            cloudPresets.forEach { p ->
+                val name = p.name.trim().ifBlank { p.id }
+                presetMap[p.id] = name
+            }
+
+            // Kelompokkan shortcut berdasarkan preset_id
+            val shortcutsByPreset = validShortcuts.groupBy { dto ->
+                dto.presetId?.trim()?.ifBlank { "default_preset" } ?: "default_preset"
+            }
+
+            // Jika ada shortcut yang merujuk ke preset_id yang belum ada di tabel presets, daftarkan
+            shortcutsByPreset.keys.forEach { pId ->
+                if (!presetMap.containsKey(pId)) {
+                    presetMap[pId] = if (pId == "default_preset") "Paket Utama" else "Preset $pId"
                 }
             }
 
-            val pulledCount = downloadedEntities.size
+            // Tentukan preset mana yang berstatus is_active = true dari Cloud
+            val activePresetFromCloud = cloudPresets.firstOrNull { it.isActive }
+            val activePresetId = activePresetFromCloud?.id
 
-            // Beritahu engine keyboard agar langsung memuat cache terbaru secara real-time
+            var totalInsertedShortcuts = 0
+
+            // 3, 4, & 5. Simpan ke Room Database lokal secara atomik dalam transaksi
+            database.withTransaction {
+                // Bersihkan preset_cloud lama jika pernah ada, agar tidak meninggalkan duplikat usang
+                shortcutDao.deleteByPreset(CLOUD_PRESET_ID)
+                presetDao.deleteById(CLOUD_PRESET_ID)
+
+                // Hapus shortcut lama hanya untuk preset-preset yang berasal dari Cloud
+                for ((pId, _) in presetMap) {
+                    shortcutDao.deleteByPreset(pId)
+                }
+
+                // Masukkan masing-masing shortcut ke preset_id yang sesuai
+                for ((pId, shortcutsInPreset) in shortcutsByPreset) {
+                    val entities = shortcutsInPreset
+                        .distinctBy { (it.triggerCode ?: "").trim().lowercase() }
+                        .map { dto ->
+                            val cleanTrigger = ShortcutImporter.cleanTrigger(dto.triggerCode ?: "").lowercase()
+                            val cleanExp = ShortcutImporter.cleanTextFormatting(dto.expansionText ?: "")
+                            ShortcutEntity(
+                                presetId = pId,
+                                triggerCode = cleanTrigger,
+                                expansionText = cleanExp,
+                                category = dto.category?.ifBlank { "General" } ?: "General",
+                                expansionMode = dto.expansionMode?.ifBlank { "SPACE" } ?: "SPACE",
+                                packageName = dto.category?.ifBlank { "General" } ?: "General",
+                                isActive = true
+                            )
+                        }
+                    if (entities.isNotEmpty()) {
+                        shortcutDao.insertAll(entities)
+                        totalInsertedShortcuts += entities.size
+                    }
+                }
+
+                // Buat / Update PresetEntity di tabel presets Room lokal
+                for ((pId, pName) in presetMap) {
+                    val count = shortcutDao.countByPreset(pId)
+                    val existing = presetDao.getPresetById(pId)
+
+                    val shouldBeActive = if (activePresetId != null) {
+                        pId == activePresetId
+                    } else {
+                        existing?.isActive ?: false
+                    }
+
+                    val presetEntity = PresetEntity(
+                        id = pId,
+                        name = pName,
+                        sourceType = "CLOUD",
+                        isActive = shouldBeActive,
+                        shortcutCount = count,
+                        createdAt = existing?.createdAt ?: System.currentTimeMillis()
+                    )
+                    presetDao.insertOrUpdate(presetEntity)
+                }
+
+                // Set preset lokal yang berstatus is_active = true sesuai dengan Cloud
+                if (activePresetId != null) {
+                    presetDao.setActivePreset(activePresetId)
+                } else {
+                    val all = presetDao.getAllPresets()
+                    if (all.isNotEmpty() && all.none { it.isActive }) {
+                        presetDao.setActivePreset(all.first().id)
+                    }
+                }
+            }
+
+            // Beritahu keyboard service agar langsung memuat cache shortcut terbaru
             CustomKeyboardService.notifyShortcutsChanged(context)
 
-            val presetInfo = if (targetPreset != null) " [Preset: ${targetPreset.name}]" else ""
+            val activePresetName = if (activePresetId != null) {
+                presetMap[activePresetId] ?: activePresetId
+            } else {
+                presetDao.getActivePreset()?.name ?: "-"
+            }
+
+            val presetCount = presetMap.size
+            val msg = if (presetCount > 1) {
+                "Sinkronisasi sukses: $totalInsertedShortcuts shortcut berhasil diunduh ke $presetCount Preset (${presetMap.values.joinToString(", ")}). Preset aktif: '$activePresetName'."
+            } else {
+                "Sinkronisasi sukses: $totalInsertedShortcuts shortcut berhasil diunduh ke Preset '$activePresetName'."
+            }
+
             SyncResult(
                 success = true,
                 pushedCount = 0,
-                pulledCount = pulledCount,
-                message = "Sinkronisasi sukses: $pulledCount shortcut$presetInfo berhasil diunduh ke Preset Cloud."
+                pulledCount = totalInsertedShortcuts,
+                message = msg
             )
         } catch (e: Exception) {
+            android.util.Log.e("SyncRepository", "Sync failed", e)
             SyncResult(
                 success = false,
                 message = "Gagal sinkronisasi: ${e.localizedMessage ?: e.message}"
@@ -149,23 +212,21 @@ class SyncRepository(
     suspend fun pushShortcut(shortcut: ShortcutEntity): Result<Unit> = withContext(Dispatchers.IO) {
         try {
             val userId = client.auth.currentUserOrNull()?.id ?: authService.getCurrentUserId()
-            val remotePresetId = try {
-                client.from("presets").select {
-                    filter {
-                        eq("is_active", true)
-                        if (userId != null) eq("user_id", userId)
-                    }
-                }.decodeList<SupabasePresetDto>().firstOrNull()?.id ?: "default_preset"
-            } catch (e: Exception) {
-                "default_preset"
-            }
-
-            val shortcutWithPreset = if (shortcut.presetId == CLOUD_PRESET_ID) {
-                shortcut.copy(presetId = remotePresetId)
+            val targetPresetId = if (shortcut.presetId.isNotBlank() && shortcut.presetId != CLOUD_PRESET_ID) {
+                shortcut.presetId
             } else {
-                shortcut
+                try {
+                    client.from("presets").select {
+                        filter {
+                            eq("is_active", true)
+                        }
+                    }.decodeList<SupabasePresetDto>().firstOrNull()?.id ?: "default_preset"
+                } catch (e: Exception) {
+                    "default_preset"
+                }
             }
 
+            val shortcutWithPreset = shortcut.copy(presetId = targetPresetId)
             val dto = SupabaseShortcutDto.fromEntity(shortcutWithPreset, userId)
             client.from("shortcuts").upsert(dto)
             Result.success(Unit)
@@ -177,16 +238,13 @@ class SyncRepository(
     /**
      * Menghapus shortcut dari Supabase Cloud (HP ➔ Web).
      */
-    suspend fun deleteCloudShortcut(triggerCode: String): Result<Unit> = withContext(Dispatchers.IO) {
+    suspend fun deleteCloudShortcut(triggerCode: String, presetId: String? = null): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            val userId = client.auth.currentUserOrNull()?.id ?: authService.getCurrentUserId()
-            val cleanKey = com.pkmobile.keyboard.data.importer.ShortcutImporter.cleanTrigger(triggerCode).lowercase()
-
-            val remotePresetId = try {
+            val cleanKey = ShortcutImporter.cleanTrigger(triggerCode).lowercase()
+            val targetPresetId = presetId ?: try {
                 client.from("presets").select {
                     filter {
                         eq("is_active", true)
-                        if (userId != null) eq("user_id", userId)
                     }
                 }.decodeList<SupabasePresetDto>().firstOrNull()?.id
             } catch (e: Exception) {
@@ -196,11 +254,8 @@ class SyncRepository(
             client.from("shortcuts").delete {
                 filter {
                     eq("trigger_code", cleanKey)
-                    if (remotePresetId != null) {
-                        eq("preset_id", remotePresetId)
-                    }
-                    if (userId != null) {
-                        eq("user_id", userId)
+                    if (targetPresetId != null) {
+                        eq("preset_id", targetPresetId)
                     }
                 }
             }

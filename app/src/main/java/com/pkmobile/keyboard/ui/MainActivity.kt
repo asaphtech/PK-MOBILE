@@ -242,8 +242,8 @@ class MainActivity : AppCompatActivity() {
                     CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
 
                     // Sinkronisasi 2 arah ke Supabase jika preset cloud atau user terhubung
-                    if (shortcutEntity.presetId == SyncRepository.CLOUD_PRESET_ID || authService.isLoggedIn()) {
-                        syncRepository.deleteCloudShortcut(shortcutEntity.triggerCode)
+                    if (shortcutEntity.presetId == SyncRepository.CLOUD_PRESET_ID || shortcutEntity.presetId.startsWith("preset_") || authService.isLoggedIn()) {
+                        syncRepository.deleteCloudShortcut(shortcutEntity.triggerCode, shortcutEntity.presetId)
                     }
 
                     withContext(Dispatchers.Main) {
@@ -699,7 +699,7 @@ class MainActivity : AppCompatActivity() {
                         CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
 
                         // 2-Way Sync: Dorong juga ke Cloud jika pengguna login atau sedang di preset cloud
-                        if (presetId == SyncRepository.CLOUD_PRESET_ID || authService.isLoggedIn()) {
+                        if (presetId == SyncRepository.CLOUD_PRESET_ID || presetId.startsWith("preset_") || authService.isLoggedIn()) {
                             val entity = ShortcutEntity(
                                 presetId = presetId,
                                 triggerCode = cleanKey,
@@ -780,9 +780,9 @@ class MainActivity : AppCompatActivity() {
                     CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
 
                     // 2-Way Sync ke Supabase Cloud
-                    if (shortcut.presetId == SyncRepository.CLOUD_PRESET_ID || authService.isLoggedIn()) {
+                    if (shortcut.presetId == SyncRepository.CLOUD_PRESET_ID || shortcut.presetId.startsWith("preset_") || authService.isLoggedIn()) {
                         if (shortcut.triggerCode.lowercase() != cleanKey.lowercase()) {
-                            syncRepository.deleteCloudShortcut(shortcut.triggerCode)
+                            syncRepository.deleteCloudShortcut(shortcut.triggerCode, shortcut.presetId)
                         }
                         syncRepository.pushShortcut(updatedEntity)
                     }
