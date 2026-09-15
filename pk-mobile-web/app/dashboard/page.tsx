@@ -594,8 +594,8 @@ export default function DashboardPage() {
 
       setPresets(enriched);
 
-      // Cek apakah localStorage.getItem('active_preset_id') cocok dengan salah satu id preset di Supabase
-      const savedPresetId = (typeof window !== 'undefined' ? localStorage.getItem('active_preset_id') : null) || preferredPresetId;
+      // Cek apakah preferredPresetId atau localStorage.getItem('active_preset_id') cocok dengan salah satu id preset di Supabase
+      const savedPresetId = preferredPresetId || (typeof window !== 'undefined' ? localStorage.getItem('active_preset_id') : null);
 
       let targetId = '';
       if (savedPresetId && enriched.some(p => p.id === savedPresetId)) {
@@ -997,30 +997,43 @@ export default function DashboardPage() {
         throw new Error('Sesi login tidak valid atau telah kedaluwarsa. Silakan login kembali.');
       }
 
-      let targetPresetId = selectedPresetId || 'default_preset';
+      // 1. Tentukan targetPresetId & nama preset
+      const cleanName = (importPresetName.trim() || csvFileName || 'Impor CSV')
+        .replace(/\.[^/.]+$/, '')
+        .trim();
 
-      // Jika opsi Buat Preset Baru dipilih (Isolasi)
-      if (importDestination === 'new_preset') {
-        const newId = `preset_${Date.now()}`;
-        const cleanName = (importPresetName.trim() || csvFileName || 'Impor CSV')
-          .replace(/\.[^/.]+$/, '')
-          .trim();
+      const isCurrentValid = importDestination === 'current_preset' && 
+                             selectedPresetId && 
+                             selectedPresetId !== 'default_preset' &&
+                             presets.some(p => p.id === selectedPresetId);
 
+      const targetPresetId = isCurrentValid ? selectedPresetId : `preset_${Date.now()}`;
+
+      // 2. Jika preset baru (atau belum ada di tabel presets), insert record preset ke Supabase terlebih dahulu
+      if (!isCurrentValid) {
         if (importSetAsActive) {
-          await client.from('presets').update({ is_active: false }).eq('user_id', activeUserId);
+          try {
+            await client.from('presets').update({ is_active: false }).eq('user_id', activeUserId);
+          } catch (e) {
+            console.warn('Gagal reset is_active lama:', e);
+          }
         }
 
         const newPreset: PresetItem = {
-          id: newId,
+          id: targetPresetId,
           name: cleanName,
           is_active: importSetAsActive,
           user_id: activeUserId
         };
 
-        await client.from('presets').insert(newPreset);
-        targetPresetId = newId;
+        const { error: presetError } = await client.from('presets').insert(newPreset);
+        if (presetError) {
+          console.error('Error insert preset:', presetError);
+          throw new Error(`Gagal membuat preset: ${presetError.message}`);
+        }
       }
 
+      // 3. Petakan seluruh shortcut agar membawa preset_id yang SAMA
       const payload = csvPreview.map(item => ({
         preset_id: targetPresetId,
         trigger_code: (item.trigger_code || item.shortcut || '').trim().toLowerCase(),
@@ -1030,27 +1043,44 @@ export default function DashboardPage() {
         user_id: activeUserId,
       }));
 
-      const { error } = await (client as any)
+      // 4. Bulk insert / upsert ke tabel shortcuts Supabase
+      const { error: shortcutsError } = await (client as any)
         .from('shortcuts')
         .upsert(payload, { onConflict: 'user_id, preset_id, trigger_code' });
 
-      if (error) {
+      if (shortcutsError) {
+        console.warn('Fallback upsert shortcuts 1:', shortcutsError);
         const { error: fallbackError } = await (client as any)
           .from('shortcuts')
-          .upsert(payload, { onConflict: 'user_id, trigger_code' });
-        if (fallbackError) throw fallbackError;
+          .upsert(payload, { onConflict: 'preset_id, trigger_code' });
+        if (fallbackError) {
+          console.warn('Fallback upsert shortcuts 2:', fallbackError);
+          const { error: fallbackError2 } = await (client as any)
+            .from('shortcuts')
+            .upsert(payload, { onConflict: 'user_id, trigger_code' });
+          if (fallbackError2) {
+            console.error('Error insert shortcuts:', fallbackError2);
+            throw new Error(`Gagal menyimpan shortcut: ${fallbackError2.message}`);
+          }
+        }
       }
 
-      showToast('success', `Berhasil mengimpor ${csvPreview.length} shortcut dari CSV ke Preset!`);
+      // 5. Update localStorage & State secara langsung SEBELUM fetchPresets()
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('active_preset_id', targetPresetId);
+      }
+      setSelectedPresetId(targetPresetId);
+
+      // 6. Refresh daftar preset & shortcut di UI secara otomatis
+      await fetchPresets(targetPresetId);
+
+      showToast('success', `Berhasil mengimpor ${csvPreview.length} shortcut dari CSV ke Preset "${cleanName}"!`);
       setIsImportModalOpen(false);
       setCsvPreview([]);
       setCsvFileName('');
       setImportPresetName('');
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('active_preset_id', targetPresetId);
-      }
-      await fetchPresets(targetPresetId);
     } catch (err: any) {
+      console.error('Gagal impor massal CSV:', err);
       setImportStatus({ error: `Gagal impor massal: ${err.message}` });
     } finally {
       setActionLoading(false);
@@ -1112,62 +1142,92 @@ export default function DashboardPage() {
         throw new Error('Sesi login tidak valid atau telah kedaluwarsa. Silakan login kembali.');
       }
 
-      let targetPresetId = selectedPresetId || 'default_preset';
+      // 1. Tentukan targetPresetId & nama preset
+      const cleanName = (importPresetName.trim() || pkFileName || 'Perfect Keyboard')
+        .replace(/\.[^/.]+$/, '')
+        .trim();
 
-      // Jika opsi Buat Preset Baru dipilih (Isolasi)
-      if (importDestination === 'new_preset') {
-        const newId = `preset_${Date.now()}`;
-        const cleanName = (importPresetName.trim() || pkFileName || 'Perfect Keyboard')
-          .replace(/\.[^/.]+$/, '')
-          .trim();
+      const isCurrentValid = importDestination === 'current_preset' && 
+                             selectedPresetId && 
+                             selectedPresetId !== 'default_preset' &&
+                             presets.some(p => p.id === selectedPresetId);
 
+      const targetPresetId = isCurrentValid ? selectedPresetId : `preset_${Date.now()}`;
+
+      // 2. Jika preset baru (atau belum ada di tabel presets), insert record preset ke Supabase terlebih dahulu
+      if (!isCurrentValid) {
         if (importSetAsActive) {
-          await client.from('presets').update({ is_active: false }).eq('user_id', activeUserId);
+          try {
+            await client.from('presets').update({ is_active: false }).eq('user_id', activeUserId);
+          } catch (e) {
+            console.warn('Gagal reset is_active lama:', e);
+          }
         }
 
         const newPreset: PresetItem = {
-          id: newId,
+          id: targetPresetId,
           name: cleanName,
           is_active: importSetAsActive,
           user_id: activeUserId
         };
 
-        await client.from('presets').insert(newPreset);
-        targetPresetId = newId;
+        const { error: presetError } = await client.from('presets').insert(newPreset);
+        if (presetError) {
+          console.error('Error insert preset:', presetError);
+          throw new Error(`Gagal membuat preset baru: ${presetError.message}`);
+        }
       }
 
-      const payload = pkParseResult.validShortcuts.map(item => ({
+      // 3. Petakan seluruh shortcut agar membawa preset_id yang SAMA
+      const shortcutsToInsert = pkParseResult.validShortcuts.map(item => ({
         preset_id: targetPresetId,
         trigger_code: item.trigger.trim().toLowerCase(),
         expansion_text: cleanMacroText(item.expansion.trim()),
         category: pkCategory || 'Perfect Keyboard',
-        expansion_mode: pkMode, // default 'SPACE'
+        expansion_mode: pkMode || 'SPACE',
         user_id: activeUserId,
       }));
 
-      const { error } = await (client as any)
+      // 4. Bulk insert / upsert ke tabel shortcuts Supabase
+      const { error: shortcutsError } = await (client as any)
         .from('shortcuts')
-        .upsert(payload, { onConflict: 'user_id, preset_id, trigger_code' });
+        .upsert(shortcutsToInsert, { onConflict: 'user_id, preset_id, trigger_code' });
 
-      if (error) {
+      if (shortcutsError) {
+        console.warn('Fallback upsert shortcuts 1:', shortcutsError);
         const { error: fallbackError } = await (client as any)
           .from('shortcuts')
-          .upsert(payload, { onConflict: 'user_id, trigger_code' });
-        if (fallbackError) throw fallbackError;
+          .upsert(shortcutsToInsert, { onConflict: 'preset_id, trigger_code' });
+        if (fallbackError) {
+          console.warn('Fallback upsert shortcuts 2:', fallbackError);
+          const { error: fallbackError2 } = await (client as any)
+            .from('shortcuts')
+            .upsert(shortcutsToInsert, { onConflict: 'user_id, trigger_code' });
+          if (fallbackError2) {
+            console.error('Error insert shortcuts:', fallbackError2);
+            throw new Error(`Gagal menyimpan shortcut: ${fallbackError2.message}`);
+          }
+        }
       }
 
-      showToast(
-        'success',
-        `Berhasil mengimpor ${pkParseResult.validShortcuts.length} shortcut Perfect Keyboard ke Preset!`
-      );
-      setPkStatus({
-        success: `Berhasil mengimpor ${pkParseResult.validShortcuts.length} shortcut ke Supabase Cloud (Preset terisolasi). Seluruh shortcut ini siap disinkronkan ke HP Android CS!`
-      });
+      // 5. Update localStorage & State secara langsung SEBELUM fetchPresets()
       if (typeof window !== 'undefined') {
         localStorage.setItem('active_preset_id', targetPresetId);
       }
+      setSelectedPresetId(targetPresetId);
+
+      // 6. Refresh daftar preset & shortcut di UI secara otomatis
       await fetchPresets(targetPresetId);
+
+      showToast(
+        'success',
+        `Berhasil mengimpor ${pkParseResult.validShortcuts.length} shortcut Perfect Keyboard ke Preset "${cleanName}"!`
+      );
+      setPkStatus({
+        success: `Berhasil mengimpor ${pkParseResult.validShortcuts.length} shortcut ke Supabase Cloud (Preset: ${cleanName}). Seluruh shortcut ini siap disinkronkan ke HP Android CS!`
+      });
     } catch (err: any) {
+      console.error('Gagal menyimpan impor PK:', err);
       setPkStatus({ error: `Gagal menyimpan ke Supabase: ${err.message}` });
     } finally {
       setActionLoading(false);
