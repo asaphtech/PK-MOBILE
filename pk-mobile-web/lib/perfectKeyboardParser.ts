@@ -18,6 +18,7 @@ export interface FailedShortcut {
   rawMessage?: string;
   reason: string;
   suggestion: string;
+  suggestedTrigger?: string;
 }
 
 export interface PerfectKeyboardParseResult {
@@ -104,13 +105,55 @@ function generateSuggestion(rawTrigger: string): string {
 }
 
 /**
+ * Menghasilkan rekomendasi trigger otomatis berbasis tombol hotkey, urutan, atau nama macro
+ * (contoh: [Ctrl+Numpad4] -> /numpad4, Macro -> /macro, atau /m_2539)
+ */
+export function generateSuggestedTrigger(rawTrigger: string, macroName?: string, lineNum?: number): string {
+  // 1. Prioritas: Ambil tombol utama dari Hotkey PC (misal: "Ctrl+Numpad4" -> "numpad4")
+  if (rawTrigger) {
+    const cleaned = rawTrigger.replace(/^(?:hk|hotkey):\s*/i, '').replace(/^[\[{(<]+|[\]})>]+$/g, '').trim();
+    const parts = cleaned.split(/[\+\-_]/);
+    const mainKey = parts[parts.length - 1].trim().toLowerCase();
+    const alphaNum = mainKey.replace(/[^a-z0-9]/g, '');
+    // Jika tombolnya bermakna (misal numpad4, f1, ins, del, dsb)
+    if (alphaNum && (alphaNum.length > 1 || !macroName)) {
+      return `/${alphaNum}`;
+    }
+  }
+
+  // 2. Prioritas kedua: Nama Macro jika tersedia
+  if (macroName && macroName.trim() && macroName.trim() !== '0') {
+    const cleanName = macroName.trim().toLowerCase().replace(/^[\[{(<"'\s]+|[\]})>"'\s]+$/g, '').replace(/\s+/g, '_');
+    const slug = cleanName.replace(/[^\w\-\/]/g, '');
+    if (slug) {
+      return slug.startsWith('/') ? slug : `/${slug}`;
+    }
+  }
+
+  // 3. Jika hanya ada 1 huruf (misal: Ctrl+A)
+  if (rawTrigger) {
+    const cleaned = rawTrigger.replace(/^(?:hk|hotkey):\s*/i, '').replace(/^[\[{(<]+|[\]})>]+$/g, '').trim();
+    const parts = cleaned.split(/[\+\-_]/);
+    const mainKey = parts[parts.length - 1].trim().toLowerCase();
+    const alphaNum = mainKey.replace(/[^a-z0-9]/g, '');
+    if (alphaNum) {
+      return `/${alphaNum}`;
+    }
+  }
+
+  // 4. Fallback berbasis urutan/nomor baris
+  return `/m_${lineNum || Math.floor(Math.random() * 8999 + 1000)}`;
+}
+
+/**
  * Mengevaluasi apakah suatu trigger ditolak atau valid untuk Android
  */
 function validateTrigger(
   rawTrigger: string,
   rawExpansion: string,
   seenTriggers: Map<string, number>,
-  lineNum: number
+  lineNum: number,
+  macroName?: string
 ): { isValid: true; trigger: string; expansion: string } | { isValid: false; failed: FailedShortcut } {
   const trigger = cleanTriggerString(rawTrigger);
   const expansion = cleanTextContent(rawExpansion);
@@ -126,7 +169,8 @@ function validateTrigger(
         expansion: expansion,
         rawMessage: expansion,
         reason: 'Kode trigger kosong atau tidak ditemukan.',
-        suggestion: 'Tentukan kode trigger teks yang valid sebelum mengimpor.'
+        suggestion: 'Tentukan kode trigger teks yang valid sebelum mengimpor.',
+        suggestedTrigger: generateSuggestedTrigger('', macroName, lineNum)
       }
     };
   }
@@ -142,7 +186,8 @@ function validateTrigger(
         expansion: '',
         rawMessage: '',
         reason: 'Isi teks balasan (expansion text) kosong.',
-        suggestion: 'Lengkapi isi teks pesan template balasan sebelum diimpor.'
+        suggestion: 'Lengkapi isi teks pesan template balasan sebelum diimpor.',
+        suggestedTrigger: generateSuggestedTrigger(trigger, macroName, lineNum)
       }
     };
   }
@@ -154,50 +199,60 @@ function validateTrigger(
   const isFunctionKey = /^f([1-9]|1[0-9]|2[0-4])$/i.test(strippedKey) ||
                         /\b(F[1-9]|F1[0-9]|F2[0-4])\b/i.test(trigger);
   if (isFunctionKey) {
+    const formattedKey = trigger.startsWith('[') ? trigger : `[${trigger.toUpperCase()}]`;
     return {
       isValid: false,
       failed: {
         lineNum,
-        rawTrigger: trigger,
+        rawTrigger: formattedKey,
         rawExpansion: expansion,
         expansion: expansion,
         rawMessage: expansion,
-        reason: `Menggunakan tombol fisik PC Function Key (${trigger}) yang tidak ada pada keyboard HP.`,
-        suggestion: generateSuggestion(trigger)
+        reason: `Menggunakan tombol fisik PC Function Key (${strippedKey.toUpperCase()}) yang tidak ada pada keyboard HP.`,
+        suggestion: generateSuggestion(trigger),
+        suggestedTrigger: generateSuggestedTrigger(trigger, macroName, lineNum)
       }
     };
   }
 
-  // 4. Cek Tombol Fisik Khusus PC (Tab, Enter, Esc, CapsLock, Insert, Home, PageUp, dll.)
+  // 4. Cek Tombol Fisik Khusus PC (Tab, Enter, Esc, CapsLock, Insert, Home, PageUp, Numpad, dll.)
   if (PC_SPECIAL_KEYS.includes(strippedKey)) {
+    const formattedKey = trigger.startsWith('[') ? trigger : `[${trigger}]`;
     return {
       isValid: false,
       failed: {
         lineNum,
-        rawTrigger: trigger,
+        rawTrigger: formattedKey,
         rawExpansion: expansion,
         expansion: expansion,
         rawMessage: expansion,
-        reason: `Menggunakan tombol fisik PC "${trigger}" yang tidak tersedia pada keyboard smartphone.`,
-        suggestion: generateSuggestion(trigger)
+        reason: `Menggunakan tombol fisik PC "${strippedKey}" yang tidak tersedia pada keyboard smartphone.`,
+        suggestion: generateSuggestion(trigger),
+        suggestedTrigger: generateSuggestedTrigger(trigger, macroName, lineNum)
       }
     };
   }
 
-  // 5. Cek Kombinasi Shortcut PC (Ctrl+, Alt+, Shift+, Win+, Cmd+)
+  // 5. Cek Kombinasi Shortcut / Hotkey PC (Ctrl+, Alt+, Shift+, Win+, Cmd+, Numpad)
   const hasModifierKey = /(ctrl|alt|shift|win|cmd|command|control|meta)[\s\+\-_]/i.test(trigger) ||
-                         /[\+\-_](ctrl|alt|shift|win|cmd)/i.test(trigger);
+                         /[\+\-_](ctrl|alt|shift|win|cmd)/i.test(trigger) ||
+                         /numpad/i.test(trigger) ||
+                         trigger.toLowerCase().startsWith('hotkey') ||
+                         trigger.toLowerCase().startsWith('hk:');
   if (hasModifierKey) {
+    const cleanHotkey = trigger.replace(/^(?:hk|hotkey):\s*/i, '').replace(/^[\[{(<]+|[\]})>]+$/g, '').trim();
+    const formattedKey = `[${cleanHotkey}]`;
     return {
       isValid: false,
       failed: {
         lineNum,
-        rawTrigger: trigger,
+        rawTrigger: formattedKey,
         rawExpansion: expansion,
         expansion: expansion,
         rawMessage: expansion,
-        reason: `Menggunakan kombinasi tombol pintas PC (${trigger}) yang tidak didukung pada layar sentuh Android.`,
-        suggestion: generateSuggestion(trigger)
+        reason: `Menggunakan tombol fisik PC (Hotkey ${cleanHotkey}) yang tidak dapat dipicu secara otomatis di keyboard HP.`,
+        suggestion: generateSuggestion(cleanHotkey),
+        suggestedTrigger: generateSuggestedTrigger(cleanHotkey, macroName, lineNum)
       }
     };
   }
@@ -214,7 +269,8 @@ function validateTrigger(
         expansion: expansion,
         rawMessage: expansion,
         reason: 'Trigger mengandung karakter spasi (tidak dapat dipicu otomatis saat mengetik di HP).',
-        suggestion: `Hapus spasi atau sambungkan dengan garis bawah (misal: "${withoutSpace}").`
+        suggestion: `Hapus spasi atau sambungkan dengan garis bawah (misal: "${withoutSpace}").`,
+        suggestedTrigger: withoutSpace.startsWith('/') ? withoutSpace : `/${withoutSpace}`
       }
     };
   }
@@ -272,30 +328,42 @@ export function parseTxtExport(fileContent: string): Array<{
     let trigger = '';
     let expansion = '';
 
-    // Regex pencarian trigger yang lebih fleksibel (at1s, at1sa, at2s, at2sa, trigger, hotkey)
-    const triggerMatches = Array.from(item.matchAll(/^(?:at1s?a?|at2s?a?|trigger|hotkey):\s*(.+)$/gmi));
+    // 1. Ekstrak nama macro
     const nameMatch = item.match(/^name:\s*(.+)$/mi);
+    const macroName = nameMatch ? nameMatch[1].trim() : '';
 
-    let rawTrigger = '';
-    for (const tm of triggerMatches) {
+    // 2. Ekstrak Auto-Text (at1s, at1sa, at2s, at2sa, trigger)
+    const autoTextMatches = Array.from(item.matchAll(/^(?:at1s?a?|at2s?a?|trigger):\s*(.+)$/gmi));
+    let rawAutoText = '';
+    for (const tm of autoTextMatches) {
       const candidate = tm[1].trim();
       if (candidate && candidate !== '0') {
-        rawTrigger = candidate;
+        rawAutoText = candidate;
         break;
       }
     }
 
-    // Handle kondisi jika trigger "0", kosong, atau hanya spasi -> gunakan nama macro sebagai fallback
-    if (!rawTrigger || rawTrigger === '0') {
-      if (nameMatch && nameMatch[1].trim()) {
-        const cleanName = nameMatch[1].trim().toLowerCase().replace(/^[\[{(<"'\s]+|[\]})>"'\s]+$/g, '').replace(/\s+/g, '_');
-        if (cleanName) {
-          rawTrigger = cleanName.startsWith('/') ? cleanName : `/${cleanName}`;
-        }
+    // 3. Ekstrak tag Hotkey PC (hk, hotkey)
+    const hotkeyMatches = Array.from(item.matchAll(/^(?:hk|hotkey):\s*(.+)$/gmi));
+    let rawHotkey = '';
+    for (const hm of hotkeyMatches) {
+      const candidate = hm[1].trim();
+      if (candidate && candidate !== '0') {
+        rawHotkey = candidate;
+        break;
       }
     }
 
-    trigger = rawTrigger;
+    if (rawAutoText) {
+      trigger = rawAutoText;
+    } else if (rawHotkey) {
+      trigger = rawHotkey.startsWith('[') ? rawHotkey : `[${rawHotkey}]`;
+    } else if (macroName) {
+      const cleanName = macroName.toLowerCase().replace(/^[\[{(<"'\s]+|[\]})>"'\s]+$/g, '').replace(/\s+/g, '_');
+      if (cleanName) {
+        trigger = cleanName.startsWith('/') ? cleanName : `/${cleanName}`;
+      }
+    }
 
     // Ekstrak isi pesan dari 'm:'
     const messageIndex = item.indexOf('\nm: ');
@@ -365,7 +433,7 @@ export function parsePerfectKeyboardFile(rawText: string): PerfectKeyboardParseR
   // 1. Format Ekspor Teks Perfect Keyboard ({end-of-item})
   if (rawText.includes('{end-of-item}')) {
     parseEndOfItemFormat(rawText, (item, lineNum) => {
-      const val = validateTrigger(item.trigger, item.expansion, seenTriggers, lineNum);
+      const val = validateTrigger(item.trigger, item.expansion, seenTriggers, lineNum, item.macroName);
       if (val.isValid) {
         validShortcuts.push({ lineNum, trigger: val.trigger, expansion: val.expansion });
       } else {
@@ -376,7 +444,7 @@ export function parsePerfectKeyboardFile(rawText: string): PerfectKeyboardParseR
   // 2. Format XML / Perfect Keyboard MTW
   else if (trimmed.startsWith('<') || (trimmed.includes('<tscut>') && trimmed.includes('<macroText>')) || trimmed.includes('<macro')) {
     parseXmlFormat(rawText, (item, lineNum) => {
-      const val = validateTrigger(item.trigger, item.expansion, seenTriggers, lineNum);
+      const val = validateTrigger(item.trigger, item.expansion, seenTriggers, lineNum, item.macroName);
       if (val.isValid) {
         validShortcuts.push({ lineNum, trigger: val.trigger, expansion: val.expansion });
       } else {
@@ -407,7 +475,7 @@ export function parsePerfectKeyboardFile(rawText: string): PerfectKeyboardParseR
  */
 function parseEndOfItemFormat(
   fileContent: string,
-  onItem: (item: { trigger: string; expansion: string }, lineNum: number) => void
+  onItem: (item: { trigger: string; expansion: string; macroName?: string }, lineNum: number) => void
 ) {
   const rawItems = fileContent.split('{end-of-item}');
   let currentLine = 1;
@@ -426,30 +494,46 @@ function parseEndOfItemFormat(
     let trigger = '';
     let expansion = '';
 
-    // Regex pencarian trigger yang lebih fleksibel (at1s, at1sa, at2s, at2sa, trigger, hotkey)
-    const triggerMatches = Array.from(item.matchAll(/^(?:at1s?a?|at2s?a?|trigger|hotkey):\s*(.+)$/gmi));
+    // 1. Ekstrak nama macro
     const nameMatch = item.match(/^name:\s*(.+)$/mi);
+    const macroName = nameMatch ? nameMatch[1].trim() : '';
 
-    let rawTrigger = '';
-    for (const tm of triggerMatches) {
+    // 2. Ekstrak Auto-Text (at1s, at1sa, at2s, at2sa, trigger)
+    const autoTextMatches = Array.from(item.matchAll(/^(?:at1s?a?|at2s?a?|trigger):\s*(.+)$/gmi));
+    let rawAutoText = '';
+    for (const tm of autoTextMatches) {
       const candidate = tm[1].trim();
       if (candidate && candidate !== '0') {
-        rawTrigger = candidate;
+        rawAutoText = candidate;
         break;
       }
     }
 
-    // Handle kondisi jika trigger "0", kosong, atau hanya spasi -> gunakan nama macro sebagai fallback
-    if (!rawTrigger || rawTrigger === '0') {
-      if (nameMatch && nameMatch[1].trim()) {
-        const cleanName = nameMatch[1].trim().toLowerCase().replace(/^[\[{(<"'\s]+|[\]})>"'\s]+$/g, '').replace(/\s+/g, '_');
-        if (cleanName) {
-          rawTrigger = cleanName.startsWith('/') ? cleanName : `/${cleanName}`;
-        }
+    // 3. Ekstrak tag Hotkey PC (hk, hotkey)
+    const hotkeyMatches = Array.from(item.matchAll(/^(?:hk|hotkey):\s*(.+)$/gmi));
+    let rawHotkey = '';
+    for (const hm of hotkeyMatches) {
+      const candidate = hm[1].trim();
+      if (candidate && candidate !== '0') {
+        rawHotkey = candidate;
+        break;
       }
     }
 
-    trigger = rawTrigger;
+    // Prioritas:
+    // a. Auto-Text biasa jika ada
+    // b. Jika tidak ada auto-text tapi ada Hotkey PC -> gunakan Hotkey PC
+    // c. Jika tidak ada keduanya -> fallback ke nama macro
+    if (rawAutoText) {
+      trigger = rawAutoText;
+    } else if (rawHotkey) {
+      trigger = rawHotkey.startsWith('[') ? rawHotkey : `[${rawHotkey}]`;
+    } else if (macroName) {
+      const cleanName = macroName.toLowerCase().replace(/^[\[{(<"'\s]+|[\]})>"'\s]+$/g, '').replace(/\s+/g, '_');
+      if (cleanName) {
+        trigger = cleanName.startsWith('/') ? cleanName : `/${cleanName}`;
+      }
+    }
 
     // Ekstrak isi pesan dari 'm:'
     const messageIndex = item.indexOf('\nm: ');
@@ -460,6 +544,11 @@ function parseEndOfItemFormat(
       rawMessage = item.substring(messageIndex + 4);
     } else if (altMessageIndex !== -1) {
       rawMessage = item.substring(altMessageIndex + 3);
+    } else {
+      const mMatch = item.match(/\nm:\s*([\s\S]*)$/) || item.match(/^m:\s*([\s\S]*)$/m);
+      if (mMatch) {
+        rawMessage = mMatch[1];
+      }
     }
 
     if (rawMessage) {
@@ -473,7 +562,7 @@ function parseEndOfItemFormat(
     }
 
     if (trigger || expansion) {
-      onItem({ trigger, expansion }, lineNum);
+      onItem({ trigger, expansion, macroName }, lineNum);
     }
   }
 }
@@ -483,7 +572,7 @@ function parseEndOfItemFormat(
  */
 function parseXmlFormat(
   xmlContent: string,
-  onItem: (item: { trigger: string; expansion: string }, lineNum: number) => void
+  onItem: (item: { trigger: string; expansion: string; macroName?: string }, lineNum: number) => void
 ) {
   // Regex mencari blok <macro>...</macro>, <item>...</item>, <entry>...</entry>, <record>...</record>
   const blockRegex = /<(?:macro|record|item|shortcut|entry|macro_item|data)\b[^>]*>([\s\S]*?)<\/(?:macro|record|item|shortcut|entry|macro_item|data)>/gi;
@@ -500,6 +589,10 @@ function parseXmlFormat(
     let trigger = '';
     let expansion = '';
 
+    // Nama macro jika ada
+    const nameTagMatch = /<name\b[^>]*>([\s\S]*?)<\/name>/i.exec(block);
+    const macroName = nameTagMatch ? cleanTriggerString(nameTagMatch[1]) : '';
+
     // 1. Tag Perfect Keyboard MTW standar: <tscut>...</tscut> & <macroText>...</macroText>
     const tscutMatch = /<tscut\b[^>]*>([\s\S]*?)<\/tscut>/i.exec(block);
     if (tscutMatch) {
@@ -511,9 +604,9 @@ function parseXmlFormat(
       expansion = cleanTextContent(macroTextMatch[1]);
     }
 
-    // 2. Tag alternatif: <hotkey>, <trigger>, <key>, <shortcut>, <at1s>, <at1sa>, <at2s>, <at2sa>
+    // 2. Tag alternatif: <hotkey>, <hk>, <trigger>, <key>, <shortcut>, <at1s>, <at1sa>, <at2s>, <at2sa>
     if (!trigger || trigger === '0') {
-      const keyTagMatch = /<(?:hotkey|trigger|key|shortcut|at1s|at1sa|at2s|at2sa)\b[^>]*>([\s\S]*?)<\/(?:hotkey|trigger|key|shortcut|at1s|at1sa|at2s|at2sa)>/i.exec(block);
+      const keyTagMatch = /<(?:hotkey|hk|trigger|key|shortcut|at1s|at1sa|at2s|at2sa)\b[^>]*>([\s\S]*?)<\/(?:hotkey|hk|trigger|key|shortcut|at1s|at1sa|at2s|at2sa)>/i.exec(block);
       if (keyTagMatch) {
         const candidate = cleanTriggerString(keyTagMatch[1]);
         if (candidate && candidate !== '0') {
@@ -524,9 +617,8 @@ function parseXmlFormat(
 
     // Fallback nama macro <name> jika trigger masih kosong atau '0'
     if (!trigger || trigger === '0') {
-      const nameTagMatch = /<name\b[^>]*>([\s\S]*?)<\/name>/i.exec(block);
-      if (nameTagMatch) {
-        const cleanName = cleanTriggerString(nameTagMatch[1]).toLowerCase().replace(/^[\[{(<"'\s]+|[\]})>"'\s]+$/g, '').replace(/\s+/g, '_');
+      if (macroName) {
+        const cleanName = macroName.toLowerCase().replace(/^[\[{(<"'\s]+|[\]})>"'\s]+$/g, '').replace(/\s+/g, '_');
         if (cleanName) {
           trigger = cleanName.startsWith('/') ? cleanName : `/${cleanName}`;
         }
@@ -543,7 +635,7 @@ function parseXmlFormat(
 
     // 4. Jika masih kosong, coba ekstrak dari atribut tag tunggal
     if (!trigger || !expansion) {
-      const attrTriggerMatch = /\b(?:tscut|trigger|hotkey|shortcut|key|name)\s*=\s*"([^"]*)"/i.exec(block);
+      const attrTriggerMatch = /\b(?:tscut|trigger|hotkey|hk|shortcut|key|name)\s*=\s*"([^"]*)"/i.exec(block);
       if (attrTriggerMatch && !trigger) {
         trigger = cleanTriggerString(attrTriggerMatch[1]);
       }
@@ -554,7 +646,7 @@ function parseXmlFormat(
     }
 
     if (trigger || expansion) {
-      onItem({ trigger, expansion }, lineNum || blockIndex);
+      onItem({ trigger, expansion, macroName }, lineNum || blockIndex);
     }
   }
 

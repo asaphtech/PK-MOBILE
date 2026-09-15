@@ -11,7 +11,9 @@ import {
 } from 'lucide-react';
 import {
   parsePerfectKeyboardFile,
-  PerfectKeyboardParseResult
+  PerfectKeyboardParseResult,
+  ValidShortcut,
+  FailedShortcut
 } from '@/lib/perfectKeyboardParser';
 
 const CATEGORIES = [
@@ -32,6 +34,156 @@ const FORM_CATEGORIES = [
   'Promo & Bonus',
   'Umum'
 ];
+
+interface WarningRowProps {
+  item: FailedShortcut;
+  idx: number;
+  existingTriggers: string[];
+  copiedExpansionIdx: number | null;
+  onCopyExpansion: (text: string, idx: number) => void;
+  onResolve: (item: FailedShortcut, newTrigger: string) => void;
+}
+
+/**
+ * Komponen baris warning interaktif (Interactive Inline Fixer)
+ * Memungkinkan pengguna langsung menetapkan trigger baru bebas duplikat
+ * dan memindahkan shortcut yang tadinya tidak didukung ke daftar Valid Shortcuts.
+ */
+function WarningRow({
+  item,
+  idx,
+  existingTriggers,
+  copiedExpansionIdx,
+  onCopyExpansion,
+  onResolve
+}: WarningRowProps) {
+  const [customTrigger, setCustomTrigger] = useState(item.suggestedTrigger || '');
+  const [error, setError] = useState('');
+
+  // Sederhanakan format trigger (tambahkan slash jika belum ada & ganti spasi dengan garis bawah)
+  const formatTrigger = (val: string) => {
+    let formatted = val.trim().replace(/\s+/g, '_');
+    if (formatted && !formatted.startsWith('/') && !formatted.startsWith('!')) {
+      formatted = '/' + formatted;
+    }
+    return formatted;
+  };
+
+  const handleChange = (val: string) => {
+    const formatted = formatTrigger(val);
+    setCustomTrigger(formatted);
+
+    if (!formatted) {
+      setError('');
+      return;
+    }
+
+    // Cek duplikat real-time terhadap DB Supabase & Valid Shortcuts
+    if (existingTriggers.includes(formatted.toLowerCase())) {
+      setError('Trigger sudah digunakan!');
+    } else {
+      setError('');
+    }
+  };
+
+  const handleApply = () => {
+    if (!customTrigger || error) return;
+    const formatted = formatTrigger(customTrigger);
+    if (!formatted || existingTriggers.includes(formatted.toLowerCase())) {
+      setError('Trigger sudah digunakan!');
+      return;
+    }
+    onResolve(item, formatted);
+  };
+
+  const expansionText = item.expansion || item.rawExpansion || item.rawMessage || '';
+  const suggestionCandidate = item.suggestedTrigger || `/m_${item.lineNum}`;
+
+  return (
+    <tr className="hover:bg-amber-950/20 transition-colors border-b border-amber-900/20 bg-slate-950/40">
+      <td className="p-2.5 font-mono text-slate-400 align-top text-xs">#{item.lineNum}</td>
+      <td className="p-2.5 align-top">
+        <span className="inline-block px-2 py-1 bg-amber-950 text-amber-400 border border-amber-800/60 rounded font-mono text-xs font-bold">
+          {item.rawTrigger || '[Hotkey PC]'}
+        </span>
+      </td>
+      {/* Kolom Isi Pesan (Expansion) */}
+      <td className="p-2.5 max-w-xs align-top">
+        <div className="relative group bg-slate-900 p-2 rounded text-xs text-slate-300 whitespace-pre-wrap max-h-20 overflow-y-auto border border-slate-800 font-sans shadow-inner">
+          <div className="pr-6 select-text">
+            {expansionText || '(Teks Kosong)'}
+          </div>
+          {expansionText && (
+            <button
+              type="button"
+              onClick={() => onCopyExpansion(expansionText, idx)}
+              className="absolute top-1.5 right-1.5 p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-amber-300 transition-colors border border-slate-700/60"
+              title="Salin isi pesan"
+            >
+              {copiedExpansionIdx === idx ? (
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+              ) : (
+                <Copy className="w-3.5 h-3.5" />
+              )}
+            </button>
+          )}
+        </div>
+      </td>
+      {/* Kolom Alasan Tidak Diproses */}
+      <td className="p-2.5 text-xs text-amber-200/90 font-medium leading-relaxed align-top min-w-[170px]">
+        {item.reason}
+      </td>
+      {/* Kolom Saran Tindakan / Interactive Inline Fixer */}
+      <td className="p-2.5 align-top min-w-[240px]">
+        <div className="flex flex-col gap-1.5">
+          {/* Opsi Saran Cepat */}
+          <div className="flex gap-1.5 items-center flex-wrap">
+            <span className="text-[10px] text-slate-400 font-medium">Saran:</span>
+            <button
+              type="button"
+              onClick={() => handleChange(suggestionCandidate)}
+              className="text-[10px] bg-amber-950 hover:bg-amber-900 text-amber-300 px-2 py-0.5 rounded border border-amber-800/60 font-mono font-bold transition-colors"
+              title="Gunakan saran trigger ini"
+            >
+              {suggestionCandidate}
+            </button>
+          </div>
+
+          {/* Kolom Input Trigger Manual + Tombol Terapkan */}
+          <div className="flex gap-1.5 items-center">
+            <input
+              type="text"
+              value={customTrigger}
+              onChange={(e) => handleChange(e.target.value)}
+              placeholder="/trigger_baru"
+              className={`text-xs bg-slate-900 px-2.5 py-1.5 rounded-lg border font-mono w-36 focus:outline-none transition-colors ${
+                error
+                  ? 'border-rose-500 text-rose-300 bg-rose-950/20'
+                  : 'border-slate-700 text-emerald-400 focus:border-indigo-500'
+              }`}
+            />
+            <button
+              type="button"
+              onClick={handleApply}
+              disabled={!customTrigger || !!error}
+              className="px-3 py-1.5 text-xs bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg font-medium transition shadow-sm disabled:cursor-not-allowed whitespace-nowrap"
+            >
+              Simpan ke Valid
+            </button>
+          </div>
+
+          {/* Pesan Error Duplikat */}
+          {error && (
+            <span className="text-[11px] text-rose-400 font-semibold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block shrink-0" />
+              {error}
+            </span>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
+}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -65,6 +217,7 @@ export default function DashboardPage() {
   const [pkFileName, setPkFileName] = useState('');
   const [pkParseResult, setPkParseResult] = useState<PerfectKeyboardParseResult | null>(null);
   const [pkActiveTab, setPkActiveTab] = useState<'failed' | 'valid'>('failed');
+  const [pkSearchQuery, setPkSearchQuery] = useState('');
   const [pkCategory, setPkCategory] = useState('Perfect Keyboard');
   const [pkMode, setPkMode] = useState<'INSTANT' | 'SPACE'>('INSTANT');
   const [pkStatus, setPkStatus] = useState<{ success?: string; error?: string }>({});
@@ -79,6 +232,63 @@ export default function DashboardPage() {
 
   // Notification Toast
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  // Anti-duplikat lookup: gabungan trigger di Supabase DB + trigger yang sudah ada di Valid Shortcuts
+  const existingTriggers = useMemo(() => {
+    const dbList = shortcuts.map(s => (s.shortcut || s.trigger_code || '').trim().toLowerCase()).filter(Boolean);
+    const validList = (pkParseResult?.validShortcuts || []).map(s => s.trigger.trim().toLowerCase()).filter(Boolean);
+    return Array.from(new Set([...dbList, ...validList]));
+  }, [shortcuts, pkParseResult?.validShortcuts]);
+
+  // Filter pencarian real-time untuk daftar tidak didukung (failedShortcuts)
+  const filteredFailedList = useMemo(() => {
+    if (!pkParseResult?.failedShortcuts) return [];
+    const q = pkSearchQuery.trim().toLowerCase();
+    if (!q) return pkParseResult.failedShortcuts;
+    return pkParseResult.failedShortcuts.filter(item => {
+      const triggerMatch = (item.rawTrigger || '').toLowerCase().includes(q);
+      const textMatch = (item.expansion || item.rawExpansion || item.rawMessage || '').toLowerCase().includes(q);
+      const reasonMatch = (item.reason || '').toLowerCase().includes(q);
+      return triggerMatch || textMatch || reasonMatch;
+    });
+  }, [pkParseResult?.failedShortcuts, pkSearchQuery]);
+
+  // Filter pencarian real-time untuk daftar shortcut siap diimpor (validShortcuts)
+  const filteredValidList = useMemo(() => {
+    if (!pkParseResult?.validShortcuts) return [];
+    const q = pkSearchQuery.trim().toLowerCase();
+    if (!q) return pkParseResult.validShortcuts;
+    return pkParseResult.validShortcuts.filter(item => {
+      const triggerMatch = (item.trigger || '').toLowerCase().includes(q);
+      const textMatch = (item.expansion || '').toLowerCase().includes(q);
+      return triggerMatch || textMatch;
+    });
+  }, [pkParseResult?.validShortcuts, pkSearchQuery]);
+
+  // Resolusi inline failed shortcut -> pindahkan ke daftar valid
+  const handleResolveFailedShortcut = (item: FailedShortcut, newTrigger: string) => {
+    if (!pkParseResult) return;
+
+    const cleanTrigger = newTrigger.trim();
+    if (!cleanTrigger) return;
+
+    const newValid: ValidShortcut = {
+      lineNum: item.lineNum,
+      trigger: cleanTrigger,
+      expansion: item.expansion || item.rawExpansion || item.rawMessage || ''
+    };
+
+    const updatedFailed = pkParseResult.failedShortcuts.filter(f => f !== item);
+    const updatedValid = [...pkParseResult.validShortcuts, newValid];
+
+    setPkParseResult({
+      totalParsed: pkParseResult.totalParsed,
+      validShortcuts: updatedValid,
+      failedShortcuts: updatedFailed
+    });
+
+    showToast('success', `Shortcut "${cleanTrigger}" berhasil ditetapkan dan dipindahkan ke daftar Valid Shortcuts!`);
+  };
 
   const showToast = (type: 'success' | 'error', message: string) => {
     setToast({ type, message });
@@ -212,7 +422,8 @@ export default function DashboardPage() {
         user_id: activeUserId, // <--- ID user yang sedang aktif
       };
 
-      if (editingItem?.id && (editingItem.trigger_code || editingItem.shortcut) && (editingItem.trigger_code || editingItem.shortcut).trim().toLowerCase() !== cleanTrigger) {
+      const prevTrigger = (editingItem?.trigger_code || editingItem?.shortcut || '').trim().toLowerCase();
+      if (editingItem?.id && prevTrigger && prevTrigger !== cleanTrigger) {
         // Jika trigger code diubah, hapus trigger lama
         await (client as any).from('shortcuts').delete().eq('id', editingItem.id);
       }
@@ -451,6 +662,7 @@ export default function DashboardPage() {
     setPkParseResult(null);
     setPkFileName('');
     setPkStatus({});
+    setPkSearchQuery('');
   };
 
   // Filter & Search logic
@@ -1138,6 +1350,26 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
+                {/* Search Bar Real-Time */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={pkSearchQuery}
+                    onChange={(e) => setPkSearchQuery(e.target.value)}
+                    placeholder="🔍 Cari berdasarkan kode trigger atau isi teks shortcut..."
+                    className="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-4 py-2.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 font-sans shadow-inner transition-colors"
+                  />
+                  {pkSearchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setPkSearchQuery('')}
+                      className="absolute right-3 top-2 text-xs text-slate-400 hover:text-slate-200 bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded transition-colors"
+                    >
+                      ✕ Clear
+                    </button>
+                  )}
+                </div>
+
                 {/* Tab Navigation */}
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
                   <button
@@ -1150,7 +1382,9 @@ export default function DashboardPage() {
                     }`}
                   >
                     <AlertTriangle className="w-3.5 h-3.5" />
-                    <span>Daftar Tidak Didukung ({pkParseResult.failedShortcuts.length})</span>
+                    <span>
+                      Daftar Tidak Didukung ({pkSearchQuery ? `${filteredFailedList.length} / ` : ''}{pkParseResult.failedShortcuts.length})
+                    </span>
                   </button>
 
                   <button
@@ -1163,17 +1397,28 @@ export default function DashboardPage() {
                     }`}
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Shortcut Siap Diimpor ({pkParseResult.validShortcuts.length})</span>
+                    <span>
+                      Shortcut Siap Diimpor ({pkSearchQuery ? `${filteredValidList.length} / ` : ''}{pkParseResult.validShortcuts.length})
+                    </span>
                   </button>
                 </div>
 
                 {/* TAB 1: TABEL LAPORAN BERWARNA (WARNING / AMBER) */}
                 {pkActiveTab === 'failed' && (
                   <div className="space-y-3">
-                    {pkParseResult.failedShortcuts.length === 0 ? (
+                    {filteredFailedList.length === 0 ? (
                       <div className="p-8 text-center rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-400">
-                        <CheckCircle2 className="w-7 h-7 text-emerald-400 mx-auto mb-2" />
-                        Semua shortcut dalam file ini valid dan dapat digunakan di keyboard HP Android!
+                        {pkSearchQuery ? (
+                          <>
+                            <Search className="w-7 h-7 text-slate-500 mx-auto mb-2" />
+                            Tidak ada shortcut tidak didukung yang cocok dengan kata kunci &quot;{pkSearchQuery}&quot;.
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle2 className="w-7 h-7 text-emerald-400 mx-auto mb-2" />
+                            Semua shortcut dalam file ini valid dan dapat digunakan di keyboard HP Android!
+                          </>
+                        )}
                       </div>
                     ) : (
                       <div className="rounded-xl border border-amber-500/30 bg-amber-950/10 overflow-hidden">
@@ -1192,53 +1437,23 @@ export default function DashboardPage() {
                               <tr>
                                 <th className="p-2.5 border-b border-amber-900/40 w-16">BARIS</th>
                                 <th className="p-2.5 border-b border-amber-900/40 w-36">TRIGGER ASLI (.4PK)</th>
-                                <th className="p-2.5 border-b border-amber-900/40 min-w-[220px]">ISI PESAN (EXPANSION)</th>
-                                <th className="p-2.5 border-b border-amber-900/40 min-w-[180px]">ALASAN TIDAK DIPROSES</th>
-                                <th className="p-2.5 border-b border-amber-900/40 min-w-[200px]">SARAN TINDAKAN</th>
+                                <th className="p-2.5 border-b border-amber-900/40 min-w-[200px]">ISI PESAN (EXPANSION)</th>
+                                <th className="p-2.5 border-b border-amber-900/40 min-w-[170px]">ALASAN TIDAK DIPROSES</th>
+                                <th className="p-2.5 border-b border-amber-900/40 min-w-[240px]">SARAN TINDAKAN / RESOLUSI</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-amber-900/20 bg-slate-950/40 text-xs">
-                              {pkParseResult.failedShortcuts.map((item, idx) => {
-                                const expansionText = item.expansion || item.rawExpansion || item.rawMessage || '';
-                                return (
-                                  <tr key={idx} className="hover:bg-amber-950/20 transition-colors">
-                                    <td className="p-2.5 font-mono text-slate-400 align-top">#{item.lineNum}</td>
-                                    <td className="p-2.5 align-top">
-                                      <span className="inline-block px-2 py-1 bg-amber-950 text-amber-400 border border-amber-800/60 rounded font-mono text-xs font-bold">
-                                        {item.rawTrigger || '(Kosong)'}
-                                      </span>
-                                    </td>
-                                    {/* Kolom Baru: Isi Pesan */}
-                                    <td className="p-2.5 max-w-xs align-top">
-                                      <div className="relative group bg-slate-900 p-2 rounded text-xs text-slate-300 whitespace-pre-wrap max-h-20 overflow-y-auto border border-slate-800 font-sans shadow-inner">
-                                        <div className="pr-6 select-text">
-                                          {expansionText || '(Teks Kosong)'}
-                                        </div>
-                                        {expansionText && (
-                                          <button
-                                            type="button"
-                                            onClick={() => handleCopyExpansion(expansionText, idx)}
-                                            className="absolute top-1.5 right-1.5 p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-amber-300 transition-colors border border-slate-700/60"
-                                            title="Salin isi pesan"
-                                          >
-                                            {copiedExpansionIdx === idx ? (
-                                              <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                            ) : (
-                                              <Copy className="w-3.5 h-3.5" />
-                                            )}
-                                          </button>
-                                        )}
-                                      </div>
-                                    </td>
-                                    <td className="p-2.5 text-amber-200/90 font-medium leading-relaxed align-top">
-                                      {item.reason}
-                                    </td>
-                                    <td className="p-2.5 text-emerald-400 font-medium leading-relaxed align-top">
-                                      {item.suggestion}
-                                    </td>
-                                  </tr>
-                                );
-                              })}
+                              {filteredFailedList.map((item, idx) => (
+                                <WarningRow
+                                  key={`${item.lineNum}-${idx}`}
+                                  item={item}
+                                  idx={idx}
+                                  existingTriggers={existingTriggers}
+                                  copiedExpansionIdx={copiedExpansionIdx}
+                                  onCopyExpansion={handleCopyExpansion}
+                                  onResolve={handleResolveFailedShortcut}
+                                />
+                              ))}
                             </tbody>
                           </table>
                         </div>
@@ -1250,9 +1465,16 @@ export default function DashboardPage() {
                 {/* TAB 2: SHORTCUT LOLOS VALIDASI */}
                 {pkActiveTab === 'valid' && (
                   <div className="space-y-3">
-                    {pkParseResult.validShortcuts.length === 0 ? (
+                    {filteredValidList.length === 0 ? (
                       <div className="p-8 text-center rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-400">
-                        Tidak ada shortcut yang lolos validasi pada file ini. Silakan sesuaikan trigger pada file asal atau periksa daftar tidak didukung.
+                        {pkSearchQuery ? (
+                          <>
+                            <Search className="w-7 h-7 text-slate-500 mx-auto mb-2" />
+                            Tidak ada shortcut siap diimpor yang cocok dengan kata kunci &quot;{pkSearchQuery}&quot;.
+                          </>
+                        ) : (
+                          'Tidak ada shortcut yang lolos validasi pada file ini. Silakan sesuaikan trigger pada file asal atau periksa daftar tidak didukung.'
+                        )}
                       </div>
                     ) : (
                       <>
@@ -1300,7 +1522,7 @@ export default function DashboardPage() {
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-slate-800/60">
-                                {pkParseResult.validShortcuts.map((item, idx) => (
+                                {filteredValidList.map((item, idx) => (
                                   <tr key={idx} className="hover:bg-slate-900/40 transition-colors">
                                     <td className="py-2 px-3 font-mono text-slate-500">#{item.lineNum}</td>
                                     <td className="py-2 px-3 font-mono text-indigo-400 font-bold">{item.trigger}</td>
