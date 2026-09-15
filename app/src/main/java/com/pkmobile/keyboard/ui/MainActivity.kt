@@ -246,7 +246,26 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@MainActivity, R.string.toast_deleted, Toast.LENGTH_SHORT).show()
+                        com.google.android.material.snackbar.Snackbar.make(
+                            binding.root,
+                            "Shortcut '${shortcutEntity.shortcut}' dihapus",
+                            5000
+                        ).setAction("BATAL") {
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                repository.insertShortcut(
+                                    shortcut = shortcutEntity.shortcut,
+                                    expansion = shortcutEntity.expansion,
+                                    expansionMode = shortcutEntity.expansionMode,
+                                    packageName = shortcutEntity.packageName,
+                                    isActive = shortcutEntity.isActive,
+                                    targetPresetId = shortcutEntity.presetId
+                                )
+                                CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
+                                if (shortcutEntity.presetId == SyncRepository.CLOUD_PRESET_ID || authService.isLoggedIn()) {
+                                    syncRepository.pushShortcut(shortcutEntity)
+                                }
+                            }
+                        }.show()
                     }
                 }
             },
@@ -303,6 +322,26 @@ class MainActivity : AppCompatActivity() {
                 applyFilter()
             }
         }
+
+        // Amati preset aktif untuk update badge
+        lifecycleScope.launch {
+            repository.activePresetFlow.collectLatest { activePreset ->
+                val name = activePreset?.name ?: "Paket Utama"
+                binding.tvActivePresetBadge.text = "⭐ $name"
+            }
+        }
+
+        updateSyncStatusUI()
+    }
+
+    private fun updateSyncStatusUI() {
+        val prefs = getSharedPreferences("pkmobile_sync", Context.MODE_PRIVATE)
+        val lastSync = prefs.getString("last_sync_time", null)
+        if (lastSync != null) {
+            binding.tvSyncStatus.text = "🟢 Tersinkron ($lastSync)"
+        } else {
+            binding.tvSyncStatus.text = "🟢 Tersinkron: Lokal"
+        }
     }
 
     /**
@@ -355,10 +394,25 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, "Menyinkronkan data dengan Cloud JFN Type Master...", Toast.LENGTH_SHORT).show()
 
         lifecycleScope.launch(Dispatchers.IO) {
+            // Snapshot cadangan lokal otomatis sebelum Cloud Sync
+            repository.createLocalBackupSnapshot(this@MainActivity)
+
             val result = syncRepository.sync()
             CustomKeyboardService.notifyShortcutsChanged(this@MainActivity)
+
+            val nowStr = java.text.SimpleDateFormat("HH:mm 'WIB'", java.util.Locale.getDefault()).format(java.util.Date())
+            if (result.success) {
+                getSharedPreferences("pkmobile_sync", Context.MODE_PRIVATE)
+                    .edit()
+                    .putString("last_sync_time", nowStr)
+                    .apply()
+            }
+
             withContext(Dispatchers.Main) {
                 binding.btnSyncCloud.isEnabled = true
+                if (result.success) {
+                    binding.tvSyncStatus.text = "🟢 Cloud Sync: $nowStr"
+                }
                 Toast.makeText(
                     this@MainActivity,
                     result.message,
@@ -438,6 +492,7 @@ class MainActivity : AppCompatActivity() {
                 if (detectedPairs.isNotEmpty()) {
                     val shouldClear = cbClearBeforeImport?.isChecked ?: false
                     lifecycleScope.launch(Dispatchers.IO) {
+                        repository.createLocalBackupSnapshot(this@MainActivity)
                         val count = repository.importXmlShortcuts(
                             pairs = detectedPairs,
                             fileName = detectedFileName,
@@ -520,6 +575,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Ambil nama paket dari nama berkas (tanpa ekstensi .xml)
                 val packageName = fileName.removeSuffix(".xml").removeSuffix(".XML").ifBlank { "Paket XML" }
+                repository.createLocalBackupSnapshot(this@MainActivity)
                 val count = repository.importXmlShortcuts(
                     pairs = pairs,
                     fileName = packageName,
@@ -615,6 +671,22 @@ class MainActivity : AppCompatActivity() {
                     lifecycleScope.launch(Dispatchers.IO) {
                         val activePreset = repository.getActivePreset()
                         val presetId = activePreset?.id ?: "default_preset"
+                        val cleanKey = ShortcutImporter.cleanTrigger(shortcutText).lowercase()
+
+                        // Validasi anti-duplikat dalam preset yang sama
+                        val existingShortcuts = repository.getShortcutsByPreset(presetId)
+                        val isDuplicate = existingShortcuts.any { it.shortcut.equals(cleanKey, ignoreCase = true) }
+                        if (isDuplicate) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Trigger '$cleanKey' sudah digunakan dalam preset ini! Silakan pilih trigger lain.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                            return@launch
+                        }
+
                         repository.insertShortcut(
                             shortcut = shortcutText,
                             expansion = expansionText,
@@ -627,7 +699,6 @@ class MainActivity : AppCompatActivity() {
 
                         // 2-Way Sync: Dorong juga ke Cloud jika pengguna login atau sedang di preset cloud
                         if (presetId == SyncRepository.CLOUD_PRESET_ID || authService.isLoggedIn()) {
-                            val cleanKey = ShortcutImporter.cleanTrigger(shortcutText).lowercase()
                             val entity = ShortcutEntity(
                                 presetId = presetId,
                                 triggerCode = cleanKey,
@@ -738,27 +809,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     // =========================================================================
-    // EKSPOR BACKUP (JSON / CSV)
+    // EKSPOR BACKUP (XML / JSON / CSV)
     // =========================================================================
     private fun showExportChoiceDialog() {
         val options = arrayOf(
-            "📁 Simpan Cadangan sebagai JSON (shortcuts.json) [Direkomendasikan]",
-            "📄 Simpan Cadangan sebagai CSV (shortcuts.csv)"
+            "📄 Simpan Cadangan sebagai XML (.xml) [Format Resmi Keyboard Android PK]",
+            "📁 Simpan Cadangan sebagai JSON (shortcuts.json)",
+            "📊 Simpan Cadangan sebagai CSV (shortcuts.csv)"
         )
 
         MaterialAlertDialogBuilder(this)
             .setTitle("Pilih Format Ekspor Cadangan")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> exportShortcuts(asJson = true)
-                    1 -> exportShortcuts(asJson = false)
+                    0 -> exportShortcuts(format = "xml")
+                    1 -> exportShortcuts(format = "json")
+                    2 -> exportShortcuts(format = "csv")
                 }
             }
             .setNegativeButton(R.string.btn_cancel, null)
             .show()
     }
 
-    private fun exportShortcuts(asJson: Boolean) {
+    private fun exportShortcuts(format: String) {
         lifecycleScope.launch(Dispatchers.IO) {
             val list = repository.getAllList()
             if (list.isEmpty()) {
@@ -768,12 +841,23 @@ class MainActivity : AppCompatActivity() {
                 return@launch
             }
 
-            val fileName = if (asJson) "shortcuts.json" else "shortcuts.csv"
-            val mimeType = if (asJson) "application/json" else "text/csv"
-            val fileContent = if (asJson) {
-                ShortcutImporter.exportToJson(list)
-            } else {
-                ShortcutImporter.exportToCsv(list)
+            val activePreset = repository.getActivePreset()
+            val presetName = activePreset?.name ?: "Perfect Keyboard"
+
+            val fileName = when (format) {
+                "xml" -> "shortcuts_${presetName.replace(" ", "_")}.xml"
+                "json" -> "shortcuts.json"
+                else -> "shortcuts.csv"
+            }
+            val mimeType = when (format) {
+                "xml" -> "application/xml"
+                "json" -> "application/json"
+                else -> "text/csv"
+            }
+            val fileContent = when (format) {
+                "xml" -> ShortcutImporter.exportToXml(list, presetName)
+                "json" -> ShortcutImporter.exportToJson(list)
+                else -> ShortcutImporter.exportToCsv(list)
             }
 
             try {

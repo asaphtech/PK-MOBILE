@@ -71,6 +71,38 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Status Sinkronisasi Real-Time & Preset Aktif -->
+        <LinearLayout
+            android:id="@+id/layout_sync_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="4dp"
+            android:paddingBottom="6dp">
+
+            <TextView
+                android:id="@+id/tv_sync_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🟢 Tersinkron: Lokal"
+                android:textColor="@color/accent"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_active_preset_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_candidate_chip"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:text="⭐ Paket Utama"
+                android:textColor="@color/key_text"
+                android:textSize="11sp" />
+        </LinearLayout>
+
         <!-- Shortcut Section Header & 3 Official Methods -->
         <LinearLayout
             android:layout_width="match_parent"

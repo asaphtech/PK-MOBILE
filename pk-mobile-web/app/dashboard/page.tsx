@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useMemo, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { getSupabaseClient, ShortcutItem, PresetItem } from '@/lib/supabase';
+import { getSupabaseClient, ShortcutItem, PresetItem, FeedbackItem } from '@/lib/supabase';
 import {
   Search, Plus, Upload, LogOut, Edit2, Trash2, Zap, Space,
   FileSpreadsheet, AlertCircle, CheckCircle2, RefreshCw, X,
   Tag, MessageSquare, Copy, Check, ChevronDown, Filter,
   Layers, Smartphone, ExternalLink, AlertTriangle, FolderOpen, FileText,
-  FolderPlus, Star, CheckCircle
+  FolderPlus, Star, CheckCircle, Download, MessageSquarePlus, Send, History, FileDown
 } from 'lucide-react';
 import {
   parsePerfectKeyboardFile,
@@ -253,6 +253,19 @@ export default function DashboardPage() {
   // Notification Toast
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // Modal Unduhan File Preset
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+
+  // Modal Saran & Masukan (Feedback)
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [feedbackCategory, setFeedbackCategory] = useState<'Permintaan Fitur' | 'Bug / Error' | 'Usulan Shortcut Baru' | 'Performa / Lainnya'>('Permintaan Fitur');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([]);
+  const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
+
+  // Live Sync Status
+  const [lastSyncTime, setLastSyncTime] = useState<string>('');
+
   // Preset saat ini yang sedang dipilih
   const currentPreset = useMemo(() => {
     return presets.find(p => p.id === selectedPresetId) || presets[0] || null;
@@ -321,6 +334,158 @@ export default function DashboardPage() {
   const showToast = (type: 'success' | 'error', message: string) => {
     setToast({ type, message });
     setTimeout(() => setToast(null), 3500);
+  };
+
+  // Helper escape karakter XML
+  const escapeXmlAttr = (str: string) => {
+    return (str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+  };
+
+  // Unduh Preset dalam format XML (kompatibel Android dengan CDATA), JSON, atau CSV
+  const handleDownloadPreset = async (targetPreset: PresetItem, format: 'xml' | 'json' | 'csv') => {
+    setActionLoading(true);
+    try {
+      const client = getSupabaseClient();
+      const { data, error } = await client
+        .from('shortcuts')
+        .select('*')
+        .eq('preset_id', targetPreset.id);
+
+      if (error) throw error;
+
+      const items: ShortcutItem[] = (data || []).map((item: any) => ({
+        id: item.id,
+        preset_id: item.preset_id,
+        shortcut: item.shortcut || item.trigger_code || '',
+        trigger_code: item.trigger_code || item.shortcut || '',
+        expansion: item.expansion || item.expansion_text || '',
+        expansion_text: item.expansion_text || item.expansion || '',
+        category: item.category || 'Umum',
+        expansion_mode: item.expansion_mode === 'INSTANT' ? 'INSTANT' : 'SPACE',
+      }));
+
+      let content = '';
+      let mimeType = 'text/plain';
+
+      if (format === 'xml') {
+        content = `<?xml version="1.0" encoding="utf-8"?>\n`;
+        content += `<shortcuts preset="${escapeXmlAttr(targetPreset.name)}" count="${items.length}" exported="${new Date().toISOString()}">\n`;
+        for (const s of items) {
+          const tr = s.shortcut || s.trigger_code || '';
+          const exp = s.expansion || s.expansion_text || '';
+          const cat = s.category || 'Umum';
+          const mode = s.expansion_mode || 'SPACE';
+          content += `  <shortcut>\n`;
+          content += `    <trigger><![CDATA[${tr}]]></trigger>\n`;
+          content += `    <expansion><![CDATA[${exp}]]></expansion>\n`;
+          content += `    <mode>${mode}</mode>\n`;
+          content += `    <category><![CDATA[${cat}]]></category>\n`;
+          content += `  </shortcut>\n`;
+        }
+        content += `</shortcuts>\n`;
+        mimeType = 'application/xml';
+      } else if (format === 'json') {
+        content = JSON.stringify({
+          preset: targetPreset.name,
+          preset_id: targetPreset.id,
+          exported_at: new Date().toISOString(),
+          total: items.length,
+          shortcuts: items.map(s => ({
+            trigger: s.shortcut || s.trigger_code || '',
+            expansion: s.expansion || s.expansion_text || '',
+            category: s.category || 'Umum',
+            expansion_mode: s.expansion_mode || 'SPACE'
+          }))
+        }, null, 2);
+        mimeType = 'application/json';
+      } else {
+        content = 'Trigger,Expansion,Category,Mode\n';
+        for (const s of items) {
+          const tr = (s.shortcut || s.trigger_code || '').replace(/"/g, '""');
+          const exp = (s.expansion || s.expansion_text || '').replace(/"/g, '""');
+          const cat = (s.category || 'Umum').replace(/"/g, '""');
+          const mode = s.expansion_mode || 'SPACE';
+          content += `"${tr}","${exp}","${cat}","${mode}"\n`;
+        }
+        mimeType = 'text/csv';
+      }
+
+      const blob = new Blob([content], { type: `${mimeType};charset=utf-8` });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const safeName = targetPreset.name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+      link.href = url;
+      link.download = `${safeName}_preset.${format}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      showToast('success', `File preset "${targetPreset.name}.${format}" (${items.length} shortcut) berhasil diunduh!`);
+    } catch (err: any) {
+      showToast('error', `Gagal mengunduh preset: ${err.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Ambil riwayat masukan/saran user
+  const fetchFeedbacks = async () => {
+    setIsFeedbackLoading(true);
+    try {
+      const client = getSupabaseClient();
+      const { data: { user: currentUser } } = await client.auth.getUser();
+      if (!currentUser) return;
+      const { data, error } = await client
+        .from('feedbacks')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      if (!error && data) {
+        setFeedbacks(data as FeedbackItem[]);
+      }
+    } catch (e) {
+      console.warn('Feedbacks fetch error', e);
+    } finally {
+      setIsFeedbackLoading(false);
+    }
+  };
+
+  // Kirim saran & komentar
+  const handleSubmitFeedback = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!feedbackMessage.trim()) return;
+    setActionLoading(true);
+    try {
+      const client = getSupabaseClient();
+      const { data: { user: currentUser } } = await client.auth.getUser();
+      const activeUserId = currentUser?.id || user?.id;
+      const activeEmail = currentUser?.email || user?.email || 'cs@pkmobile.app';
+
+      const newFeedback = {
+        user_id: activeUserId,
+        user_email: activeEmail,
+        category: feedbackCategory,
+        message: feedbackMessage.trim(),
+      };
+
+      const { error } = await client.from('feedbacks').insert(newFeedback);
+      if (error) throw error;
+
+      showToast('success', 'Terima kasih! Saran & masukan Anda telah terkirim.');
+      setFeedbackMessage('');
+      await fetchFeedbacks();
+    } catch (err: any) {
+      showToast('error', `Gagal mengirim masukan: ${err.message}`);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   // Fetch Session, Presets, & Shortcuts
@@ -453,6 +618,8 @@ export default function DashboardPage() {
           created_at: item.created_at
         }));
         setShortcuts(formatted);
+        const now = new Date();
+        setLastSyncTime(now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }));
       }
     } catch (err: any) {
       showToast('error', `Kesalahan koneksi: ${err.message}`);
@@ -645,6 +812,21 @@ export default function DashboardPage() {
       };
 
       const prevTrigger = (editingItem?.trigger_code || editingItem?.shortcut || '').trim().toLowerCase();
+
+      // Validasi anti-duplikat trigger dalam preset yang sama
+      if (!editingItem || prevTrigger !== cleanTrigger) {
+        const isDuplicate = shortcuts.some(
+          s => (s.preset_id === targetPreset || !s.preset_id) &&
+               (s.shortcut || s.trigger_code || '').trim().toLowerCase() === cleanTrigger &&
+               s.id !== editingItem?.id
+        );
+        if (isDuplicate) {
+          setFormError(`Trigger code "${cleanTrigger}" sudah digunakan pada preset ini! Silakan pilih trigger lain.`);
+          setActionLoading(false);
+          return;
+        }
+      }
+
       if (editingItem?.id && prevTrigger && prevTrigger !== cleanTrigger) {
         // Jika trigger code diubah, hapus trigger lama
         await (client as any).from('shortcuts').delete().eq('id', editingItem.id);
@@ -1023,15 +1205,51 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-end">
             {/* Download APK & Panduan Instalasi HP */}
             <ApkDownloadSection />
 
-            <div className="text-right hidden md:block">
-              <div className="text-xs font-medium text-slate-300">{user?.email || 'Customer Support'}</div>
-              <div className="text-[11px] text-emerald-400 flex items-center justify-end gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Supabase Live Sync</span>
+            {/* Riwayat & Unduh Preset */}
+            <button
+              onClick={() => setIsDownloadModalOpen(true)}
+              className="px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+              title="Riwayat & Unduh File Preset (.xml / .json / .csv)"
+            >
+              <FileDown className="w-4 h-4 text-indigo-400" />
+              <span className="hidden sm:inline">Unduh Preset</span>
+            </button>
+
+            {/* Saran & Masukan Tim CS */}
+            <button
+              onClick={() => {
+                setIsFeedbackModalOpen(true);
+                fetchFeedbacks();
+              }}
+              className="px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+              title="Kotak Saran & Masukan Tim CS"
+            >
+              <MessageSquarePlus className="w-4 h-4 text-emerald-400" />
+              <span className="hidden sm:inline">Kotak Saran</span>
+            </button>
+
+            {/* Indikator Live Sync Status */}
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-850/80 border border-slate-800 text-right">
+              <button
+                onClick={() => fetchShortcuts(selectedPresetId)}
+                disabled={loading}
+                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-emerald-400 transition-colors"
+                title="Refresh sinkronisasi database"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-emerald-400' : ''}`} />
+              </button>
+              <div>
+                <div className="text-[11px] font-semibold text-slate-200">
+                  {user?.email ? user.email.split('@')[0] : 'CS Agent'}
+                </div>
+                <div className="text-[10px] text-emerald-400 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                  <span>Tersinkron ({lastSyncTime || 'Terbaru'})</span>
+                </div>
               </div>
             </div>
 
@@ -2245,6 +2463,230 @@ export default function DashboardPage() {
                 className="py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-lg shadow-rose-600/30 transition-all disabled:opacity-50"
               >
                 {actionLoading ? 'Menghapus...' : 'Ya, Hapus Preset'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Riwayat & Unduh Berkas Preset */}
+      {isDownloadModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-3xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 relative max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800 shrink-0">
+              <div className="flex items-center gap-2.5 text-white font-bold text-base">
+                <div className="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+                  <FileDown className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="leading-tight">Riwayat &amp; Unduh File Preset</div>
+                  <div className="text-[11px] text-slate-400 font-normal mt-0.5">
+                    Unduh file shortcut untuk backup offline atau impor langsung ke aplikasi Android PK Mobile.
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsDownloadModalOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto flex-1 pr-1 space-y-3">
+              <div className="p-3 bg-indigo-950/40 border border-indigo-500/30 rounded-xl text-xs text-indigo-200 flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-white">Format .XML Kompatibel Android:</strong> Berkas .xml diunduh dengan struktur khusus Android PK Mobile yang membungkus teks dengan <code className="text-amber-300 font-mono text-[11px]">&lt;![CDATA[...]]&gt;</code> sehingga seluruh karakter spesial (enter, kutip, tanda baca, simbol) aman 100% tanpa error saat diimpor di HP.
+                </div>
+              </div>
+
+              <div className="divide-y divide-slate-800 border border-slate-800 rounded-xl overflow-hidden bg-slate-950/60">
+                {presets.map((preset) => (
+                  <div key={preset.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-900/50 transition-colors">
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-sm text-white">{preset.name}</span>
+                        {preset.is_active && (
+                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                            Aktif di HP
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-slate-400 mt-1 flex items-center gap-3">
+                        <span>📊 {preset.shortcut_count || 0} shortcut</span>
+                        {preset.created_at && (
+                          <span>📅 {new Date(preset.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => handleDownloadPreset(preset, 'xml')}
+                        disabled={actionLoading}
+                        className="px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                        title="Unduh format XML (Format resmi Aplikasi HP)"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>.XML (HP)</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleDownloadPreset(preset, 'json')}
+                        disabled={actionLoading}
+                        className="px-3 py-1.5 rounded-lg bg-sky-600/20 hover:bg-sky-600/30 text-sky-300 border border-sky-500/40 text-xs font-bold transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                        title="Unduh format JSON (Cadangan Data Lengkap)"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>.JSON</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleDownloadPreset(preset, 'csv')}
+                        disabled={actionLoading}
+                        className="px-3 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                        title="Unduh format CSV (Microsoft Excel / Google Sheets)"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>.CSV</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-4 mt-3 border-t border-slate-800 flex justify-end shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsDownloadModalOpen(false)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Kotak Saran & Komentar Tim CS */}
+      {isFeedbackModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 relative max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800 shrink-0">
+              <div className="flex items-center gap-2.5 text-white font-bold text-base">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+                  <MessageSquarePlus className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="leading-tight">Kotak Saran &amp; Komentar Tim CS</div>
+                  <div className="text-[11px] text-slate-400 font-normal mt-0.5">
+                    Sampaikan keluhan kendala keyboard HP, permintaan fitur baru, atau usulan template shortcut.
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsFeedbackModalOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto flex-1 pr-1 space-y-5">
+              {/* Form Masukan */}
+              <form onSubmit={handleSubmitFeedback} className="space-y-3.5 bg-slate-950/70 p-4 rounded-xl border border-slate-800">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    Kategori Masukan
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {(['Permintaan Fitur', 'Bug / Error', 'Usulan Shortcut Baru', 'Performa / Lainnya'] as const).map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setFeedbackCategory(cat)}
+                        className={`px-3 py-2 rounded-lg text-xs font-semibold border transition-all text-center ${
+                          feedbackCategory === cat
+                            ? 'bg-indigo-600 border-indigo-500 text-white shadow-sm'
+                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    Isi Saran / Detail Masukan
+                  </label>
+                  <textarea
+                    rows={4}
+                    required
+                    value={feedbackMessage}
+                    onChange={(e) => setFeedbackMessage(e.target.value)}
+                    placeholder="Contoh: Tolong tambahkan shortcut untuk format no rekening baru, atau keyboard lambat saat beralih aplikasi..."
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all resize-none"
+                  />
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={actionLoading || !feedbackMessage.trim()}
+                    className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>{actionLoading ? 'Mengirim...' : 'Kirim Masukan'}</span>
+                  </button>
+                </div>
+              </form>
+
+              {/* Riwayat Feedback Sebelumnya */}
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+                  <History className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Riwayat Masukan Anda</span>
+                </h4>
+
+                {isFeedbackLoading ? (
+                  <div className="p-4 text-center text-xs text-slate-500">Memuat riwayat masukan...</div>
+                ) : feedbacks.length === 0 ? (
+                  <div className="p-4 bg-slate-950/40 border border-slate-800/80 rounded-xl text-center text-xs text-slate-500">
+                    Belum ada masukan yang Anda kirimkan.
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {feedbacks.map((item) => (
+                      <div key={item.id} className="p-3 bg-slate-950/80 border border-slate-800 rounded-xl">
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                            {item.category}
+                          </span>
+                          <span className="text-[10px] text-slate-500">
+                            {item.created_at ? new Date(item.created_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }) : ''}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-300 whitespace-pre-wrap font-sans">
+                          {item.message}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="pt-4 mt-3 border-t border-slate-800 flex justify-end shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsFeedbackModalOpen(false)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+              >
+                Tutup
               </button>
             </div>
           </div>

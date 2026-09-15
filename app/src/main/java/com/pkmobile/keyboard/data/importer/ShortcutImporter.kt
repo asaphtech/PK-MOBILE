@@ -726,4 +726,24 @@ object ShortcutImporter {
         }
         return sb.toString()
     }
+
+    /**
+     * Ekspor daftar shortcut ke teks XML standar PK Mobile dengan pembungkus CDATA
+     * untuk mengamankan karakter khusus, baris baru, emotikon, dan tanda kurung.
+     */
+    fun exportToXml(shortcuts: List<ShortcutEntity>, presetName: String = "Perfect Keyboard"): String {
+        val sb = StringBuilder()
+        sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+        sb.append("<shortcuts preset=\"${presetName.replace("\"", "&quot;")}\" count=\"${shortcuts.size}\">\n")
+        for (item in shortcuts) {
+            sb.append("  <shortcut>\n")
+            sb.append("    <trigger><![CDATA[${item.shortcut}]]></trigger>\n")
+            sb.append("    <expansion><![CDATA[${item.expansion}]]></expansion>\n")
+            sb.append("    <mode>${item.expansionMode}</mode>\n")
+            sb.append("    <category><![CDATA[${item.category}]]></category>\n")
+            sb.append("  </shortcut>\n")
+        }
+        sb.append("</shortcuts>\n")
+        return sb.toString()
+    }
 }

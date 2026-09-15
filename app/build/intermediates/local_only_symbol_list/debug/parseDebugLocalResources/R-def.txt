@@ -66,11 +66,14 @@ id btn_export_shortcut
 id btn_import_xml
 id btn_open_bulk_input
 id btn_open_preset_picker
+id btn_search_clear
+id btn_search_close
 id btn_select_ime
 id btn_settings
 id btn_sync_cloud
 id btn_sync_now
-id candidate_bar
+id btn_toggle_search
+id candidate_bar_container
 id card_fn_guide
 id card_open_file_preset
 id card_preset_item
@@ -157,9 +160,13 @@ id keyboard_root
 id layout_alpha
 id layout_auth_form
 id layout_fn
+id layout_normal_candidate
 id layout_package_section
+id layout_search_results
+id layout_search_strip
 id layout_symbol
 id layout_symbol2
+id layout_sync_status
 id menu_layer_fn
 id menu_settings
 id progress_sync
@@ -250,6 +257,7 @@ id sym_space
 id sym_star
 id sym_switch_abc
 id sym_switch_fn
+id tv_active_preset_badge
 id tv_active_preset_subtitle
 id tv_app_version
 id tv_auth_status_badge
@@ -275,6 +283,7 @@ id tv_preset_name
 id tv_preset_source_badge
 id tv_preset_status_badge
 id tv_preview_count
+id tv_search_query_display
 id tv_shortcut_badge
 id tv_shortcut_header
 id tv_status_badge

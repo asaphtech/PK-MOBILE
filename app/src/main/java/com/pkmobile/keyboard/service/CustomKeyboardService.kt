@@ -73,6 +73,17 @@ class CustomKeyboardService : InputMethodService() {
     private var btnCandidateChip: LinearLayout? = null
     private var keyShiftButton: ImageButton? = null
 
+    // Search Mode State & Views (Bypass AutoTextEngine)
+    private var isSearchMode = false
+    private val searchQuery = StringBuilder()
+    private var layoutNormalCandidate: View? = null
+    private var layoutSearchStrip: View? = null
+    private var btnToggleSearch: Button? = null
+    private var btnSearchClose: Button? = null
+    private var btnSearchClear: Button? = null
+    private var tvSearchQueryDisplay: TextView? = null
+    private var layoutSearchResults: LinearLayout? = null
+
     // Daftar tombol alfabet untuk refresh uppercase/lowercase
     private val alphaButtons = mutableListOf<Button>()
 
@@ -129,6 +140,7 @@ class CustomKeyboardService : InputMethodService() {
         super.onStartInputView(info, restarting)
         loadPreferences()
         // Reset state setiap kali keyboard terbuka
+        exitSearchMode()
         autoTextEngine.resetBuffer()
         isShiftActive = false
         showLayer(KeyboardLayer.ALPHA)
@@ -152,12 +164,164 @@ class CustomKeyboardService : InputMethodService() {
         btnCandidateChip = root.findViewById(R.id.btn_candidate_chip)
         keyShiftButton = root.findViewById(R.id.key_shift)
 
+        // Binding View Mode Pencarian Shortcut
+        layoutNormalCandidate = root.findViewById(R.id.layout_normal_candidate)
+        layoutSearchStrip = root.findViewById(R.id.layout_search_strip)
+        btnToggleSearch = root.findViewById(R.id.btn_toggle_search)
+        btnSearchClose = root.findViewById(R.id.btn_search_close)
+        btnSearchClear = root.findViewById(R.id.btn_search_clear)
+        tvSearchQueryDisplay = root.findViewById(R.id.tv_search_query_display)
+        layoutSearchResults = root.findViewById(R.id.layout_search_results)
+
+        btnToggleSearch?.setOnClickListener {
+            enterSearchMode()
+        }
+
+        btnSearchClose?.setOnClickListener {
+            exitSearchMode()
+        }
+
+        btnSearchClear?.setOnClickListener {
+            searchQuery.setLength(0)
+            renderSearchResults()
+        }
+
         // Klik chip candidate suggestion bar untuk mengekspansi shortcut
         btnCandidateChip?.setOnClickListener {
             currentInputConnection?.let { ic ->
                 autoTextEngine.applyCandidateExpansion(ic)
             }
         }
+    }
+
+    /**
+     * Memasuki mode pencarian cepat shortcut:
+     * - AutoTextEngine di-bypass sepenuhnya.
+     * - Ketikan tombol alfabet/simbol hanya memfilter shortcut in-memory tanpa dikirim ke aplikasi target.
+     */
+    private fun enterSearchMode() {
+        isSearchMode = true
+        searchQuery.setLength(0)
+        layoutNormalCandidate?.visibility = View.GONE
+        layoutSearchStrip?.visibility = View.VISIBLE
+        renderSearchResults()
+    }
+
+    /**
+     * Keluar dari mode pencarian dan kembali ke mode pengetikan normal.
+     */
+    private fun exitSearchMode() {
+        isSearchMode = false
+        searchQuery.setLength(0)
+        layoutSearchStrip?.visibility = View.GONE
+        layoutNormalCandidate?.visibility = View.VISIBLE
+        layoutSearchResults?.removeAllViews()
+    }
+
+    /**
+     * Menerima karakter saat dalam mode pencarian.
+     */
+    private fun handleSearchInput(text: String) {
+        searchQuery.append(text)
+        renderSearchResults()
+    }
+
+    /**
+     * Menangani tombol backspace saat dalam mode pencarian.
+     */
+    private fun handleSearchBackspace() {
+        if (searchQuery.isNotEmpty()) {
+            searchQuery.deleteCharAt(searchQuery.length - 1)
+            renderSearchResults()
+        } else {
+            // Jika query sudah kosong dan backspace ditekan, tutup mode pencarian
+            exitSearchMode()
+        }
+    }
+
+    /**
+     * Merender hasil filter shortcut ke horizontal chip list.
+     */
+    private fun renderSearchResults() {
+        val q = searchQuery.toString()
+        if (q.isEmpty()) {
+            tvSearchQueryDisplay?.text = "🔍 Cari..."
+            btnSearchClear?.visibility = View.GONE
+        } else {
+            tvSearchQueryDisplay?.text = "🔍 $q"
+            btnSearchClear?.visibility = View.VISIBLE
+        }
+
+        val results = autoTextEngine.searchShortcuts(q)
+        layoutSearchResults?.removeAllViews()
+
+        if (results.isEmpty()) {
+            val emptyTv = TextView(this).apply {
+                text = if (q.isEmpty()) "Belum ada shortcut aktif" else "Tidak ditemukan"
+                setTextColor(ContextCompat.getColor(this@CustomKeyboardService, R.color.candidate_text_primary))
+                textSize = 12f
+                setPadding(16, 8, 16, 8)
+            }
+            layoutSearchResults?.addView(emptyTv)
+            return
+        }
+
+        for (item in results) {
+            val (trigger, expansion) = item
+            val chip = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                setBackgroundResource(R.drawable.bg_candidate_chip)
+                setPadding(20, 8, 20, 8)
+                val params = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 0, 16, 0)
+                }
+                layoutParams = params
+                isClickable = true
+                isFocusable = true
+
+                setOnClickListener {
+                    commitSearchResult(expansion)
+                }
+            }
+
+            val tvTrigger = TextView(this).apply {
+                text = trigger
+                setTextColor(ContextCompat.getColor(this@CustomKeyboardService, R.color.candidate_text_highlight))
+                textSize = 12f
+                typeface = android.graphics.Typeface.DEFAULT_BOLD
+            }
+
+            val tvArrow = TextView(this).apply {
+                text = " ➔ "
+                setTextColor(ContextCompat.getColor(this@CustomKeyboardService, R.color.candidate_text_primary))
+                textSize = 11f
+            }
+
+            val tvExpansion = TextView(this).apply {
+                val cleanPreview = expansion.replace("\n", " ").trim()
+                text = if (cleanPreview.length > 25) cleanPreview.take(25) + "..." else cleanPreview
+                setTextColor(ContextCompat.getColor(this@CustomKeyboardService, R.color.key_text))
+                textSize = 12f
+                maxLines = 1
+            }
+
+            chip.addView(tvTrigger)
+            chip.addView(tvArrow)
+            chip.addView(tvExpansion)
+            layoutSearchResults?.addView(chip)
+        }
+    }
+
+    /**
+     * Memasukkan teks ekspansi yang dipilih ke input target dan menutup mode pencarian.
+     */
+    private fun commitSearchResult(expansion: String) {
+        val ic = currentInputConnection
+        ic?.commitText(expansion, 1)
+        exitSearchMode()
     }
 
     /**
@@ -516,8 +680,13 @@ class CustomKeyboardService : InputMethodService() {
 
     /**
      * Mengirim karakter teks ke kolom input yang sedang aktif.
+     * Jika dalam Search Mode: AutoTextEngine di-bypass 100%, karakter diarahkan ke filter in-memory.
      */
     private fun commitCharacter(text: String) {
+        if (isSearchMode) {
+            handleSearchInput(text)
+            return
+        }
         val ic = currentInputConnection ?: return
         ic.commitText(text, 1)
 
@@ -532,6 +701,10 @@ class CustomKeyboardService : InputMethodService() {
      * Menangani penekanan tombol Spasi (mendeteksi shortcut auto-text atau spasi biasa).
      */
     private fun handleSpaceKey() {
+        if (isSearchMode) {
+            handleSearchInput(" ")
+            return
+        }
         val ic = currentInputConnection ?: return
         autoTextEngine.handleSpace(ic)
     }
@@ -546,6 +719,10 @@ class CustomKeyboardService : InputMethodService() {
      * - Jalankan logika penghapusan karakter normal seperti sebelumnya.
      */
     private fun handleBackspaceKey() {
+        if (isSearchMode) {
+            handleSearchBackspace()
+            return
+        }
         val ic = currentInputConnection ?: return
 
         // 1. Periksa apakah ada teks yang sedang diblok / diseleksi
@@ -567,6 +744,10 @@ class CustomKeyboardService : InputMethodService() {
      * Memanggil currentInputConnection.commitText("\n", 1) untuk baris baru murni.
      */
     private fun handleNewLineKey() {
+        if (isSearchMode) {
+            exitSearchMode()
+            return
+        }
         val ic = currentInputConnection ?: return
         ic.commitText("\n", 1)
         autoTextEngine.resetBuffer()
@@ -578,6 +759,16 @@ class CustomKeyboardService : InputMethodService() {
      * Jika aksi editor tidak di-handle oleh input target, kirim fallback KeyEvent ENTER.
      */
     private fun handleEnterKey() {
+        if (isSearchMode) {
+            val results = autoTextEngine.searchShortcuts(searchQuery.toString())
+            if (results.isNotEmpty()) {
+                commitSearchResult(results.first().second)
+            } else {
+                exitSearchMode()
+            }
+            return
+        }
+
         val ic = currentInputConnection ?: return
 
         // 1. Cek apakah ada shortcut sebelum kursor untuk diekspansi

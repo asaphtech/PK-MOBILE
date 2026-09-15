@@ -35,3 +35,12 @@ export interface ShortcutItem {
   user_id?: string;
   created_at?: string;
 }
+
+export interface FeedbackItem {
+  id?: string;
+  user_id?: string;
+  user_email?: string;
+  category: string;
+  message: string;
+  created_at?: string;
+}

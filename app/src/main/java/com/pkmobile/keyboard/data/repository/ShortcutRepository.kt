@@ -242,5 +242,38 @@ class ShortcutRepository(
     suspend fun deleteByTriggerCode(triggerCode: String) {
         shortcutDao.deleteByTriggerCode(triggerCode)
     }
+
+    /**
+     * Membuat snapshot cadangan lokal otomatis (JSON dump) ke context.filesDir/backups/
+     * sebelum melakukan impor berkas baru atau operasi penghapusan preset.
+     */
+    suspend fun createLocalBackupSnapshot(context: android.content.Context): String? {
+        return try {
+            val allList = shortcutDao.getAllList()
+            if (allList.isEmpty()) return null
+            val backupDir = java.io.File(context.filesDir, "backups").apply { mkdirs() }
+            val timeStamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.US).format(java.util.Date())
+            val backupFile = java.io.File(backupDir, "backup_snapshot_$timeStamp.json")
+
+            val jsonArray = org.json.JSONArray()
+            for (item in allList) {
+                val obj = org.json.JSONObject().apply {
+                    put("preset_id", item.presetId)
+                    put("trigger_code", item.triggerCode)
+                    put("expansion_text", item.expansionText)
+                    put("expansion_mode", item.expansionMode)
+                    put("category", item.category)
+                    put("package_name", item.packageName)
+                    put("is_active", item.isActive)
+                }
+                jsonArray.put(obj)
+            }
+            backupFile.writeText(jsonArray.toString(2))
+            backupFile.absolutePath
+        } catch (e: Exception) {
+            android.util.Log.e("ShortcutRepository", "Gagal membuat snapshot cadangan lokal", e)
+            null
+        }
+    }
 }
 

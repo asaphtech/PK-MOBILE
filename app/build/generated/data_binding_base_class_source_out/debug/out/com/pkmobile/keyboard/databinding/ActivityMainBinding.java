@@ -65,7 +65,13 @@ public final class ActivityMainBinding implements ViewBinding {
   public final LinearLayout layoutPackageSection;
 
   @NonNull
+  public final LinearLayout layoutSyncStatus;
+
+  @NonNull
   public final RecyclerView rvShortcuts;
+
+  @NonNull
+  public final TextView tvActivePresetBadge;
 
   @NonNull
   public final TextView tvActivePresetSubtitle;
@@ -82,6 +88,9 @@ public final class ActivityMainBinding implements ViewBinding {
   @NonNull
   public final TextView tvShortcutHeader;
 
+  @NonNull
+  public final TextView tvSyncStatus;
+
   private ActivityMainBinding(@NonNull CoordinatorLayout rootView,
       @NonNull MaterialButton btnAddShortcut, @NonNull MaterialButton btnCardSelectPreset,
       @NonNull ImageButton btnClearSearch, @NonNull MaterialButton btnExportShortcut,
@@ -89,10 +98,11 @@ public final class ActivityMainBinding implements ViewBinding {
       @NonNull ImageButton btnSettings, @NonNull MaterialButton btnSyncCloud,
       @NonNull MaterialCardView cardOpenFilePreset, @NonNull MaterialCardView cardSearch,
       @NonNull EditText etSearchShortcut, @NonNull EditText etTestInput,
-      @NonNull LinearLayout layoutPackageSection, @NonNull RecyclerView rvShortcuts,
+      @NonNull LinearLayout layoutPackageSection, @NonNull LinearLayout layoutSyncStatus,
+      @NonNull RecyclerView rvShortcuts, @NonNull TextView tvActivePresetBadge,
       @NonNull TextView tvActivePresetSubtitle, @NonNull TextView tvEmptyShortcuts,
       @NonNull TextView tvPackagesTitle, @NonNull TextView tvPresetCardTitle,
-      @NonNull TextView tvShortcutHeader) {
+      @NonNull TextView tvShortcutHeader, @NonNull TextView tvSyncStatus) {
     this.rootView = rootView;
     this.btnAddShortcut = btnAddShortcut;
     this.btnCardSelectPreset = btnCardSelectPreset;
@@ -107,12 +117,15 @@ public final class ActivityMainBinding implements ViewBinding {
     this.etSearchShortcut = etSearchShortcut;
     this.etTestInput = etTestInput;
     this.layoutPackageSection = layoutPackageSection;
+    this.layoutSyncStatus = layoutSyncStatus;
     this.rvShortcuts = rvShortcuts;
+    this.tvActivePresetBadge = tvActivePresetBadge;
     this.tvActivePresetSubtitle = tvActivePresetSubtitle;
     this.tvEmptyShortcuts = tvEmptyShortcuts;
     this.tvPackagesTitle = tvPackagesTitle;
     this.tvPresetCardTitle = tvPresetCardTitle;
     this.tvShortcutHeader = tvShortcutHeader;
+    this.tvSyncStatus = tvSyncStatus;
   }
 
   @Override
@@ -220,9 +233,21 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.layout_sync_status;
+      LinearLayout layoutSyncStatus = ViewBindings.findChildViewById(rootView, id);
+      if (layoutSyncStatus == null) {
+        break missingId;
+      }
+
       id = R.id.rv_shortcuts;
       RecyclerView rvShortcuts = ViewBindings.findChildViewById(rootView, id);
       if (rvShortcuts == null) {
+        break missingId;
+      }
+
+      id = R.id.tv_active_preset_badge;
+      TextView tvActivePresetBadge = ViewBindings.findChildViewById(rootView, id);
+      if (tvActivePresetBadge == null) {
         break missingId;
       }
 
@@ -256,11 +281,18 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tv_sync_status;
+      TextView tvSyncStatus = ViewBindings.findChildViewById(rootView, id);
+      if (tvSyncStatus == null) {
+        break missingId;
+      }
+
       return new ActivityMainBinding((CoordinatorLayout) rootView, btnAddShortcut,
           btnCardSelectPreset, btnClearSearch, btnExportShortcut, btnImportXml, btnOpenPresetPicker,
           btnSettings, btnSyncCloud, cardOpenFilePreset, cardSearch, etSearchShortcut, etTestInput,
-          layoutPackageSection, rvShortcuts, tvActivePresetSubtitle, tvEmptyShortcuts,
-          tvPackagesTitle, tvPresetCardTitle, tvShortcutHeader);
+          layoutPackageSection, layoutSyncStatus, rvShortcuts, tvActivePresetBadge,
+          tvActivePresetSubtitle, tvEmptyShortcuts, tvPackagesTitle, tvPresetCardTitle,
+          tvShortcutHeader, tvSyncStatus);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

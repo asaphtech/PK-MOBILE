@@ -75,6 +75,21 @@ class AutoTextEngine(
         }
     }
 
+    /**
+     * Mencari shortcut di cache memori secara case-insensitive tanpa memicu auto-expansion.
+     * Mengembalikan daftar pasangan (trigger, expansion) yang cocok dengan kata kunci.
+     */
+    fun searchShortcuts(query: String): List<Pair<String, String>> {
+        val q = query.trim().lowercase()
+        val results = mutableListOf<Pair<String, String>>()
+        for ((trigger, cached) in shortcutCache) {
+            if (q.isEmpty() || trigger.contains(q) || cached.expansion.lowercase().contains(q)) {
+                results.add(Pair(trigger, cached.expansion))
+            }
+        }
+        return results.sortedWith(compareBy({ !it.first.startsWith(q) }, { it.first }))
+    }
+
 
     /**
      * Memeriksa apakah karakter diizinkan masuk ke dalam kata trigger shortcut.

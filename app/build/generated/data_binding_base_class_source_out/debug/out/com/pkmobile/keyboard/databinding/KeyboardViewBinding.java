@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,7 +26,16 @@ public final class KeyboardViewBinding implements ViewBinding {
   public final LinearLayout btnCandidateChip;
 
   @NonNull
-  public final LinearLayout candidateBar;
+  public final Button btnSearchClear;
+
+  @NonNull
+  public final Button btnSearchClose;
+
+  @NonNull
+  public final Button btnToggleSearch;
+
+  @NonNull
+  public final FrameLayout candidateBarContainer;
 
   @NonNull
   public final Button fnAlt;
@@ -236,6 +246,15 @@ public final class KeyboardViewBinding implements ViewBinding {
 
   @NonNull
   public final LinearLayout layoutFn;
+
+  @NonNull
+  public final LinearLayout layoutNormalCandidate;
+
+  @NonNull
+  public final LinearLayout layoutSearchResults;
+
+  @NonNull
+  public final LinearLayout layoutSearchStrip;
 
   @NonNull
   public final LinearLayout layoutSymbol;
@@ -465,14 +484,18 @@ public final class KeyboardViewBinding implements ViewBinding {
   @NonNull
   public final TextView tvCandidateText;
 
+  @NonNull
+  public final TextView tvSearchQueryDisplay;
+
   private KeyboardViewBinding(@NonNull LinearLayout rootView,
-      @NonNull LinearLayout btnCandidateChip, @NonNull LinearLayout candidateBar,
-      @NonNull Button fnAlt, @NonNull Button fnBreak, @NonNull Button fnCaps,
-      @NonNull Button fnCtrl, @NonNull Button fnDel, @NonNull Button fnEnd, @NonNull Button fnEnter,
-      @NonNull Button fnEsc, @NonNull Button fnF1, @NonNull Button fnF10, @NonNull Button fnF11,
-      @NonNull Button fnF12, @NonNull Button fnF2, @NonNull Button fnF3, @NonNull Button fnF4,
-      @NonNull Button fnF5, @NonNull Button fnF6, @NonNull Button fnF7, @NonNull Button fnF8,
-      @NonNull Button fnF9, @NonNull Button fnHome, @NonNull Button fnIns,
+      @NonNull LinearLayout btnCandidateChip, @NonNull Button btnSearchClear,
+      @NonNull Button btnSearchClose, @NonNull Button btnToggleSearch,
+      @NonNull FrameLayout candidateBarContainer, @NonNull Button fnAlt, @NonNull Button fnBreak,
+      @NonNull Button fnCaps, @NonNull Button fnCtrl, @NonNull Button fnDel, @NonNull Button fnEnd,
+      @NonNull Button fnEnter, @NonNull Button fnEsc, @NonNull Button fnF1, @NonNull Button fnF10,
+      @NonNull Button fnF11, @NonNull Button fnF12, @NonNull Button fnF2, @NonNull Button fnF3,
+      @NonNull Button fnF4, @NonNull Button fnF5, @NonNull Button fnF6, @NonNull Button fnF7,
+      @NonNull Button fnF8, @NonNull Button fnF9, @NonNull Button fnHome, @NonNull Button fnIns,
       @NonNull ImageButton fnKeyBackspace, @NonNull Button fnNewLine, @NonNull Button fnPgdn,
       @NonNull Button fnPgup, @NonNull Button fnPrtscn, @NonNull Button fnSpace,
       @NonNull Button fnSwitchAbc, @NonNull Button fnSwitchSym, @NonNull Button fnTab,
@@ -487,10 +510,11 @@ public final class KeyboardViewBinding implements ViewBinding {
       @NonNull Button keySymbolSwitch, @NonNull Button keyT, @NonNull Button keyU,
       @NonNull Button keyV, @NonNull Button keyW, @NonNull Button keyX, @NonNull Button keyY,
       @NonNull Button keyZ, @NonNull LinearLayout keyboardRoot, @NonNull LinearLayout layoutAlpha,
-      @NonNull LinearLayout layoutFn, @NonNull LinearLayout layoutSymbol,
-      @NonNull LinearLayout layoutSymbol2, @NonNull Button sym0, @NonNull Button sym1,
-      @NonNull Button sym2, @NonNull Button sym2Backslash, @NonNull Button sym2Backtick,
-      @NonNull Button sym2BraceClose, @NonNull Button sym2BraceOpen,
+      @NonNull LinearLayout layoutFn, @NonNull LinearLayout layoutNormalCandidate,
+      @NonNull LinearLayout layoutSearchResults, @NonNull LinearLayout layoutSearchStrip,
+      @NonNull LinearLayout layoutSymbol, @NonNull LinearLayout layoutSymbol2, @NonNull Button sym0,
+      @NonNull Button sym1, @NonNull Button sym2, @NonNull Button sym2Backslash,
+      @NonNull Button sym2Backtick, @NonNull Button sym2BraceClose, @NonNull Button sym2BraceOpen,
       @NonNull Button sym2BracketClose, @NonNull Button sym2BracketOpen, @NonNull Button sym2Bullet,
       @NonNull Button sym2Caret, @NonNull Button sym2Cent, @NonNull Button sym2Comma,
       @NonNull Button sym2Copy, @NonNull Button sym2Degree, @NonNull Button sym2Ellipsis,
@@ -513,10 +537,14 @@ public final class KeyboardViewBinding implements ViewBinding {
       @NonNull Button symQuote, @NonNull Button symSemicolon, @NonNull Button symSinglequote,
       @NonNull Button symSlash, @NonNull Button symSpace, @NonNull Button symStar,
       @NonNull Button symSwitchAbc, @NonNull Button symSwitchFn,
-      @NonNull TextView tvCandidatePrefix, @NonNull TextView tvCandidateText) {
+      @NonNull TextView tvCandidatePrefix, @NonNull TextView tvCandidateText,
+      @NonNull TextView tvSearchQueryDisplay) {
     this.rootView = rootView;
     this.btnCandidateChip = btnCandidateChip;
-    this.candidateBar = candidateBar;
+    this.btnSearchClear = btnSearchClear;
+    this.btnSearchClose = btnSearchClose;
+    this.btnToggleSearch = btnToggleSearch;
+    this.candidateBarContainer = candidateBarContainer;
     this.fnAlt = fnAlt;
     this.fnBreak = fnBreak;
     this.fnCaps = fnCaps;
@@ -587,6 +615,9 @@ public final class KeyboardViewBinding implements ViewBinding {
     this.keyboardRoot = keyboardRoot;
     this.layoutAlpha = layoutAlpha;
     this.layoutFn = layoutFn;
+    this.layoutNormalCandidate = layoutNormalCandidate;
+    this.layoutSearchResults = layoutSearchResults;
+    this.layoutSearchStrip = layoutSearchStrip;
     this.layoutSymbol = layoutSymbol;
     this.layoutSymbol2 = layoutSymbol2;
     this.sym0 = sym0;
@@ -663,6 +694,7 @@ public final class KeyboardViewBinding implements ViewBinding {
     this.symSwitchFn = symSwitchFn;
     this.tvCandidatePrefix = tvCandidatePrefix;
     this.tvCandidateText = tvCandidateText;
+    this.tvSearchQueryDisplay = tvSearchQueryDisplay;
   }
 
   @Override
@@ -698,9 +730,27 @@ public final class KeyboardViewBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.candidate_bar;
-      LinearLayout candidateBar = ViewBindings.findChildViewById(rootView, id);
-      if (candidateBar == null) {
+      id = R.id.btn_search_clear;
+      Button btnSearchClear = ViewBindings.findChildViewById(rootView, id);
+      if (btnSearchClear == null) {
+        break missingId;
+      }
+
+      id = R.id.btn_search_close;
+      Button btnSearchClose = ViewBindings.findChildViewById(rootView, id);
+      if (btnSearchClose == null) {
+        break missingId;
+      }
+
+      id = R.id.btn_toggle_search;
+      Button btnToggleSearch = ViewBindings.findChildViewById(rootView, id);
+      if (btnToggleSearch == null) {
+        break missingId;
+      }
+
+      id = R.id.candidate_bar_container;
+      FrameLayout candidateBarContainer = ViewBindings.findChildViewById(rootView, id);
+      if (candidateBarContainer == null) {
         break missingId;
       }
 
@@ -1117,6 +1167,24 @@ public final class KeyboardViewBinding implements ViewBinding {
       id = R.id.layout_fn;
       LinearLayout layoutFn = ViewBindings.findChildViewById(rootView, id);
       if (layoutFn == null) {
+        break missingId;
+      }
+
+      id = R.id.layout_normal_candidate;
+      LinearLayout layoutNormalCandidate = ViewBindings.findChildViewById(rootView, id);
+      if (layoutNormalCandidate == null) {
+        break missingId;
+      }
+
+      id = R.id.layout_search_results;
+      LinearLayout layoutSearchResults = ViewBindings.findChildViewById(rootView, id);
+      if (layoutSearchResults == null) {
+        break missingId;
+      }
+
+      id = R.id.layout_search_strip;
+      LinearLayout layoutSearchStrip = ViewBindings.findChildViewById(rootView, id);
+      if (layoutSearchStrip == null) {
         break missingId;
       }
 
@@ -1576,25 +1644,32 @@ public final class KeyboardViewBinding implements ViewBinding {
         break missingId;
       }
 
-      return new KeyboardViewBinding((LinearLayout) rootView, btnCandidateChip, candidateBar, fnAlt,
-          fnBreak, fnCaps, fnCtrl, fnDel, fnEnd, fnEnter, fnEsc, fnF1, fnF10, fnF11, fnF12, fnF2,
-          fnF3, fnF4, fnF5, fnF6, fnF7, fnF8, fnF9, fnHome, fnIns, fnKeyBackspace, fnNewLine,
-          fnPgdn, fnPgup, fnPrtscn, fnSpace, fnSwitchAbc, fnSwitchSym, fnTab, keyA, keyB,
-          keyBackspace, keyC, keyComma, keyD, keyE, keyEnter, keyF, keyFnSwitch, keyG, keyH, keyI,
-          keyJ, keyK, keyL, keyM, keyN, keyNewLine, keyO, keyP, keyPeriod, keyQ, keyR, keyS,
-          keyShift, keySlash, keySpace, keySymbolSwitch, keyT, keyU, keyV, keyW, keyX, keyY, keyZ,
-          keyboardRoot, layoutAlpha, layoutFn, layoutSymbol, layoutSymbol2, sym0, sym1, sym2,
-          sym2Backslash, sym2Backtick, sym2BraceClose, sym2BraceOpen, sym2BracketClose,
-          sym2BracketOpen, sym2Bullet, sym2Caret, sym2Cent, sym2Comma, sym2Copy, sym2Degree,
-          sym2Ellipsis, sym2Enter, sym2Equal, sym2Euro, sym2Greater, sym2GuillemetLeft,
-          sym2GuillemetRight, sym2KeyBackspace, sym2Less, sym2NewLine, sym2Notequal, sym2PageSwitch,
-          sym2Period, sym2Pipe, sym2Plusminus, sym2Pound, sym2Reg, sym2Section, sym2Space,
-          sym2SwitchAbc, sym2SwitchFn, sym2Tilde, sym2Underscore, sym2Yen, sym3, sym4, sym5, sym6,
-          sym7, sym8, sym9, symAmp, symAt, symColon, symComma, symDollar, symEnter, symExclamation,
-          symHash, symKeyBackspace, symMinus, symNewLine, symPageSwitch, symParenClose,
-          symParenOpen, symPercent, symPeriod, symPlus, symQuestion, symQuote, symSemicolon,
-          symSinglequote, symSlash, symSpace, symStar, symSwitchAbc, symSwitchFn, tvCandidatePrefix,
-          tvCandidateText);
+      id = R.id.tv_search_query_display;
+      TextView tvSearchQueryDisplay = ViewBindings.findChildViewById(rootView, id);
+      if (tvSearchQueryDisplay == null) {
+        break missingId;
+      }
+
+      return new KeyboardViewBinding((LinearLayout) rootView, btnCandidateChip, btnSearchClear,
+          btnSearchClose, btnToggleSearch, candidateBarContainer, fnAlt, fnBreak, fnCaps, fnCtrl,
+          fnDel, fnEnd, fnEnter, fnEsc, fnF1, fnF10, fnF11, fnF12, fnF2, fnF3, fnF4, fnF5, fnF6,
+          fnF7, fnF8, fnF9, fnHome, fnIns, fnKeyBackspace, fnNewLine, fnPgdn, fnPgup, fnPrtscn,
+          fnSpace, fnSwitchAbc, fnSwitchSym, fnTab, keyA, keyB, keyBackspace, keyC, keyComma, keyD,
+          keyE, keyEnter, keyF, keyFnSwitch, keyG, keyH, keyI, keyJ, keyK, keyL, keyM, keyN,
+          keyNewLine, keyO, keyP, keyPeriod, keyQ, keyR, keyS, keyShift, keySlash, keySpace,
+          keySymbolSwitch, keyT, keyU, keyV, keyW, keyX, keyY, keyZ, keyboardRoot, layoutAlpha,
+          layoutFn, layoutNormalCandidate, layoutSearchResults, layoutSearchStrip, layoutSymbol,
+          layoutSymbol2, sym0, sym1, sym2, sym2Backslash, sym2Backtick, sym2BraceClose,
+          sym2BraceOpen, sym2BracketClose, sym2BracketOpen, sym2Bullet, sym2Caret, sym2Cent,
+          sym2Comma, sym2Copy, sym2Degree, sym2Ellipsis, sym2Enter, sym2Equal, sym2Euro,
+          sym2Greater, sym2GuillemetLeft, sym2GuillemetRight, sym2KeyBackspace, sym2Less,
+          sym2NewLine, sym2Notequal, sym2PageSwitch, sym2Period, sym2Pipe, sym2Plusminus, sym2Pound,
+          sym2Reg, sym2Section, sym2Space, sym2SwitchAbc, sym2SwitchFn, sym2Tilde, sym2Underscore,
+          sym2Yen, sym3, sym4, sym5, sym6, sym7, sym8, sym9, symAmp, symAt, symColon, symComma,
+          symDollar, symEnter, symExclamation, symHash, symKeyBackspace, symMinus, symNewLine,
+          symPageSwitch, symParenClose, symParenOpen, symPercent, symPeriod, symPlus, symQuestion,
+          symQuote, symSemicolon, symSinglequote, symSlash, symSpace, symStar, symSwitchAbc,
+          symSwitchFn, tvCandidatePrefix, tvCandidateText, tvSearchQueryDisplay);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
